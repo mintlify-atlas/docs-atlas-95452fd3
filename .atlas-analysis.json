@@ -1,0 +1,191 @@
+{
+  "projectType": "sdk-library",
+  "projectName": "UCX DSA",
+  "projectDescription": "Educational Python package for data structures and algorithms at UC Berkeley Extension",
+  "theme": "palm",
+  "primaryColor": "#003262",
+  "lightColor": "#3B7EA1",
+  "darkColor": "#003262",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Linear Data Structures",
+            "pages": [
+              "data-structures/array",
+              "data-structures/stack",
+              "data-structures/queue",
+              "data-structures/deque",
+              "data-structures/linked-lists"
+            ]
+          },
+          {
+            "group": "Tree Data Structures",
+            "pages": [
+              "data-structures/tree",
+              "data-structures/heap",
+              "data-structures/trie"
+            ]
+          },
+          {
+            "group": "Hash-Based Structures",
+            "pages": [
+              "data-structures/hashtable",
+              "data-structures/hashset"
+            ]
+          },
+          {
+            "group": "Graphs",
+            "pages": [
+              "graphs/overview",
+              "graphs/graph-factory",
+              "graphs/adjacency-matrix",
+              "graphs/adjacency-list",
+              "graphs/traversal"
+            ]
+          },
+          {
+            "group": "Algorithms",
+            "pages": [
+              "algorithms/dijkstra",
+              "algorithms/prim",
+              "algorithms/huffman",
+              "algorithms/sorting"
+            ]
+          },
+          {
+            "group": "Utilities",
+            "pages": [
+              "utilities/generators",
+              "utilities/visualization"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Arrays",
+            "pages": [
+              "api/array",
+              "api/dynamic-array",
+              "api/circular-array"
+            ]
+          },
+          {
+            "group": "Linear Structures",
+            "pages": [
+              "api/stack",
+              "api/queue",
+              "api/circular-queue",
+              "api/deque",
+              "api/singly-linked-list",
+              "api/doubly-linked-list"
+            ]
+          },
+          {
+            "group": "Trees & Heaps",
+            "pages": [
+              "api/tree-node",
+              "api/heap",
+              "api/min-heap",
+              "api/priority-queue",
+              "api/trie"
+            ]
+          },
+          {
+            "group": "Hash Structures",
+            "pages": [
+              "api/hashtable",
+              "api/hashset"
+            ]
+          },
+          {
+            "group": "Graphs",
+            "pages": [
+              "api/graph-factory",
+              "api/adjacency-matrix-graph",
+              "api/adjacency-matrix-weighted-graph",
+              "api/adjacency-list-graph",
+              "api/adjacency-list-weighted-graph"
+            ]
+          },
+          {
+            "group": "Graph Algorithms",
+            "pages": [
+              "api/graph-traversal",
+              "api/dijkstra",
+              "api/prim"
+            ]
+          },
+          {
+            "group": "Other Algorithms",
+            "pages": [
+              "api/huffman",
+              "api/sorttools"
+            ]
+          },
+          {
+            "group": "Utilities",
+            "pages": [
+              "api/generators",
+              "api/draw",
+              "api/pretty-print"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Complete implementations of fundamental data structures",
+    "Graph algorithms including Dijkstra's and Prim's",
+    "Educational focus with clear, readable code",
+    "Visualization support via NetworkX",
+    "Test data generators for learning"
+  ],
+  "publicApiSurface": [
+    "Array",
+    "DynamicArray",
+    "CircularArray",
+    "Stack",
+    "Queue",
+    "CircularQueue",
+    "Deque",
+    "SinglyLinkedList",
+    "DoublyLinkedList",
+    "TreeNode",
+    "Heap",
+    "MinHeap",
+    "PriorityQueue",
+    "Trie",
+    "HashTable",
+    "HashSet",
+    "Graph",
+    "AdjacencyMatrixGraph",
+    "AdjacencyMatrixWeightedGraph",
+    "AdjacencyListGraph",
+    "AdjacencyListWeightedGraph",
+    "dfs_traverse",
+    "bfs_traverse",
+    "dijkstra",
+    "prim",
+    "huffman_tree",
+    "generate_random_array",
+    "draw_graph",
+    "draw_tree",
+    "draw_heap",
+    "draw_trie"
+  ]
+}
