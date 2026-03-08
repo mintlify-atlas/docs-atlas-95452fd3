@@ -1,0 +1,255 @@
+---
+title: Graph Traversal
+description: API reference for BFS and DFS graph traversal algorithms
+---
+
+This module provides depth-first search (DFS) and breadth-first search (BFS) traversal algorithms for graphs.
+
+## Functions
+
+### dfs
+
+Performs depth-first traversal starting from a given vertex.
+
+```python
+from dsa.graph_traversal import dfs
+
+path = dfs(graph, vertex, visited=None, path=None, debug=False, stack=None)
+```
+
+<ParamField path="graph" type="Graph" required>
+  Graph object with an `adjacents(v)` method that returns adjacent vertices
+</ParamField>
+
+<ParamField path="vertex" type="str" required>
+  Starting vertex label
+</ParamField>
+
+<ParamField path="visited" type="set" default="None">
+  Set of visited vertices (used internally for recursion)
+</ParamField>
+
+<ParamField path="path" type="list" default="None">
+  Traversal order result (used internally for recursion)
+</ParamField>
+
+<ParamField path="debug" type="bool" default="False">
+  If True, prints internal state including current vertex, adjacents, stack, and visited set
+</ParamField>
+
+<ParamField path="stack" type="list" default="None">
+  Internal recursion stack (debug only)
+</ParamField>
+
+<ResponseField name="path" type="list">
+  List of vertices in DFS traversal order
+</ResponseField>
+
+<CodeGroup>
+```python Basic Usage
+from dsa.graph import AdjacencyListGraph
+from dsa.graph_traversal import dfs
+
+# Create a graph
+graph = AdjacencyListGraph()
+graph.add_edge("A", "B")
+graph.add_edge("A", "C")
+graph.add_edge("B", "D")
+graph.add_edge("C", "E")
+
+# Perform DFS traversal
+path = dfs(graph, "A")
+print(path)  # Output: ['A', 'B', 'D', 'C', 'E']
+```
+
+```python With Debug
+from dsa.graph import AdjacencyListGraph
+from dsa.graph_traversal import dfs
+
+graph = AdjacencyListGraph()
+graph.add_edge("A", "B")
+graph.add_edge("A", "C")
+
+# Enable debug mode to see internal state
+path = dfs(graph, "A", debug=True)
+```
+</CodeGroup>
+
+---
+
+### dfs_path
+
+Finds a path from start vertex to end vertex using depth-first search.
+
+```python
+from dsa.graph_traversal import dfs_path
+
+path = dfs_path(graph, start, end, visited=None)
+```
+
+<ParamField path="graph" type="Graph" required>
+  Graph object with an `adjacents(v)` method
+</ParamField>
+
+<ParamField path="start" type="str" required>
+  Starting vertex label
+</ParamField>
+
+<ParamField path="end" type="str" required>
+  Ending vertex label
+</ParamField>
+
+<ParamField path="visited" type="set" default="None">
+  Set of visited vertices (used internally)
+</ParamField>
+
+<ResponseField name="path" type="list | None">
+  Path from start to end as a list of vertices, or None if no path exists
+</ResponseField>
+
+<CodeGroup>
+```python Finding a Path
+from dsa.graph import AdjacencyListGraph
+from dsa.graph_traversal import dfs_path
+
+graph = AdjacencyListGraph()
+graph.add_edge("A", "B")
+graph.add_edge("B", "C")
+graph.add_edge("A", "D")
+graph.add_edge("D", "C")
+
+# Find a path from A to C
+path = dfs_path(graph, "A", "C")
+print(path)  # Output: ['A', 'B', 'C'] or ['A', 'D', 'C']
+```
+
+```python No Path Exists
+from dsa.graph import AdjacencyListGraph
+from dsa.graph_traversal import dfs_path
+
+graph = AdjacencyListGraph()
+graph.add_edge("A", "B")
+graph.add_edge("C", "D")
+
+# Try to find path between disconnected components
+path = dfs_path(graph, "A", "C")
+print(path)  # Output: None
+```
+</CodeGroup>
+
+---
+
+### bfs
+
+Performs breadth-first traversal starting from a given vertex.
+
+```python
+from dsa.graph_traversal import bfs
+
+path = bfs(graph, start, debug=False)
+```
+
+<ParamField path="graph" type="Graph" required>
+  Graph object with an `adjacents(v)` method
+</ParamField>
+
+<ParamField path="start" type="str" required>
+  Starting vertex label
+</ParamField>
+
+<ParamField path="debug" type="bool" default="False">
+  If True, prints internal state including current vertex, adjacents, and queue
+</ParamField>
+
+<ResponseField name="path" type="list">
+  List of vertices in BFS traversal order
+</ResponseField>
+
+<CodeGroup>
+```python Basic Usage
+from dsa.graph import AdjacencyListGraph
+from dsa.graph_traversal import bfs
+
+# Create a graph
+graph = AdjacencyListGraph()
+graph.add_edge("A", "B")
+graph.add_edge("A", "C")
+graph.add_edge("B", "D")
+graph.add_edge("C", "E")
+
+# Perform BFS traversal
+path = bfs(graph, "A")
+print(path)  # Output: ['A', 'B', 'C', 'D', 'E']
+```
+
+```python With Debug
+from dsa.graph import AdjacencyListGraph
+from dsa.graph_traversal import bfs
+
+graph = AdjacencyListGraph()
+graph.add_edge("A", "B")
+graph.add_edge("A", "C")
+
+# Enable debug mode
+path = bfs(graph, "A", debug=True)
+```
+</CodeGroup>
+
+---
+
+### bfs_path
+
+Finds the shortest path from start vertex to end vertex using breadth-first search.
+
+```python
+from dsa.graph_traversal import bfs_path
+
+path = bfs_path(graph, start, end)
+```
+
+<ParamField path="graph" type="Graph" required>
+  Graph object with an `adjacents(v)` method
+</ParamField>
+
+<ParamField path="start" type="str" required>
+  Starting vertex label
+</ParamField>
+
+<ParamField path="end" type="str" required>
+  Ending vertex label
+</ParamField>
+
+<ResponseField name="path" type="list | None">
+  Shortest path from start to end as a list of vertices, or None if no path exists
+</ResponseField>
+
+<CodeGroup>
+```python Finding Shortest Path
+from dsa.graph import AdjacencyListGraph
+from dsa.graph_traversal import bfs_path
+
+graph = AdjacencyListGraph()
+graph.add_edge("A", "B")
+graph.add_edge("B", "C")
+graph.add_edge("A", "D")
+graph.add_edge("D", "E")
+graph.add_edge("E", "C")
+
+# Find shortest path from A to C
+path = bfs_path(graph, "A", "C")
+print(path)  # Output: ['A', 'B', 'C']
+```
+
+```python No Path Exists
+from dsa.graph import AdjacencyListGraph
+from dsa.graph_traversal import bfs_path
+
+graph = AdjacencyListGraph()
+graph.add_edge("A", "B")
+graph.add_edge("C", "D")
+
+# Try to find path between disconnected components
+path = bfs_path(graph, "A", "D")
+print(path)  # Output: None
+```
+</CodeGroup>

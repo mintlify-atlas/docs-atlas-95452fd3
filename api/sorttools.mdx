@@ -1,0 +1,266 @@
+---
+title: Sort Tools
+description: API reference for array generation and sorting utility functions
+---
+
+This module provides utility functions for generating test arrays and validating sorting algorithms.
+
+## Functions
+
+### rand_int_array
+
+Generates an array of random integers.
+
+```python
+from dsa.sorttools import rand_int_array
+
+array = rand_int_array(n, maxnum)
+```
+
+<ParamField path="n" type="int" required>
+  The number of integers to generate
+</ParamField>
+
+<ParamField path="maxnum" type="int" required>
+  The maximum number in the range (0 to maxnum inclusive)
+</ParamField>
+
+<ResponseField name="array" type="list">
+  Array of n random integers from 0 to maxnum
+</ResponseField>
+
+```python Example
+from dsa.sorttools import rand_int_array
+
+# Generate 10 random integers between 0 and 100
+array = rand_int_array(10, 100)
+print(array)  # [45, 23, 89, 12, 67, 34, 91, 5, 78, 56]
+```
+
+---
+
+### filled_array
+
+Generates a sorted array filled with integers from 0 to n-1.
+
+```python
+from dsa.sorttools import filled_array
+
+array = filled_array(n)
+```
+
+<ParamField path="n" type="int" required>
+  The number of integers to generate
+</ParamField>
+
+<ResponseField name="array" type="list">
+  Array filled with integers from 0 to n-1 in ascending order
+</ResponseField>
+
+```python Example
+from dsa.sorttools import filled_array
+
+# Generate array [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+array = filled_array(10)
+print(array)  # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+---
+
+### shuffle_array
+
+Generates a shuffled array with integers from 0 to n-1.
+
+```python
+from dsa.sorttools import shuffle_array
+
+array = shuffle_array(n)
+```
+
+<ParamField path="n" type="int" required>
+  The number of integers to generate
+</ParamField>
+
+<ResponseField name="array" type="list">
+  Randomly shuffled array containing integers from 0 to n-1
+</ResponseField>
+
+```python Example
+from dsa.sorttools import shuffle_array
+
+# Generate shuffled array of integers 0-9
+array = shuffle_array(10)
+print(array)  # [7, 2, 9, 0, 5, 3, 8, 1, 6, 4] (random order)
+```
+
+---
+
+### is_sorted
+
+Checks if an array is sorted in ascending order.
+
+```python
+from dsa.sorttools import is_sorted
+
+result = is_sorted(array)
+```
+
+<ParamField path="array" type="list" required>
+  The array to verify
+</ParamField>
+
+<ResponseField name="result" type="bool">
+  True if the array is sorted in ascending order, False otherwise
+</ResponseField>
+
+<CodeGroup>
+```python Sorted Array
+from dsa.sorttools import is_sorted
+
+array = [1, 2, 3, 4, 5]
+print(is_sorted(array))  # True
+```
+
+```python Unsorted Array
+from dsa.sorttools import is_sorted
+
+array = [5, 2, 8, 1, 9]
+print(is_sorted(array))  # False
+```
+
+```python Testing Sort Algorithm
+from dsa.sorttools import shuffle_array, is_sorted
+
+array = shuffle_array(100)
+# ... apply your sorting algorithm ...
+array.sort()
+print(is_sorted(array))  # True
+```
+</CodeGroup>
+
+---
+
+### array_details
+
+Returns a formatted string with array statistics.
+
+```python
+from dsa.sorttools import array_details
+
+details = array_details(array)
+```
+
+<ParamField path="array" type="list" required>
+  The array to analyze
+</ParamField>
+
+<ResponseField name="details" type="str">
+  String containing count of elements, first 10 elements, and last 10 elements
+</ResponseField>
+
+```python Example
+from dsa.sorttools import shuffle_array, array_details
+
+array = shuffle_array(100)
+details = array_details(array)
+print(details)
+# Count: 100 first 10: [7, 23, 45, ...] last 10: [..., 89, 12, 56]
+```
+
+---
+
+### generate_almost_sorted_array
+
+Generates an almost sorted array with a specified number of random swaps.
+
+```python
+from dsa.sorttools import generate_almost_sorted_array
+
+array = generate_almost_sorted_array(size, swaps)
+```
+
+<ParamField path="size" type="int" required>
+  The size of the array to generate
+</ParamField>
+
+<ParamField path="swaps" type="int" required>
+  The number of adjacent elements to swap to create disorder
+</ParamField>
+
+<ResponseField name="array" type="list">
+  Array of integers that is mostly sorted with specified local swaps
+</ResponseField>
+
+<CodeGroup>
+```python Nearly Sorted
+from dsa.sorttools import generate_almost_sorted_array
+
+# Generate array that's almost sorted (only 5 swaps)
+array = generate_almost_sorted_array(100, 5)
+print(array[:20])  # [0, 1, 2, 3, 5, 4, 6, 7, 8, 10, 9, ...]
+```
+
+```python Testing Adaptive Algorithms
+from dsa.sorttools import generate_almost_sorted_array, is_sorted
+import time
+
+# Test algorithm performance on nearly sorted data
+array = generate_almost_sorted_array(10000, 50)
+
+start = time.time()
+array.sort()  # Or your sorting algorithm
+end = time.time()
+
+print(f"Sorted: {is_sorted(array)}")
+print(f"Time: {end - start:.4f} seconds")
+```
+
+```python Varying Disorder Levels
+from dsa.sorttools import generate_almost_sorted_array
+
+# Test with different levels of disorder
+for swaps in [10, 50, 100, 500]:
+    array = generate_almost_sorted_array(1000, swaps)
+    print(f"Swaps: {swaps}, First 20: {array[:20]}")
+```
+</CodeGroup>
+
+<Accordion title="Use Cases for Sort Testing">
+  **Performance Benchmarking:**
+  - Use `rand_int_array()` for average case testing
+  - Use `filled_array()` for best case testing (already sorted)
+  - Use `shuffle_array()` for worst case testing (completely random)
+  - Use `generate_almost_sorted_array()` for testing adaptive algorithms
+  
+  **Validation:**
+  - Use `is_sorted()` to verify your sorting algorithm works correctly
+  - Use `array_details()` to inspect large arrays without printing all elements
+  
+  **Example Test Suite:**
+  ```python
+  from dsa.sorttools import (
+      rand_int_array,
+      shuffle_array,
+      generate_almost_sorted_array,
+      is_sorted
+  )
+  
+  def test_sort_algorithm(sort_func):
+      # Test random array
+      array1 = rand_int_array(100, 1000)
+      sort_func(array1)
+      assert is_sorted(array1), "Failed on random array"
+      
+      # Test shuffled array
+      array2 = shuffle_array(100)
+      sort_func(array2)
+      assert is_sorted(array2), "Failed on shuffled array"
+      
+      # Test almost sorted array
+      array3 = generate_almost_sorted_array(100, 10)
+      sort_func(array3)
+      assert is_sorted(array3), "Failed on almost sorted array"
+      
+      print("All tests passed!")
+  ```
+</Accordion>

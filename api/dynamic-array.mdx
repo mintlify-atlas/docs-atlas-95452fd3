@@ -1,0 +1,398 @@
+---
+title: 'DynamicArray'
+description: 'A dynamic array implementation with automatic capacity adjustment'
+---
+
+## Overview
+
+The `DynamicArray` class extends the `Array` class to provide a dynamic array implementation with automatic capacity management. Unlike the static `Array`, the `DynamicArray` automatically grows when capacity is exceeded and shrinks when utilization is low.
+
+### Special Methods
+
+- **Index Operator**: `array[index]` - Access elements by index
+- **Assignment**: `array[index] = value` - Set values at specific indices
+- **Equality**: DynamicArray instances can be compared for equality with other `DynamicArray` or `Array` instances based on their contents
+
+### Inheritance
+
+`DynamicArray` inherits from `Array` and overrides key methods to provide automatic capacity management:
+- Inherits: `__getitem__`, `__setitem__`, `__len__`, `__repr__`, `__eq__`, `is_empty`, `capacity`, `to_list`, `from_list`, `shift_right`, `shift_left`
+- Overrides: `append`, `extend`, `insert`, `delete`
+- Adds: `grow`, `shrink`, `check_capacity`
+
+---
+
+## Constructor
+
+### `__init__(contents=None, capacity: int=10)`
+
+Initialize the dynamic array with optional contents and an initial capacity.
+
+<ParamField path="contents" type="iterable" default="None">
+  An optional iterable to fill the array with initial values. If the length of contents exceeds the specified capacity, the capacity will be automatically adjusted to fit.
+</ParamField>
+
+<ParamField path="capacity" type="int" default="10">
+  The initial size of the array. The capacity will automatically grow or shrink as needed.
+</ParamField>
+
+<Accordion title="Note">
+  The constructor is inherited from the `Array` class. The key difference is that the capacity will dynamically adjust during the lifetime of the array.
+</Accordion>
+
+<CodeGroup>
+```python Example
+from dsa.array import DynamicArray
+
+# Create an empty dynamic array with default capacity of 10
+arr = DynamicArray()
+
+# Create with specific initial capacity
+arr = DynamicArray(capacity=5)
+
+# Create with initial contents
+arr = DynamicArray(contents=[1, 2, 3, 4, 5])
+
+# Create with contents larger than default capacity
+arr = DynamicArray(contents=range(50))  # capacity automatically adjusted
+```
+</CodeGroup>
+
+---
+
+## Capacity Management Methods
+
+### `grow()`
+
+Helper method to double the capacity of the current array.
+
+**Time Complexity:** O(n) where n is the current number of elements
+
+**Space Complexity:** O(n) for the new array allocation
+
+<Accordion title="Implementation Details">
+  This method creates a new internal array with double the capacity and copies all existing elements to it. It is automatically called by `check_capacity()` when needed.
+</Accordion>
+
+<CodeGroup>
+```python Example
+arr = DynamicArray(capacity=4)
+print(arr.capacity())  # 4
+
+# Add elements to trigger growth
+for i in range(5):
+    arr.append(i)
+
+print(arr.capacity())  # 8 (doubled automatically)
+```
+</CodeGroup>
+
+---
+
+### `shrink()`
+
+Helper method to halve the capacity of the current array. The minimum capacity is 10.
+
+**Time Complexity:** O(n) where n is the current number of elements
+
+**Space Complexity:** O(n) for the new array allocation
+
+<Accordion title="Implementation Details">
+  This method creates a new internal array with half the capacity and copies all existing elements to it. The capacity will never shrink below 10. It is automatically called by `check_capacity()` when needed.
+</Accordion>
+
+<CodeGroup>
+```python Example
+arr = DynamicArray(capacity=40)
+for i in range(40):
+    arr.append(i)
+
+print(arr.capacity())  # 80 (grew during appends)
+
+# Delete many elements to trigger shrink
+for i in range(30):
+    arr.delete(0)
+
+print(arr.capacity())  # 40 (halved automatically)
+print(len(arr))        # 10
+```
+</CodeGroup>
+
+---
+
+### `check_capacity()`
+
+Automatically adjusts the array capacity based on utilization:
+- If `count >= capacity`, grow the array
+- If `count <= 1/4 of capacity`, shrink the array
+
+**Time Complexity:** O(1) amortized, O(n) worst case when resizing
+
+**Space Complexity:** O(1) amortized, O(n) worst case when resizing
+
+<Accordion title="Amortized Analysis">
+  While individual resize operations take O(n) time, the amortized cost per operation is O(1) because resizing happens infrequently. Each resize doubles or halves the capacity, so the number of resizes is logarithmic in the total number of operations.
+</Accordion>
+
+<CodeGroup>
+```python Example
+arr = DynamicArray(capacity=10)
+print(arr.capacity())  # 10
+
+# Add elements - grows when count >= capacity
+for i in range(15):
+    arr.append(i)
+print(arr.capacity())  # 20
+
+# Remove elements - shrinks when count <= 1/4 capacity
+for i in range(10):
+    arr.delete(0)
+print(arr.capacity())  # 10 (shrunk)
+```
+</CodeGroup>
+
+---
+
+## Methods (Overridden)
+
+### `append(element)`
+
+Append an element to the array. Automatically adjusts capacity as needed.
+
+<ParamField path="element" type="any" required>
+  The element to append to the array.
+</ParamField>
+
+**Time Complexity:** O(1) amortized
+
+**Space Complexity:** O(1) amortized
+
+<Accordion title="Difference from Array">
+  Unlike the static `Array.append()` which raises an exception when capacity is exceeded, `DynamicArray.append()` automatically grows the array to accommodate new elements.
+</Accordion>
+
+<CodeGroup>
+```python Example
+arr = DynamicArray(capacity=2)
+print(arr.capacity())  # 2
+
+arr.append(1)
+arr.append(2)
+print(arr.capacity())  # 2
+
+# This would fail with Array, but works with DynamicArray
+arr.append(3)
+print(arr.capacity())  # 4 (automatically doubled)
+print(arr.to_list())   # [1, 2, 3]
+```
+</CodeGroup>
+
+---
+
+### `extend(array)`
+
+Append multiple elements from a given iterable. Automatically adjusts capacity as needed.
+
+<ParamField path="array" type="iterable" required>
+  An iterable containing elements to append to the array.
+</ParamField>
+
+**Time Complexity:** O(m) amortized, where m is the number of elements to add
+
+**Space Complexity:** O(1) amortized
+
+<Accordion title="Difference from Array">
+  Unlike the static `Array.extend()` which may raise an exception when capacity is exceeded, `DynamicArray.extend()` automatically grows the array as needed.
+</Accordion>
+
+<CodeGroup>
+```python Example
+arr = DynamicArray(capacity=5)
+arr.extend([1, 2, 3, 4, 5])
+print(arr.capacity())  # 5
+
+# Extend beyond initial capacity
+arr.extend([6, 7, 8, 9, 10])
+print(arr.capacity())  # 10 (automatically grown)
+print(len(arr))        # 10
+```
+</CodeGroup>
+
+---
+
+### `insert(index: int, element)`
+
+Insert an element at a specified index, shifting existing elements to the right. Automatically adjusts capacity as needed.
+
+<ParamField path="index" type="int" required>
+  The index at which to insert the element. Must be between 0 and count - 1 (not count as in Array).
+</ParamField>
+
+<ParamField path="element" type="any" required>
+  The element to insert.
+</ParamField>
+
+**Raises:**
+- `IndexError`: If the index is out of bounds
+
+**Time Complexity:** O(n) where n is the number of elements to shift
+
+**Space Complexity:** O(1) amortized
+
+<Accordion title="Difference from Array">
+  Unlike `Array.insert()`, this method automatically grows the array if needed. Note that the index validation is also different: it must be strictly less than count, not less than or equal to.
+</Accordion>
+
+<CodeGroup>
+```python Example
+arr = DynamicArray(contents=[1, 2, 4, 5], capacity=4)
+print(arr.capacity())  # 4
+
+arr.insert(2, 3)  # Insert 3 at index 2
+print(arr.capacity())  # 8 (automatically doubled)
+print(arr.to_list())   # [1, 2, 3, 4, 5]
+```
+
+```python Error Handling
+arr = DynamicArray(contents=[1, 2, 3])
+
+try:
+    arr.insert(5, 100)  # Index out of bounds
+except IndexError:
+    print("Index must be within current array bounds")
+```
+</CodeGroup>
+
+---
+
+### `delete(index: int)`
+
+Delete an element at a specified index, shifting subsequent elements to the left. Automatically adjusts capacity as needed.
+
+<ParamField path="index" type="int" required>
+  The index of the element to delete. Must be between 0 and count - 1.
+</ParamField>
+
+**Raises:**
+- `IndexError`: If the index is out of bounds
+
+**Time Complexity:** O(n) where n is the number of elements to shift
+
+**Space Complexity:** O(1) amortized
+
+<Accordion title="Difference from Array">
+  Unlike `Array.delete()`, this method automatically shrinks the array when utilization falls below 25% of capacity.
+</Accordion>
+
+<CodeGroup>
+```python Example
+arr = DynamicArray(contents=range(20))
+print(arr.capacity())  # 20
+
+# Delete many elements
+for i in range(15):
+    arr.delete(0)
+
+print(arr.capacity())  # 10 (automatically shrunk)
+print(len(arr))        # 5
+print(arr.to_list())   # [15, 16, 17, 18, 19]
+```
+</CodeGroup>
+
+---
+
+## Inherited Methods
+
+The following methods are inherited from the `Array` class and work identically:
+
+### Index Access
+
+- **`__getitem__(index: int)`** - Retrieve element at index using `array[index]`
+- **`__setitem__(index: int, value)`** - Set value at index using `array[index] = value`
+
+### Utility Methods
+
+- **`is_empty() -> bool`** - Check if the array is empty
+- **`capacity() -> int`** - Get the current total capacity
+- **`to_list() -> list`** - Convert to a standard Python list
+- **`from_list(mylist: list)`** - Create a DynamicArray from a Python list (classmethod)
+
+### Helper Methods
+
+- **`shift_right(start: int)`** - Shift elements right from a start index
+- **`shift_left(start: int)`** - Shift elements left from a start index
+
+### Special Methods
+
+- **`__len__() -> int`** - Get the number of elements using `len(array)`
+- **`__repr__() -> str`** - String representation of the array
+- **`__eq__(other) -> bool`** - Compare arrays for equality
+
+<Accordion title="View Full Documentation">
+  For detailed documentation of inherited methods, see the [Array](/api/array) reference page.
+</Accordion>
+
+---
+
+## Attributes
+
+### `count`
+
+<ResponseField name="count" type="int">
+  The number of elements currently stored in the array. This is updated automatically when elements are added or removed.
+</ResponseField>
+
+<CodeGroup>
+```python Example
+arr = DynamicArray()
+print(arr.count)  # 0
+
+arr.append(1)
+print(arr.count)  # 1
+
+arr.extend([2, 3, 4])
+print(arr.count)  # 4
+```
+</CodeGroup>
+
+---
+
+## Performance Characteristics
+
+### Time Complexity Summary
+
+| Operation | Average Case | Worst Case |
+|-----------|-------------|------------|
+| `append` | O(1) | O(n) |
+| `extend` | O(m) | O(n + m) |
+| `insert` | O(n) | O(n) |
+| `delete` | O(n) | O(n) |
+| `__getitem__` | O(1) | O(1) |
+| `__setitem__` | O(1) | O(1) |
+| `is_empty` | O(1) | O(1) |
+| `capacity` | O(1) | O(1) |
+
+### Space Complexity
+
+The `DynamicArray` maintains O(n) space complexity where n is the number of elements stored. The actual capacity may be up to 4x the number of elements before shrinking occurs.
+
+<CodeGroup>
+```python Capacity Growth Example
+arr = DynamicArray()
+print(f"Count: {len(arr)}, Capacity: {arr.capacity()}")  # Count: 0, Capacity: 10
+
+# Add 10 elements
+for i in range(10):
+    arr.append(i)
+print(f"Count: {len(arr)}, Capacity: {arr.capacity()}")  # Count: 10, Capacity: 10
+
+# Add one more to trigger growth
+arr.append(10)
+print(f"Count: {len(arr)}, Capacity: {arr.capacity()}")  # Count: 11, Capacity: 20
+
+# Delete down to trigger shrink
+while len(arr) > 5:
+    arr.delete(0)
+print(f"Count: {len(arr)}, Capacity: {arr.capacity()}")  # Count: 5, Capacity: 10
+```
+</CodeGroup>

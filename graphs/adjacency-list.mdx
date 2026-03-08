@@ -1,0 +1,799 @@
+---
+title: "Adjacency List Graphs"
+description: "List-based graph implementations optimized for sparse graphs"
+icon: "list"
+---
+
+## Overview
+
+Adjacency list graphs store each vertex's neighbors in a list or dictionary. This representation is space-efficient for sparse graphs and enables fast neighbor iteration. UCX DSA provides both weighted and unweighted adjacency list implementations.
+
+<Note>
+  Adjacency list graphs use O(V + E) space, making them ideal for sparse graphs. They excel at operations that iterate over a vertex's neighbors.
+</Note>
+
+## Class Hierarchy
+
+```
+AdjacencyListGraph (unweighted)
+  └─ AdjacencyListWeightedGraph (weighted)
+```
+
+## AdjacencyListGraph (Unweighted)
+
+The base adjacency list implementation for unweighted graphs.
+
+### Constructor
+
+```python
+from dsa.graph import AdjacencyListGraph
+
+# Create an empty graph
+g = AdjacencyListGraph(directed=False)
+
+# Create with initial vertices
+g = AdjacencyListGraph(
+    directed=True,
+    vertices=['A', 'B', 'C', 'D']
+)
+```
+
+**Parameters:**
+- `directed` (bool, optional): Whether the graph is directed. Defaults to `False`
+- `vertices` (list, optional): Initial vertex labels (strings). Defaults to empty list
+
+### Internal Structure
+
+The graph uses a dictionary where keys are vertex labels and values are lists of neighbors:
+
+```python
+g = AdjacencyListGraph(directed=True)
+g.add_edge('A', 'B')
+g.add_edge('A', 'C')
+g.add_edge('B', 'C')
+
+# Internal structure:
+# {
+#   'A': ['B', 'C'],
+#   'B': ['C'],
+#   'C': []
+# }
+```
+
+## Vertex Operations
+
+### add_vertex(label)
+
+Add a new vertex to the graph.
+
+```python
+g = AdjacencyListGraph()
+
+# Add vertices
+g.add_vertex('A')
+g.add_vertex('B')
+g.add_vertex('C')
+
+print(g.vertices())  # ['A', 'B', 'C']
+
+# Attempting to add duplicate raises ValueError
+try:
+    g.add_vertex('A')
+except ValueError as e:
+    print(f"Error: {e}")  # "Vertex A already exists"
+```
+
+**Parameters:**
+- `label` (str): The vertex label to add
+
+**Raises:** `ValueError` if vertex already exists
+
+**Time Complexity:** O(1)
+
+### delete_vertex(label)
+
+Remove a vertex and all edges connected to it.
+
+```python
+g = AdjacencyListGraph(directed=False)
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+g.add_edge('C', 'D')
+
+# Delete vertex B and its edges
+g.delete_vertex('B')
+print(g.vertices())  # ['A', 'C', 'D']
+print(g.has_edge('A', 'B'))  # KeyError - B doesn't exist
+```
+
+**Parameters:**
+- `label` (str): The vertex label to remove
+
+**Time Complexity:** O(V + E) - must remove vertex from all adjacency lists
+
+### has_vertex(label)
+
+Check if a vertex exists in the graph.
+
+```python
+g = AdjacencyListGraph()
+g.add_vertex('A')
+g.add_vertex('B')
+
+print(g.has_vertex('A'))  # True
+print(g.has_vertex('C'))  # False
+
+# Can also use 'in' operator
+if 'B' in g:
+    print("Vertex B exists")
+```
+
+**Parameters:**
+- `label` (str): The vertex label to check
+
+**Returns:** `True` if vertex exists, `False` otherwise
+
+**Time Complexity:** O(1)
+
+### vertices()
+
+Get a list of all vertex labels.
+
+```python
+g = AdjacencyListGraph()
+g.add_vertex('A')
+g.add_vertex('B')
+g.add_vertex('C')
+
+print(g.vertices())  # ['A', 'B', 'C']
+```
+
+**Returns:** List of vertex labels
+
+**Time Complexity:** O(V)
+
+## Edge Operations
+
+### add_edge(start_label, end_label, directed)
+
+Add an edge between two vertices.
+
+```python
+g = AdjacencyListGraph(directed=False)
+
+# Vertices are created automatically if they don't exist
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+g.add_edge('C', 'D')
+
+print(g.order())  # 4 vertices created
+print(g.size())   # 3 edges
+```
+
+**Parameters:**
+- `start_label` (str): Starting vertex label
+- `end_label` (str): Ending vertex label
+- `directed` (bool, optional): Override graph's directionality for this edge. Defaults to graph's setting
+
+**Behavior:**
+- For undirected graphs: Creates edge in both directions
+- For directed graphs: Creates edge only from start to end
+- Automatically creates vertices if they don't exist
+- Prevents duplicate edges to the same neighbor
+
+**Time Complexity:** O(1) average case
+
+### add_directed_edge(start_label, end_label)
+
+Add a directed edge (internal helper method).
+
+```python
+g = AdjacencyListGraph(directed=True)
+
+# Add directed edge from A to B
+g.add_directed_edge('A', 'B')
+
+print(g.has_edge('A', 'B'))  # True
+print(g.has_edge('B', 'A'))  # False
+```
+
+**Parameters:**
+- `start_label` (str): Starting vertex label
+- `end_label` (str): Ending vertex label
+
+**Time Complexity:** O(1)
+
+### delete_edge(start_label, end_label, directed)
+
+Remove an edge from the graph.
+
+```python
+g = AdjacencyListGraph(directed=False)
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+
+# Delete edge
+g.delete_edge('A', 'B')
+print(g.has_edge('A', 'B'))  # False
+
+# Attempting to delete non-existent edge raises KeyError
+try:
+    g.delete_edge('A', 'C')
+except KeyError as e:
+    print(f"Error: {e}")
+```
+
+**Parameters:**
+- `start_label` (str): Starting vertex label
+- `end_label` (str): Ending vertex label
+- `directed` (bool, optional): Override graph's directionality. Defaults to graph's setting
+
+**Raises:** `KeyError` if vertex or edge doesn't exist
+
+**Time Complexity:** O(degree(start)) for undirected, O(1) for directed
+
+### has_edge(start_label, end_label)
+
+Check if an edge exists between two vertices.
+
+```python
+g = AdjacencyListGraph(directed=False)
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+
+print(g.has_edge('A', 'B'))  # True
+print(g.has_edge('B', 'A'))  # True (undirected)
+print(g.has_edge('A', 'C'))  # False
+```
+
+**Parameters:**
+- `start_label` (str): Starting vertex label
+- `end_label` (str): Ending vertex label
+
+**Returns:** `True` if edge exists, `False` otherwise
+
+**Raises:** `KeyError` if either vertex doesn't exist
+
+**Time Complexity:** O(degree(start))
+
+### edges()
+
+Get a list of all edges in the graph.
+
+```python
+g = AdjacencyListGraph(directed=True)
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+g.add_edge('A', 'C')
+
+print(g.edges())  # [('A', 'B'), ('A', 'C'), ('B', 'C')]
+```
+
+**Returns:** List of tuples `(start, end)` representing all edges
+
+**Time Complexity:** O(V + E)
+
+### undirected_edges()
+
+Get edges as undirected pairs (avoids duplicates).
+
+```python
+g = AdjacencyListGraph(directed=False)
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+
+# Returns each edge once
+print(g.undirected_edges())  # [('A', 'B'), ('B', 'C')]
+# Note: Won't include both ('A', 'B') and ('B', 'A')
+```
+
+**Returns:** List of unique edge pairs
+
+**Time Complexity:** O(V + E)
+
+## Query Operations
+
+### adjacents(vertex)
+
+Get all vertices adjacent to a given vertex.
+
+```python
+g = AdjacencyListGraph(directed=False)
+g.add_edge('A', 'B')
+g.add_edge('A', 'C')
+g.add_edge('A', 'D')
+
+print(g.adjacents('A'))  # ['B', 'C', 'D']
+print(g['A'])            # ['B', 'C', 'D'] (using indexing)
+```
+
+**Parameters:**
+- `vertex` (str): The vertex label
+
+**Returns:** List of adjacent vertex labels
+
+**Time Complexity:** O(1) - returns reference to the list
+
+### order()
+
+Get the number of vertices in the graph.
+
+```python
+g = AdjacencyListGraph()
+g.add_vertex('A')
+g.add_vertex('B')
+g.add_vertex('C')
+
+print(g.order())  # 3
+print(len(g))     # 3 (using len())
+```
+
+**Returns:** Number of vertices
+
+**Time Complexity:** O(1)
+
+### size()
+
+Get the number of edges in the graph.
+
+```python
+g = AdjacencyListGraph(directed=False)
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+g.add_edge('A', 'C')
+
+print(g.size())  # 3 edges
+```
+
+**Returns:** Number of edges
+
+**Time Complexity:** O(V)
+
+## Conversion Methods
+
+### to_dict()
+
+Convert the graph to a dictionary representation.
+
+```python
+g = AdjacencyListGraph(directed=True)
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+g.add_edge('A', 'C')
+
+data = g.to_dict()
+print(data)
+# {
+#   'A': ['B', 'C'],
+#   'B': ['C'],
+#   'C': []
+# }
+```
+
+**Returns:** Dictionary mapping each vertex to a copy of its neighbor list
+
+**Time Complexity:** O(V + E)
+
+### from_dict(data, directed)
+
+Create a graph from a dictionary.
+
+```python
+from dsa.graph import AdjacencyListGraph
+
+data = {
+    'A': ['B', 'C'],
+    'B': ['C', 'D'],
+    'C': ['D'],
+    'D': []
+}
+
+g = AdjacencyListGraph.from_dict(data, directed=True)
+print(g.vertices())  # ['A', 'B', 'C', 'D']
+print(g.has_edge('A', 'B'))  # True
+```
+
+**Parameters:**
+- `data` (dict): Dictionary mapping vertices to neighbor lists
+- `directed` (bool, optional): Whether the graph is directed. Defaults to `False`
+
+**Returns:** New `AdjacencyListGraph` instance
+
+## AdjacencyListWeightedGraph
+
+Extends `AdjacencyListGraph` to support weighted edges.
+
+### Constructor
+
+```python
+from dsa.graph import AdjacencyListWeightedGraph
+
+# Create a weighted graph
+g = AdjacencyListWeightedGraph(
+    directed=False,
+    vertices=['A', 'B', 'C']
+)
+```
+
+**Parameters:**
+- `directed` (bool, optional): Whether the graph is directed. Defaults to `False`
+- `vertices` (list, optional): Initial vertex labels. Defaults to empty list
+
+### Internal Structure
+
+For weighted graphs, neighbors are stored as dictionaries mapping neighbor labels to weights:
+
+```python
+g = AdjacencyListWeightedGraph(directed=True)
+g.add_edge('A', 'B', 10)
+g.add_edge('A', 'C', 5)
+g.add_edge('B', 'C', 20)
+
+# Internal structure:
+# {
+#   'A': {'B': 10, 'C': 5},
+#   'B': {'C': 20},
+#   'C': {}
+# }
+```
+
+### add_edge(start_label, end_label, weight, directed)
+
+Add a weighted edge.
+
+```python
+g = AdjacencyListWeightedGraph(directed=False)
+
+# Add edges with weights
+g.add_edge('A', 'B', 10)
+g.add_edge('B', 'C', 20)
+g.add_edge('A', 'C', 5)
+
+print(g.size())  # 3 edges
+```
+
+**Parameters:**
+- `start_label` (str): Starting vertex label
+- `end_label` (str): Ending vertex label
+- `weight` (numeric): Edge weight (int or float)
+- `directed` (bool, optional): Override graph's directionality
+
+**Time Complexity:** O(1)
+
+### delete_edge(start_label, end_label, directed)
+
+Remove a weighted edge.
+
+```python
+g = AdjacencyListWeightedGraph(directed=False)
+g.add_edge('A', 'B', 10)
+g.add_edge('B', 'C', 20)
+
+g.delete_edge('A', 'B')
+print(g.has_edge('A', 'B'))  # False
+```
+
+**Parameters:**
+- `start_label` (str): Starting vertex label
+- `end_label` (str): Ending vertex label
+- `directed` (bool, optional): Override graph's directionality
+
+**Raises:** `KeyError` if vertex or edge doesn't exist
+
+**Time Complexity:** O(1)
+
+### get_weight(start_label, end_label)
+
+Retrieve the weight of an edge.
+
+```python
+g = AdjacencyListWeightedGraph()
+g.add_edge('A', 'B', 15)
+g.add_edge('B', 'C', 25)
+
+weight = g.get_weight('A', 'B')
+print(f"Weight: {weight}")  # Weight: 15
+```
+
+**Parameters:**
+- `start_label` (str): Starting vertex label
+- `end_label` (str): Ending vertex label
+
+**Returns:** The weight of the edge
+
+**Time Complexity:** O(1)
+
+### adjacents(vertex)
+
+Get list of adjacent vertex labels (without weights).
+
+```python
+g = AdjacencyListWeightedGraph()
+g.add_edge('A', 'B', 10)
+g.add_edge('A', 'C', 5)
+g.add_edge('A', 'D', 15)
+
+print(g.adjacents('A'))  # ['B', 'C', 'D']
+```
+
+**Parameters:**
+- `vertex` (str): The vertex label
+
+**Returns:** List of adjacent vertex labels (weights not included)
+
+**Time Complexity:** O(degree(vertex))
+
+### adjacent_items(vertex)
+
+Get adjacent vertices with their edge weights.
+
+```python
+g = AdjacencyListWeightedGraph()
+g.add_edge('A', 'B', 10)
+g.add_edge('A', 'C', 5)
+g.add_edge('A', 'D', 15)
+
+for neighbor, weight in g.adjacent_items('A'):
+    print(f"A -> {neighbor}: {weight}")
+# A -> B: 10
+# A -> C: 5
+# A -> D: 15
+```
+
+**Parameters:**
+- `vertex` (str): The vertex label
+
+**Returns:** Iterator of tuples `(neighbor, weight)`
+
+**Time Complexity:** O(1) to get iterator
+
+### edges()
+
+Get all edges with their weights.
+
+```python
+g = AdjacencyListWeightedGraph(directed=True)
+g.add_edge('A', 'B', 10)
+g.add_edge('B', 'C', 20)
+
+print(g.edges())  # [('A', 'B', 10), ('B', 'C', 20)]
+```
+
+**Returns:** List of tuples `(start, end, weight)`
+
+**Time Complexity:** O(V + E)
+
+### Indexing Returns Dictionary
+
+```python
+g = AdjacencyListWeightedGraph()
+g.add_edge('A', 'B', 10)
+g.add_edge('A', 'C', 5)
+
+# For weighted graphs, indexing returns a dictionary
+neighbors = g['A']
+print(neighbors)  # {'B': 10, 'C': 5}
+```
+
+## Usage Examples
+
+### Social Network
+
+```python
+from dsa.graph import AdjacencyListGraph
+from dsa.graph_traversal import bfs
+
+# Create a social network
+social = AdjacencyListGraph(directed=False)
+
+# Add friendships
+friendships = [
+    ('Alice', 'Bob'),
+    ('Alice', 'Charlie'),
+    ('Bob', 'David'),
+    ('Charlie', 'David'),
+    ('David', 'Eve'),
+    ('Eve', 'Frank')
+]
+
+for person1, person2 in friendships:
+    social.add_edge(person1, person2)
+
+# Find Alice's friends
+print(f"Alice's friends: {social['Alice']}")
+
+# Find all people Alice can reach
+reachable = bfs(social, 'Alice')
+print(f"Alice can reach: {reachable}")
+
+# Network statistics
+print(f"Network size: {social.order()} people")
+print(f"Total friendships: {social.size()}")
+
+# Find mutual friends
+alice_friends = set(social['Alice'])
+bob_friends = set(social['Bob'])
+mutual = alice_friends & bob_friends
+print(f"Mutual friends: {mutual}")
+```
+
+### Flight Network with Costs
+
+```python
+from dsa.graph import AdjacencyListWeightedGraph
+
+# Create a flight network
+flights = AdjacencyListWeightedGraph(directed=True)
+
+# Add flights with prices
+routes = [
+    ('NYC', 'LAX', 350),
+    ('NYC', 'CHI', 200),
+    ('NYC', 'MIA', 280),
+    ('CHI', 'LAX', 180),
+    ('CHI', 'DEN', 150),
+    ('LAX', 'SF', 80),
+    ('DEN', 'SF', 120)
+]
+
+for origin, dest, price in routes:
+    flights.add_edge(origin, dest, price)
+
+# Find all destinations from NYC
+print(f"From NYC: {flights['NYC']}")
+# Output: {'LAX': 350, 'CHI': 200, 'MIA': 280}
+
+# Get flight price
+if flights.has_edge('NYC', 'LAX'):
+    price = flights.get_weight('NYC', 'LAX')
+    print(f"NYC to LAX: ${price}")
+
+# Find all flights from a city with prices
+for dest, price in flights.adjacent_items('CHI'):
+    print(f"Chicago to {dest}: ${price}")
+```
+
+### Web Crawler with Page Dependencies
+
+```python
+from dsa.graph import AdjacencyListGraph
+from dsa.graph_traversal import dfs
+
+# Create a directed graph of web pages
+web = AdjacencyListGraph(directed=True)
+
+# Add page links
+links = [
+    ('index.html', 'about.html'),
+    ('index.html', 'products.html'),
+    ('products.html', 'product1.html'),
+    ('products.html', 'product2.html'),
+    ('about.html', 'contact.html'),
+    ('contact.html', 'index.html')  # Cycle back
+]
+
+for from_page, to_page in links:
+    web.add_edge(from_page, to_page)
+
+# Find all pages reachable from index
+reachable = dfs(web, 'index.html')
+print(f"Pages from index: {reachable}")
+
+# Find pages that link to a specific page
+target = 'contact.html'
+linking_pages = []
+for page in web.vertices():
+    if target in web[page]:
+        linking_pages.append(page)
+print(f"Pages linking to {target}: {linking_pages}")
+
+# Find orphaned pages (no incoming links)
+all_pages = set(web.vertices())
+pages_with_incoming = set()
+for page in web.vertices():
+    pages_with_incoming.update(web[page])
+orphaned = all_pages - pages_with_incoming
+print(f"Orphaned pages: {orphaned}")
+```
+
+### Converting and Serializing
+
+```python
+from dsa.graph import AdjacencyListWeightedGraph
+import json
+
+# Create a road network
+roads = AdjacencyListWeightedGraph(directed=False)
+roads.add_edge('CityA', 'CityB', 50)
+roads.add_edge('CityB', 'CityC', 30)
+roads.add_edge('CityA', 'CityC', 70)
+
+# Export to dictionary
+data = roads.to_dict()
+print("Graph data:", data)
+
+# Save to JSON file
+with open('roads.json', 'w') as f:
+    json.dump(data, f, indent=2)
+
+# Load from JSON file
+with open('roads.json', 'r') as f:
+    loaded_data = json.load(f)
+
+# Recreate graph
+roads2 = AdjacencyListWeightedGraph.from_dict(loaded_data, directed=False)
+print(f"Loaded {roads2.order()} cities with {roads2.size()} roads")
+```
+
+## Performance Characteristics
+
+<CardGroup cols={2}>
+  <Card title="Time Complexity" icon="clock">
+    - **Edge lookup:** O(degree) 
+    - **Add edge:** O(1)
+    - **Remove edge:** O(degree)
+    - **Add vertex:** O(1) ⭐
+    - **Remove vertex:** O(V + E)
+    - **Get neighbors:** O(1) ⭐
+    - **Iterate neighbors:** O(degree) ⭐
+  </Card>
+  
+  <Card title="Space Complexity" icon="memory">
+    - **Total:** O(V + E) ⭐
+    - **Proportional to actual edges**
+    - Efficient for sparse graphs
+    - Grows with connectivity
+  </Card>
+</CardGroup>
+
+## When to Use Adjacency List
+
+<AccordionGroup>
+  <Accordion title="Use When">
+    - The graph is **sparse** (few edges relative to V²)
+    - You need to **iterate over neighbors frequently**
+    - You're implementing **graph traversal** algorithms (BFS, DFS)
+    - **Memory efficiency** is important
+    - The number of vertices is **large** or **dynamic**
+    - You're implementing most graph algorithms (they typically iterate over neighbors)
+  </Accordion>
+  
+  <Accordion title="Avoid When">
+    - The graph is **very dense**
+    - You need **very frequent edge existence checks**
+    - You have a small, fixed number of vertices
+    - You're implementing algorithms that check all possible edges
+  </Accordion>
+</AccordionGroup>
+
+## Comparison: List vs Matrix
+
+| Operation | Adjacency List | Adjacency Matrix |
+|-----------|----------------|------------------|
+| Space | O(V + E) ⭐ | O(V²) |
+| Add vertex | O(1) ⭐ | O(V²) |
+| Add edge | O(1) | O(1) |
+| Check edge | O(degree) | O(1) ⭐ |
+| Get neighbors | O(1) ⭐ | O(V) |
+| Remove vertex | O(V + E) | O(V²) |
+| Best for | Sparse graphs ⭐ | Dense graphs |
+
+## Related Pages
+
+<CardGroup cols={2}>
+  <Card title="Graph Factory" icon="industry" href="/graphs/graph-factory">
+    Learn how to create adjacency list graphs using the factory
+  </Card>
+  
+  <Card title="Adjacency Matrix" icon="table-cells" href="/graphs/adjacency-matrix">
+    Alternative matrix-based graph representation
+  </Card>
+  
+  <Card title="Graph Traversal" icon="route" href="/graphs/traversal">
+    BFS and DFS algorithms optimized for adjacency lists
+  </Card>
+  
+  <Card title="Graphs Overview" icon="diagram-project" href="/graphs/overview">
+    Introduction to graphs and graph types
+  </Card>
+</CardGroup>

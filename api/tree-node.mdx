@@ -1,0 +1,467 @@
+---
+title: 'TreeNode & Tree'
+description: 'API reference for binary tree node and binary search tree classes'
+---
+
+## TreeNode
+
+A binary tree node implementation.
+
+### Constructor
+
+```python
+TreeNode(value, left=None, right=None)
+```
+
+<ParamField path="value" type="any" required>
+  The value of the node.
+</ParamField>
+
+<ParamField path="left" type="TreeNode" default="None">
+  Reference to the left child node.
+</ParamField>
+
+<ParamField path="right" type="TreeNode" default="None">
+  Reference to the right child node.
+</ParamField>
+
+### Methods
+
+#### copy()
+
+Return a deep copy of the node and its subtree.
+
+```python
+node.copy()
+```
+
+<ResponseField name="return" type="TreeNode">
+  A new TreeNode with the same structure and values as the original.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import TreeNode
+
+original = TreeNode(5)
+original.left = TreeNode(3)
+original.right = TreeNode(7)
+
+copy = original.copy()
+# copy is a separate tree with the same structure
+```
+
+**Time Complexity:** O(n) where n is the number of nodes in the subtree
+
+---
+
+#### print(level=0)
+
+Print the contents of the node and its subtree in a visual tree format.
+
+```python
+node.print(level=0)
+```
+
+<ParamField path="level" type="int" default="0">
+  Starting indentation level of the node (used internally for recursion).
+</ParamField>
+
+**Example:**
+
+```python
+from ucx_dsa import TreeNode
+
+root = TreeNode(5)
+root.left = TreeNode(3)
+root.right = TreeNode(7)
+
+root.print()
+# Output:
+#    7
+# 5
+#    3
+```
+
+**Time Complexity:** O(n) where n is the number of nodes in the subtree
+
+---
+
+### Special Methods
+
+#### \_\_lt\_\_(other)
+
+Compare the value of two nodes using the less-than operator.
+
+```python
+node1 < node2
+```
+
+<ParamField path="other" type="TreeNode" required>
+  The other node to compare against.
+</ParamField>
+
+<ResponseField name="return" type="bool">
+  True if this node's value is less than the other node's value.
+</ResponseField>
+
+---
+
+#### \_\_repr\_\_()
+
+Return the string representation of a node.
+
+```python
+str(node)
+repr(node)
+```
+
+<ResponseField name="return" type="str">
+  String representation of the node's value, or "none" if value is None.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import TreeNode
+
+node = TreeNode(42)
+print(node)  # Output: 42
+```
+
+---
+
+## Tree
+
+A binary search tree (BST) implementation. Can be treated as a plain binary tree if BST operations (insert, search, delete) are not used and nodes are set manually.
+
+### Constructor
+
+```python
+Tree(root=None)
+```
+
+<ParamField path="root" type="TreeNode" default="None">
+  Root node of the tree.
+</ParamField>
+
+**Example:**
+
+```python
+from ucx_dsa import Tree, TreeNode
+
+# Create an empty tree
+tree = Tree()
+
+# Or create a tree with a root node
+tree = Tree(TreeNode(10))
+```
+
+---
+
+### Methods
+
+#### search(value)
+
+Search for a value in the binary search tree.
+
+```python
+tree.search(value)
+```
+
+<ParamField path="value" type="any" required>
+  Value to search for.
+</ParamField>
+
+<ResponseField name="return" type="TreeNode">
+  The node with the matching value.
+</ResponseField>
+
+**Raises:**
+- `ValueError`: If value is not found in the tree
+
+**Example:**
+
+```python
+from ucx_dsa import Tree
+
+tree = Tree()
+tree.insert(5)
+tree.insert(3)
+tree.insert(7)
+
+node = tree.search(3)
+print(node.value)  # Output: 3
+```
+
+**Time Complexity:** O(log n) average case, O(n) worst case
+
+---
+
+#### insert(value)
+
+Insert a value in the binary search tree.
+
+```python
+tree.insert(value)
+```
+
+<ParamField path="value" type="any" required>
+  The value to insert.
+</ParamField>
+
+<ResponseField name="return" type="TreeNode">
+  The root of the tree after insertion.
+</ResponseField>
+
+**Raises:**
+- `ValueError`: If value already exists in the tree
+
+**Example:**
+
+```python
+from ucx_dsa import Tree
+
+tree = Tree()
+tree.insert(10)
+tree.insert(5)
+tree.insert(15)
+tree.insert(3)
+tree.insert(7)
+```
+
+**Time Complexity:** O(log n) average case, O(n) worst case
+
+---
+
+#### insert_iterative(value)
+
+Insert a value in the binary search tree using an iterative implementation.
+
+```python
+tree.insert_iterative(value)
+```
+
+<ParamField path="value" type="any" required>
+  The value to insert.
+</ParamField>
+
+**Raises:**
+- `ValueError`: If value already exists in the tree
+
+**Example:**
+
+```python
+from ucx_dsa import Tree
+
+tree = Tree()
+tree.insert_iterative(20)
+tree.insert_iterative(10)
+tree.insert_iterative(30)
+```
+
+**Time Complexity:** O(log n) average case, O(n) worst case
+
+---
+
+#### delete(value)
+
+Delete a value from the binary search tree.
+
+```python
+tree.delete(value)
+```
+
+<ParamField path="value" type="any" required>
+  The value to delete.
+</ParamField>
+
+<ResponseField name="return" type="TreeNode">
+  The root of the tree after deletion.
+</ResponseField>
+
+**Raises:**
+- `ValueError`: If value is not found in the tree
+
+**Example:**
+
+```python
+from ucx_dsa import Tree
+
+tree = Tree()
+tree.insert(10)
+tree.insert(5)
+tree.insert(15)
+
+tree.delete(5)
+# 5 is now removed from the tree
+```
+
+**Time Complexity:** O(log n) average case, O(n) worst case
+
+---
+
+#### successor_node(node=None)
+
+Return the successor node (the minimum value in a binary search tree's right subtree).
+
+```python
+tree.successor_node(node=None)
+```
+
+<ParamField path="node" type="TreeNode" default="None">
+  The starting node. If None, uses the tree's root.
+</ParamField>
+
+<ResponseField name="return" type="TreeNode">
+  Node with the lowest value in the subtree, or None if not found.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Tree
+
+tree = Tree()
+tree.insert(10)
+tree.insert(5)
+tree.insert(15)
+tree.insert(12)
+tree.insert(20)
+
+successor = tree.successor_node()
+print(successor.value)  # Output: 5 (leftmost node)
+```
+
+**Time Complexity:** O(h) where h is the height of the tree
+
+---
+
+#### predecessor_node(node=None)
+
+Return the predecessor node (the maximum value in a binary search tree's left subtree).
+
+```python
+tree.predecessor_node(node=None)
+```
+
+<ParamField path="node" type="TreeNode" default="None">
+  The starting node. If None, uses the tree's root.
+</ParamField>
+
+<ResponseField name="return" type="TreeNode">
+  Node with the highest value in the subtree, or None if not found.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Tree
+
+tree = Tree()
+tree.insert(10)
+tree.insert(5)
+tree.insert(15)
+tree.insert(12)
+tree.insert(20)
+
+predecessor = tree.predecessor_node()
+print(predecessor.value)  # Output: 20 (rightmost node)
+```
+
+**Time Complexity:** O(h) where h is the height of the tree
+
+---
+
+#### print()
+
+Print the values in the BST in a visual tree format.
+
+```python
+tree.print()
+```
+
+**Example:**
+
+```python
+from ucx_dsa import Tree
+
+tree = Tree()
+tree.insert(10)
+tree.insert(5)
+tree.insert(15)
+
+tree.print()
+# Output:
+#    15
+# 10
+#    5
+```
+
+---
+
+### Special Methods
+
+#### \_\_len\_\_()
+
+Return the number of nodes in the BST.
+
+```python
+len(tree)
+```
+
+<ResponseField name="return" type="int">
+  The number of nodes in the BST.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Tree
+
+tree = Tree()
+tree.insert(10)
+tree.insert(5)
+tree.insert(15)
+
+print(len(tree))  # Output: 3
+```
+
+**Time Complexity:** O(n)
+
+---
+
+#### \_\_eq\_\_(other)
+
+Compare two Tree objects for value-based equality (structure and values).
+
+```python
+tree1 == tree2
+```
+
+<ParamField path="other" type="Tree" required>
+  The other tree to compare against.
+</ParamField>
+
+<ResponseField name="return" type="bool">
+  True if both are Tree instances and their structures and values are equal.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Tree
+
+tree1 = Tree()
+tree1.insert(10)
+tree1.insert(5)
+
+tree2 = Tree()
+tree2.insert(10)
+tree2.insert(5)
+
+print(tree1 == tree2)  # Output: True
+```
+
+**Time Complexity:** O(n)

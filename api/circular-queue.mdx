@@ -1,0 +1,229 @@
+---
+title: CircularQueue
+description: API reference for the CircularQueue class
+---
+
+The `CircularQueue` class provides a circular queue implementation that wraps around when the capacity is reached. It inherits from `CircularArray`.
+
+## CircularQueue
+
+A circular queue implementation that allows elements to wrap around in a circular buffer.
+
+### Constructor
+
+<ParamField path="contents" type="list" default="None">
+  Optional list with contents to enqueue during initialization
+</ParamField>
+
+<ParamField path="capacity" type="int" default="10">
+  The initial size of the circular queue
+</ParamField>
+
+```python
+from dsa.queue import CircularQueue
+
+# Create a circular queue with default capacity
+queue = CircularQueue()
+
+# Create a circular queue with custom capacity
+queue = CircularQueue(capacity=5)
+
+# Create with initial contents
+queue = CircularQueue(contents=[1, 2, 3], capacity=10)
+```
+
+### Methods
+
+#### enqueue(element)
+
+Add an element to the queue. Wraps around when the capacity is reached.
+
+<ParamField path="element" type="any" required>
+  The element to enqueue
+</ParamField>
+
+**Returns:** None
+
+```python
+queue = CircularQueue(capacity=3)
+queue.enqueue(1)
+queue.enqueue(2)
+queue.enqueue(3)
+queue.dequeue()  # Remove first element
+queue.enqueue(4)  # Wraps around to beginning
+```
+
+#### dequeue()
+
+Remove and return the front element from the queue.
+
+**Returns:** The front element in the queue
+
+**Raises:**
+- `Exception`: When there are no elements to dequeue
+
+```python
+queue = CircularQueue()
+queue.enqueue(1)
+queue.enqueue(2)
+print(queue.dequeue())  # Output: 1
+print(queue.dequeue())  # Output: 2
+# queue.dequeue()  # Raises Exception: "Empty Queue"
+```
+
+#### peek()
+
+Return the front element without removing it.
+
+**Returns:** The element in front of the queue
+
+**Raises:**
+- `Exception`: When the queue is empty
+
+```python
+queue = CircularQueue()
+queue.enqueue(10)
+print(queue.peek())  # Output: 10
+print(queue.peek())  # Output: 10 (element still in queue)
+```
+
+#### is_empty()
+
+Check if the queue is empty.
+
+**Returns:** `True` if the queue is empty, `False` otherwise
+
+```python
+queue = CircularQueue()
+print(queue.is_empty())  # Output: True
+queue.enqueue(1)
+print(queue.is_empty())  # Output: False
+```
+
+#### to_list()
+
+Convert the queue contents to a Python list.
+
+**Returns:** A list containing the queue elements in order
+
+```python
+queue = CircularQueue(capacity=5)
+queue.enqueue(1)
+queue.enqueue(2)
+queue.enqueue(3)
+print(queue.to_list())  # Output: [1, 2, 3]
+```
+
+### Inherited Properties
+
+Since CircularQueue inherits from CircularArray, it has access to:
+
+<ResponseField name="count" type="int">
+  The number of elements currently in the queue
+</ResponseField>
+
+### Special Methods
+
+#### \_\_len\_\_()
+
+Return the count of items in the queue.
+
+```python
+queue = CircularQueue()
+queue.enqueue(1)
+queue.enqueue(2)
+print(len(queue))  # Output: 2
+```
+
+#### \_\_eq\_\_(other)
+
+Compare the circular queue with other queue types for value-based equality.
+
+**Returns:** `True` if contents are equal, `False` otherwise
+
+```python
+from dsa.queue import CircularQueue, Queue
+
+queue1 = CircularQueue()
+queue2 = Queue()
+for i in [1, 2, 3]:
+    queue1.enqueue(i)
+    queue2.enqueue(i)
+
+print(queue1 == queue2)  # Output: True
+```
+
+### Complete Example
+
+<Accordion title="Working with CircularQueue">
+```python
+from dsa.queue import CircularQueue
+
+# Create a circular queue with limited capacity
+queue = CircularQueue(capacity=5)
+
+# Enqueue elements
+for i in range(5):
+    queue.enqueue(i)
+    print(f"Enqueued {i}, Count: {len(queue)}")
+
+print(f"Queue contents: {queue.to_list()}")  # Output: [0, 1, 2, 3, 4]
+
+# Dequeue some elements
+print(queue.dequeue())  # Output: 0
+print(queue.dequeue())  # Output: 1
+
+# Enqueue new elements - they wrap around
+queue.enqueue(5)
+queue.enqueue(6)
+
+print(f"Queue after wrap-around: {queue.to_list()}")  # Output: [2, 3, 4, 5, 6]
+
+# Check front element
+print(f"Front element: {queue.peek()}")  # Output: 2
+
+# Process remaining elements
+while not queue.is_empty():
+    element = queue.dequeue()
+    print(f"Processing: {element}")
+
+print(f"Is empty: {queue.is_empty()}")  # Output: True
+```
+</Accordion>
+
+### Circular Buffer Behavior
+
+<Note>
+The CircularQueue wraps around when elements are enqueued and dequeued, making efficient use of the allocated space. This is ideal for scenarios where you need a fixed-size buffer with continuous read/write operations.
+</Note>
+
+<CodeGroup>
+```python Example: Circular wrap-around
+queue = CircularQueue(capacity=3)
+
+# Fill the queue
+queue.enqueue('A')
+queue.enqueue('B')
+queue.enqueue('C')
+
+# Remove one element
+queue.dequeue()  # Removes 'A'
+
+# Add a new element - wraps to the start
+queue.enqueue('D')
+
+print(queue.to_list())  # Output: ['B', 'C', 'D']
+```
+
+```python Example: Continuous operations
+queue = CircularQueue(capacity=4)
+
+for i in range(10):
+    queue.enqueue(i)
+    if len(queue) >= 3:
+        queue.dequeue()
+    print(f"Queue: {queue.to_list()}")
+
+# Maintains a sliding window of recent elements
+```
+</CodeGroup>

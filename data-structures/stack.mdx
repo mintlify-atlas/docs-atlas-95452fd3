@@ -1,0 +1,415 @@
+---
+title: 'Stack'
+description: 'LIFO stack implementations with static and dynamic capacity'
+icon: 'layer-group'
+---
+
+## Overview
+
+A **Stack** is a Last-In-First-Out (LIFO) data structure where elements are added and removed from the same end (the top). The UCX DSA package provides two stack implementations:
+
+- **Stack**: Fixed-capacity static stack
+- **DynamicStack**: Automatically resizing stack
+
+## Stack (Static)
+
+A static stack with a fixed capacity that must be specified at initialization.
+
+### Creating a Stack
+
+<CodeGroup>
+
+```python Empty Stack
+from dsa.stack import Stack
+
+# Create stack with default capacity of 10
+stack = Stack()
+print(stack.capacity())  # 10
+print(len(stack))        # 0
+```
+
+```python Custom Capacity
+from dsa.stack import Stack
+
+# Specify custom capacity
+stack = Stack(capacity=20)
+print(stack.capacity())  # 20
+```
+
+```python From List
+from dsa.stack import Stack
+
+# Create from existing list
+stack = Stack.from_list([1, 2, 3, 4, 5])
+print(stack)  # [1, 2, 3, 4, 5] Top: 4 Capacity: 10
+```
+
+</CodeGroup>
+
+### Key Methods
+
+#### push(element)
+
+Push an element onto the top of the stack.
+
+```python
+stack = Stack(capacity=5)
+stack.push(10)
+stack.push(20)
+stack.push(30)
+print(stack)  # [10, 20, 30] Top: 2 Capacity: 5
+
+# Raises Exception if capacity is exceeded
+try:
+    for i in range(10):
+        stack.push(i)
+except Exception as e:
+    print(e)  # Capacity Reached
+```
+
+<Note>
+**Time Complexity**: O(1)
+</Note>
+
+#### pop()
+
+Remove and return the top element from the stack.
+
+```python
+stack = Stack.from_list([10, 20, 30])
+
+top = stack.pop()
+print(top)    # 30
+print(stack)  # [10, 20] Top: 1 Capacity: 10
+
+# Pop remaining elements
+print(stack.pop())  # 20
+print(stack.pop())  # 10
+
+# Raises Exception if stack is empty
+try:
+    stack.pop()
+except Exception as e:
+    print(e)  # Empty Stack
+```
+
+<Note>
+**Time Complexity**: O(1)
+</Note>
+
+#### peek()
+
+Return the top element without removing it.
+
+```python
+stack = Stack.from_list([10, 20, 30])
+
+print(stack.peek())  # 30
+print(len(stack))    # 3 (element still in stack)
+
+# Raises Exception if stack is empty
+empty_stack = Stack()
+try:
+    empty_stack.peek()
+except Exception as e:
+    print(e)  # Empty Stack
+```
+
+<Note>
+**Time Complexity**: O(1)
+</Note>
+
+### Utility Methods
+
+```python
+stack = Stack.from_list([1, 2, 3, 4, 5])
+
+# Check if empty
+print(stack.is_empty())  # False
+
+# Get number of elements
+print(len(stack))  # 5
+
+# Get top index
+print(stack.top())  # 4
+
+# Get capacity
+print(stack.capacity())  # 10
+
+# Convert to Python list
+print(stack.to_list())  # [1, 2, 3, 4, 5]
+
+# String representation
+print(stack)  # [1, 2, 3, 4, 5] Top: 4 Capacity: 10
+```
+
+## DynamicStack
+
+A dynamic stack that automatically adjusts its capacity. It doubles in size when full and halves when utilization drops below 25%.
+
+### Creating a DynamicStack
+
+```python
+from dsa.stack import DynamicStack
+
+# Create with default capacity
+stack = DynamicStack()
+
+# Create from list
+stack = DynamicStack.from_list([1, 2, 3])
+```
+
+### Automatic Resizing
+
+The DynamicStack grows and shrinks automatically:
+
+```python
+stack = DynamicStack(capacity=2)
+print(f"Initial capacity: {stack.capacity()}")  # 2
+
+# Add elements - capacity doubles when full
+stack.push(1)
+stack.push(2)
+print(f"After 2 elements: {stack.capacity()}")  # 2
+
+stack.push(3)  # Triggers growth
+print(f"After 3 elements: {stack.capacity()}")  # 4
+
+stack.push(4)
+stack.push(5)  # Triggers growth again
+print(f"After 5 elements: {stack.capacity()}")  # 8
+
+# Shrinks when count <= 1/4 of capacity
+for i in range(4):
+    stack.pop()
+print(f"After pops: {stack.capacity()}")  # 4 (shrunk from 8)
+```
+
+<Tip>
+**Growth Strategy**:
+- Grows: capacity × 2 when `count >= capacity`
+- Shrinks: capacity ÷ 2 when `count <= capacity ÷ 4`
+- Minimum capacity: 10
+</Tip>
+
+### Key Methods
+
+DynamicStack supports all the same methods as Stack:
+
+```python
+stack = DynamicStack()
+
+# Push without capacity concerns
+for i in range(100):
+    stack.push(i)
+print(len(stack))  # 100
+
+# Pop elements
+while not stack.is_empty():
+    value = stack.pop()
+
+# Peek at top
+stack.push(42)
+print(stack.peek())  # 42
+```
+
+<Note>
+**Time Complexity**:
+- `push()`: O(1) amortized
+- `pop()`: O(1) amortized
+- `peek()`: O(1)
+</Note>
+
+## Use Cases
+
+<Tabs>
+  <Tab title="Expression Evaluation">
+    Stacks are ideal for evaluating arithmetic expressions:
+    
+    ```python
+    from dsa.stack import Stack
+    
+    def evaluate_postfix(expression):
+        """Evaluate postfix expression using stack."""
+        stack = Stack()
+        
+        for token in expression.split():
+            if token.isdigit():
+                stack.push(int(token))
+            else:
+                b = stack.pop()
+                a = stack.pop()
+                if token == '+':
+                    stack.push(a + b)
+                elif token == '-':
+                    stack.push(a - b)
+                elif token == '*':
+                    stack.push(a * b)
+                elif token == '/':
+                    stack.push(a // b)
+        
+        return stack.pop()
+    
+    result = evaluate_postfix("5 3 + 2 *")
+    print(result)  # 16  ((5+3)*2)
+    ```
+  </Tab>
+  
+  <Tab title="Balanced Parentheses">
+    Check if parentheses are balanced:
+    
+    ```python
+    from dsa.stack import Stack
+    
+    def is_balanced(expression):
+        """Check if parentheses are balanced."""
+        stack = Stack()
+        pairs = {'(': ')', '[': ']', '{': '}'}
+        
+        for char in expression:
+            if char in pairs:
+                stack.push(char)
+            elif char in pairs.values():
+                if stack.is_empty():
+                    return False
+                if pairs[stack.pop()] != char:
+                    return False
+        
+        return stack.is_empty()
+    
+    print(is_balanced("({[]})"))    # True
+    print(is_balanced("({[}])"))    # False
+    print(is_balanced("((()))"))    # True
+    ```
+  </Tab>
+  
+  <Tab title="Undo/Redo">
+    Implement undo/redo functionality:
+    
+    ```python
+    from dsa.stack import DynamicStack
+    
+    class TextEditor:
+        def __init__(self):
+            self.text = ""
+            self.undo_stack = DynamicStack()
+            self.redo_stack = DynamicStack()
+        
+        def write(self, text):
+            self.undo_stack.push(self.text)
+            self.text += text
+            # Clear redo stack on new action
+            self.redo_stack = DynamicStack()
+        
+        def undo(self):
+            if not self.undo_stack.is_empty():
+                self.redo_stack.push(self.text)
+                self.text = self.undo_stack.pop()
+        
+        def redo(self):
+            if not self.redo_stack.is_empty():
+                self.undo_stack.push(self.text)
+                self.text = self.redo_stack.pop()
+    
+    editor = TextEditor()
+    editor.write("Hello ")
+    editor.write("World")
+    print(editor.text)  # "Hello World"
+    editor.undo()
+    print(editor.text)  # "Hello "
+    editor.redo()
+    print(editor.text)  # "Hello World"
+    ```
+  </Tab>
+  
+  <Tab title="Function Call Stack">
+    Simulate function call stack:
+    
+    ```python
+    from dsa.stack import Stack
+    
+    def factorial(n):
+        """Calculate factorial using explicit stack."""
+        stack = Stack()
+        result = 1
+        
+        # Push all values onto stack
+        while n > 1:
+            stack.push(n)
+            n -= 1
+        
+        # Pop and multiply
+        while not stack.is_empty():
+            result *= stack.pop()
+        
+        return result
+    
+    print(factorial(5))  # 120
+    ```
+  </Tab>
+</Tabs>
+
+## Comparison: Stack vs DynamicStack
+
+| Feature | Stack | DynamicStack |
+|---------|-------|-------------|
+| Capacity | Fixed | Dynamic |
+| Memory | Predictable | Variable |
+| Performance | Constant O(1) | Amortized O(1) |
+| Use Case | Known max size | Unknown size |
+| Exception on Full | Yes | No (auto-grows) |
+
+<Tip>
+**When to use Stack**: Use when you know the maximum size in advance and want predictable memory usage.
+
+**When to use DynamicStack**: Use when size is unknown or varies significantly, and you want automatic memory management.
+</Tip>
+
+## Equality Comparison
+
+Both stack types support equality comparison based on contents:
+
+```python
+from dsa.stack import Stack, DynamicStack
+
+stack1 = Stack.from_list([1, 2, 3])
+stack2 = DynamicStack.from_list([1, 2, 3])
+stack3 = Stack.from_list([1, 2, 4])
+
+print(stack1 == stack2)  # True (same contents)
+print(stack1 == stack3)  # False (different contents)
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Check Before Pop" icon="triangle-exclamation">
+    Always check if the stack is empty before popping:
+    ```python
+    if not stack.is_empty():
+        value = stack.pop()
+    ```
+  </Card>
+  
+  <Card title="Use Peek for Inspection" icon="eye">
+    Use `peek()` when you need to inspect without removing:
+    ```python
+    if not stack.is_empty():
+        next_item = stack.peek()
+    ```
+  </Card>
+  
+  <Card title="Choose Right Type" icon="scale-balanced">
+    Use Stack for fixed size, DynamicStack for flexible size
+  </Card>
+  
+  <Card title="Handle Exceptions" icon="shield-halved">
+    Wrap push/pop in try-except for robust code:
+    ```python
+    try:
+        stack.push(value)
+    except Exception:
+        # Handle capacity error
+    ```
+  </Card>
+</CardGroup>

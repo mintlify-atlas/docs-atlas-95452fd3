@@ -1,0 +1,582 @@
+---
+title: 'AdjacencyMatrixGraph'
+description: 'An unweighted adjacency matrix graph implementation'
+---
+
+## Overview
+
+The `AdjacencyMatrixGraph` class represents an unweighted graph using an adjacency matrix. It supports both directed and undirected graphs and stores edges as boolean values in a 2D matrix.
+
+## Constructor
+
+```python
+AdjacencyMatrixGraph(directed=False, weighted=False, vertices=None)
+```
+
+<ParamField path="directed" type="bool" default="False">
+  Whether the graph is directed
+</ParamField>
+
+<ParamField path="weighted" type="bool" default="False">
+  Whether the graph is weighted (always False for this class)
+</ParamField>
+
+<ParamField path="vertices" type="list[str]" default="None">
+  List of vertex labels to initialize the graph with
+</ParamField>
+
+**Raises:** `ValueError` if duplicate vertex labels are provided
+
+```python
+from dsa.graph import AdjacencyMatrixGraph
+
+# Create empty graph
+g = AdjacencyMatrixGraph()
+
+# Create directed graph
+g = AdjacencyMatrixGraph(directed=True)
+
+# Create with initial vertices
+g = AdjacencyMatrixGraph(vertices=['A', 'B', 'C', 'D'])
+```
+
+## Attributes
+
+<ResponseField name="is_directed" type="bool">
+  Whether the graph is directed
+</ResponseField>
+
+<ResponseField name="is_weighted" type="bool">
+  Whether the graph is weighted (always False)
+</ResponseField>
+
+<ResponseField name="labels" type="list[str]">
+  List of all vertex labels in the graph
+</ResponseField>
+
+## Methods
+
+### add_vertex
+
+Add a vertex to the graph.
+
+```python
+add_vertex(label: str)
+```
+
+<ParamField path="label" type="str" required>
+  The vertex label to add
+</ParamField>
+
+**Raises:** `ValueError` if the vertex already exists
+
+```python
+g = AdjacencyMatrixGraph()
+g.add_vertex('A')
+g.add_vertex('B')
+g.add_vertex('C')
+```
+
+### delete_vertex
+
+Delete a vertex from the graph.
+
+```python
+delete_vertex(label: str)
+```
+
+<ParamField path="label" type="str" required>
+  The vertex label to delete
+</ParamField>
+
+```python
+g = AdjacencyMatrixGraph(vertices=['A', 'B', 'C'])
+g.delete_vertex('B')
+print(g.vertices())  # ['A', 'C']
+```
+
+### add_edge
+
+Add an edge between two vertices.
+
+```python
+add_edge(start_label: str, end_label: str, directed=None)
+```
+
+<ParamField path="start_label" type="str" required>
+  Starting vertex label
+</ParamField>
+
+<ParamField path="end_label" type="str" required>
+  Ending vertex label
+</ParamField>
+
+<ParamField path="directed" type="bool" default="None">
+  Override the graph's default directed behavior. If None, uses `self.is_directed`
+</ParamField>
+
+```python
+g = AdjacencyMatrixGraph(vertices=['A', 'B', 'C'])
+
+# Add undirected edge (creates A→B and B→A)
+g.add_edge('A', 'B')
+
+# Add directed edge (creates B→C only)
+g.add_edge('B', 'C', directed=True)
+
+# Vertices are auto-created if they don't exist
+g.add_edge('D', 'E')
+```
+
+### delete_edge
+
+Delete an edge between two vertices.
+
+```python
+delete_edge(start_label: str, end_label: str, directed=None)
+```
+
+<ParamField path="start_label" type="str" required>
+  Starting vertex label
+</ParamField>
+
+<ParamField path="end_label" type="str" required>
+  Ending vertex label
+</ParamField>
+
+<ParamField path="directed" type="bool" default="None">
+  Override the graph's default directed behavior. If None, uses `self.is_directed`
+</ParamField>
+
+**Raises:** `KeyError` if the edge does not exist
+
+```python
+g = AdjacencyMatrixGraph()
+g.add_edge('A', 'B')
+g.delete_edge('A', 'B')
+```
+
+### has_vertex
+
+Check if a vertex exists in the graph.
+
+```python
+has_vertex(label: str) -> bool
+```
+
+<ParamField path="label" type="str" required>
+  The vertex label to check
+</ParamField>
+
+<ResponseField name="return" type="bool">
+  True if the vertex exists, False otherwise
+</ResponseField>
+
+```python
+g = AdjacencyMatrixGraph(vertices=['A', 'B'])
+print(g.has_vertex('A'))  # True
+print(g.has_vertex('C'))  # False
+```
+
+### has_edge
+
+Check if an edge exists between two vertices.
+
+```python
+has_edge(start_label: str, end_label: str) -> bool
+```
+
+<ParamField path="start_label" type="str" required>
+  Starting vertex label
+</ParamField>
+
+<ParamField path="end_label" type="str" required>
+  Ending vertex label
+</ParamField>
+
+<ResponseField name="return" type="bool">
+  True if an edge exists from start to end, False otherwise
+</ResponseField>
+
+**Raises:** `KeyError` if either vertex does not exist
+
+```python
+g = AdjacencyMatrixGraph()
+g.add_edge('A', 'B')
+print(g.has_edge('A', 'B'))  # True
+print(g.has_edge('B', 'C'))  # Raises KeyError
+```
+
+### vertices
+
+Get a list of all vertex labels.
+
+```python
+vertices() -> list
+```
+
+<ResponseField name="return" type="list[str]">
+  List of all vertex labels in the graph
+</ResponseField>
+
+```python
+g = AdjacencyMatrixGraph(vertices=['A', 'B', 'C'])
+print(g.vertices())  # ['A', 'B', 'C']
+```
+
+### edges
+
+Get a list of all edges in the graph.
+
+```python
+edges() -> list
+```
+
+<ResponseField name="return" type="list[tuple]">
+  List of edges, each represented as a tuple `(start, end)`
+</ResponseField>
+
+```python
+g = AdjacencyMatrixGraph()
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+print(g.edges())  # [('A', 'B'), ('B', 'A'), ('B', 'C'), ('C', 'B')]
+```
+
+### undirected_edges
+
+Get a list of edges without duplicates for undirected graphs.
+
+```python
+undirected_edges() -> list
+```
+
+<ResponseField name="return" type="list[tuple]">
+  List of unique edges, each represented as a tuple `(start, end)`
+</ResponseField>
+
+```python
+g = AdjacencyMatrixGraph()
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+print(g.undirected_edges())  # [('A', 'B'), ('B', 'C')]
+```
+
+### adjacents
+
+Get a list of adjacent vertices for a given vertex.
+
+```python
+adjacents(vertex: str) -> list
+```
+
+<ParamField path="vertex" type="str" required>
+  The vertex label
+</ParamField>
+
+<ResponseField name="return" type="list[str]">
+  List of adjacent vertex labels
+</ResponseField>
+
+```python
+g = AdjacencyMatrixGraph()
+g.add_edge('A', 'B')
+g.add_edge('A', 'C')
+print(g.adjacents('A'))  # ['B', 'C']
+```
+
+### order
+
+Get the number of vertices in the graph.
+
+```python
+order() -> int
+```
+
+<ResponseField name="return" type="int">
+  The number of vertices
+</ResponseField>
+
+```python
+g = AdjacencyMatrixGraph(vertices=['A', 'B', 'C'])
+print(g.order())  # 3
+```
+
+### size
+
+Get the number of edges in the graph.
+
+```python
+size() -> int
+```
+
+<ResponseField name="return" type="int">
+  The number of edges
+</ResponseField>
+
+```python
+g = AdjacencyMatrixGraph()
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+print(g.size())  # 2 (undirected, so A-B and B-C are counted once each)
+```
+
+### print_graph
+
+Print a visual representation of the adjacency matrix.
+
+```python
+print_graph()
+```
+
+```python
+g = AdjacencyMatrixGraph(vertices=['A', 'B', 'C'])
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+g.print_graph()
+# Output:
+#    | A   B   C  
+# ----------------
+#  A |     T      
+#  B | T       T  
+#  C |     T      
+```
+
+### to_dict
+
+Convert the graph to a dictionary representation.
+
+```python
+to_dict() -> dict
+```
+
+<ResponseField name="return" type="dict">
+  Dictionary where keys are vertices and values are lists of adjacent vertices
+</ResponseField>
+
+```python
+g = AdjacencyMatrixGraph()
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+print(g.to_dict())
+# {'A': ['B'], 'B': ['A', 'C'], 'C': ['B']}
+```
+
+## Class Methods
+
+### from_dict
+
+Create a graph from a dictionary representation.
+
+```python
+@classmethod
+from_dict(data: dict, directed: bool = False) -> AdjacencyMatrixGraph
+```
+
+<ParamField path="data" type="dict" required>
+  Dictionary where keys are vertices and values are lists of adjacent vertices
+</ParamField>
+
+<ParamField path="directed" type="bool" default="False">
+  Whether the graph is directed
+</ParamField>
+
+<ResponseField name="return" type="AdjacencyMatrixGraph">
+  A new graph instance
+</ResponseField>
+
+```python
+data = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A'],
+    'D': ['B']
+}
+g = AdjacencyMatrixGraph.from_dict(data)
+```
+
+## Special Methods
+
+### \_\_getitem\_\_
+
+Get adjacent vertices using bracket notation.
+
+```python
+g = AdjacencyMatrixGraph()
+g.add_edge('A', 'B')
+g.add_edge('A', 'C')
+print(g['A'])  # ['B', 'C']
+```
+
+### \_\_contains\_\_
+
+Check if a vertex exists using the `in` operator.
+
+```python
+g = AdjacencyMatrixGraph(vertices=['A', 'B'])
+print('A' in g)  # True
+print('C' in g)  # False
+```
+
+### \_\_len\_\_
+
+Get the number of vertices.
+
+```python
+g = AdjacencyMatrixGraph(vertices=['A', 'B', 'C'])
+print(len(g))  # 3
+```
+
+## Complete Examples
+
+<CodeGroup>
+
+```python Undirected Graph
+from dsa.graph import AdjacencyMatrixGraph
+
+# Create social network graph
+g = AdjacencyMatrixGraph()
+
+# Add friendships (undirected)
+g.add_edge('Alice', 'Bob')
+g.add_edge('Bob', 'Charlie')
+g.add_edge('Charlie', 'David')
+g.add_edge('Alice', 'David')
+
+print(f"Vertices: {g.vertices()}")
+print(f"Edges: {g.undirected_edges()}")
+print(f"Alice's friends: {g.adjacents('Alice')}")
+print(f"Graph order: {g.order()}")  # 4 vertices
+print(f"Graph size: {g.size()}")    # 4 edges
+
+# Check connections
+print(f"Are Alice and Bob friends? {g.has_edge('Alice', 'Bob')}")
+print(f"Are Alice and Charlie friends? {g.has_edge('Alice', 'Charlie')}")
+```
+
+```python Directed Graph
+from dsa.graph import AdjacencyMatrixGraph
+
+# Create web page link graph
+g = AdjacencyMatrixGraph(directed=True)
+
+# Add hyperlinks (directed)
+g.add_edge('index.html', 'about.html')
+g.add_edge('index.html', 'contact.html')
+g.add_edge('about.html', 'index.html')
+g.add_edge('contact.html', 'index.html')
+
+print(f"Pages linking from index: {g.adjacents('index.html')}")
+print(f"Pages linking from about: {g.adjacents('about.html')}")
+
+# Note: directed edges are one-way
+print(f"index -> about? {g.has_edge('index.html', 'about.html')}")  # True
+print(f"about -> contact? {g.has_edge('about.html', 'contact.html')}")  # False
+```
+
+```python Graph Operations
+from dsa.graph import AdjacencyMatrixGraph
+
+# Create graph from dictionary
+data = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A', 'D'],
+    'D': ['B', 'C']
+}
+g = AdjacencyMatrixGraph.from_dict(data)
+
+# Perform operations
+print(f"Initial vertices: {g.vertices()}")
+print(f"Initial edges: {g.size()}")
+
+# Add new vertex and edges
+g.add_vertex('E')
+g.add_edge('D', 'E')
+g.add_edge('E', 'A')
+
+print(f"After addition: {g.vertices()}")
+print(f"After addition: {g.size()}")
+
+# Remove edge
+g.delete_edge('A', 'B')
+print(f"After removing A-B: {g.size()}")
+
+# Remove vertex (removes all connected edges)
+g.delete_vertex('E')
+print(f"After removing E: {g.vertices()}")
+print(f"After removing E: {g.size()}")
+
+# Convert back to dictionary
+print(f"Final graph: {g.to_dict()}")
+```
+
+```python Graph Traversal
+from dsa.graph import AdjacencyMatrixGraph
+from collections import deque
+
+# Create graph
+g = AdjacencyMatrixGraph(vertices=['A', 'B', 'C', 'D', 'E'])
+g.add_edge('A', 'B')
+g.add_edge('A', 'C')
+g.add_edge('B', 'D')
+g.add_edge('C', 'D')
+g.add_edge('D', 'E')
+
+# BFS traversal
+def bfs(graph, start):
+    visited = set()
+    queue = deque([start])
+    result = []
+    
+    while queue:
+        vertex = queue.popleft()
+        if vertex not in visited:
+            visited.add(vertex)
+            result.append(vertex)
+            for neighbor in graph.adjacents(vertex):
+                if neighbor not in visited:
+                    queue.append(neighbor)
+    
+    return result
+
+print(f"BFS from A: {bfs(g, 'A')}")
+
+# DFS traversal
+def dfs(graph, start, visited=None):
+    if visited is None:
+        visited = set()
+    
+    visited.add(start)
+    result = [start]
+    
+    for neighbor in graph.adjacents(start):
+        if neighbor not in visited:
+            result.extend(dfs(graph, neighbor, visited))
+    
+    return result
+
+print(f"DFS from A: {dfs(g, 'A')}")
+```
+
+</CodeGroup>
+
+## Performance
+
+- **Space Complexity:** O(V²) where V is the number of vertices
+- **Add Vertex:** O(V²) - requires resizing matrix
+- **Delete Vertex:** O(V²) - requires resizing matrix
+- **Add Edge:** O(1)
+- **Delete Edge:** O(1)
+- **Has Edge:** O(1)
+- **Get Adjacents:** O(V)
+- **Get All Edges:** O(V²)
+
+## Notes
+
+- Best for dense graphs where most vertices are connected
+- Provides O(1) edge lookup time
+- Uses more space than adjacency list for sparse graphs
+- Vertex labels must be strings
+- Self-loops are not supported
+- For undirected graphs, edges are stored symmetrically in the matrix

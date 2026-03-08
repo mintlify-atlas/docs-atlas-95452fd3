@@ -1,0 +1,458 @@
+---
+title: Draw Classes
+description: API reference for visualization classes for data structures
+---
+
+This module provides visualization classes for drawing trees, heaps, tries, and graphs using NetworkX and Matplotlib.
+
+## Base Class
+
+### Draw
+
+Base class for drawing various data structures.
+
+```python
+from dsa.draw import Draw
+
+drawer = Draw()
+```
+
+#### Methods
+
+##### set_figsize
+
+Sets the figure size for the plot.
+
+```python
+drawer.set_figsize(figsize)
+```
+
+<ParamField path="figsize" type="tuple" required>
+  Tuple representing the figure size (width, height)
+</ParamField>
+
+##### save
+
+Saves the rendered plot to a file.
+
+```python
+drawer.save(filename, **kwargs)
+```
+
+<ParamField path="filename" type="str" required>
+  Name of the file to save the plot to
+</ParamField>
+
+<ParamField path="kwargs" type="dict">
+  Additional keyword arguments for customization
+</ParamField>
+
+##### draw
+
+Displays the rendered plot.
+
+```python
+drawer.draw(**kwargs)
+```
+
+<ParamField path="kwargs" type="dict">
+  Additional keyword arguments for customization
+</ParamField>
+
+---
+
+## TreeDraw
+
+Class for drawing binary tree structures.
+
+```python
+from dsa.draw import TreeDraw
+from dsa.tree import Tree
+
+td = TreeDraw(tree)
+```
+
+<ParamField path="tree" type="Tree" required>
+  The tree structure to be drawn
+</ParamField>
+
+### Methods
+
+##### add_edges
+
+Recursively adds edges to the graph and positions nodes in a tree layout.
+
+```python
+pos = td.add_edges(graph, node, pos=None, x=0, y=0, layer=1)
+```
+
+<ParamField path="graph" type="networkx.DiGraph" required>
+  The graph object where edges are added
+</ParamField>
+
+<ParamField path="node" type="TreeNode" required>
+  The current node in the tree
+</ParamField>
+
+<ParamField path="pos" type="dict" default="None">
+  Dictionary to store node positions
+</ParamField>
+
+<ParamField path="x" type="float" default="0">
+  X-coordinate for the current node
+</ParamField>
+
+<ParamField path="y" type="float" default="0">
+  Y-coordinate for the current node
+</ParamField>
+
+<ParamField path="layer" type="int" default="1">
+  Current layer/level of the node in the tree
+</ParamField>
+
+<ResponseField name="pos" type="dict">
+  Dictionary containing positions of all nodes in the tree
+</ResponseField>
+
+<CodeGroup>
+```python Basic Tree Visualization
+from dsa.tree import Tree, TreeNode
+from dsa.draw import TreeDraw
+
+# Create a tree
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+root.left.left = TreeNode(4)
+root.left.right = TreeNode(5)
+
+tree = Tree(root)
+td = TreeDraw(tree)
+td.draw()
+```
+
+```python Save Tree to File
+from dsa.tree import Tree, TreeNode
+from dsa.draw import TreeDraw
+
+root = TreeNode(10)
+root.left = TreeNode(5)
+root.right = TreeNode(15)
+
+tree = Tree(root)
+td = TreeDraw(tree)
+td.set_figsize((8, 6))
+td.save("my_tree.png")
+```
+</CodeGroup>
+
+---
+
+## HeapDraw
+
+Class for drawing heap structures.
+
+```python
+from dsa.draw import HeapDraw
+from dsa.heap import MinHeap
+
+hd = HeapDraw(heap)
+```
+
+<ParamField path="heap" type="Heap" required>
+  The heap structure to be drawn
+</ParamField>
+
+### Methods
+
+##### array_to_node
+
+Converts an array-based heap into a tree node structure.
+
+```python
+node = hd.array_to_node(index, array)
+```
+
+<ParamField path="index" type="int" required>
+  Current index in the array representing the node
+</ParamField>
+
+<ParamField path="array" type="list" required>
+  Array containing heap values
+</ParamField>
+
+<ResponseField name="node" type="TreeNode">
+  Root node of the constructed subtree
+</ResponseField>
+
+<CodeGroup>
+```python Visualize Min Heap
+from dsa.heap import MinHeap
+from dsa.draw import HeapDraw
+
+heap = MinHeap()
+for val in [5, 3, 7, 1, 9, 4, 6]:
+    heap.insert(val)
+
+hd = HeapDraw(heap)
+hd.draw()
+```
+
+```python Save Heap Visualization
+from dsa.heap import Heap
+from dsa.draw import HeapDraw
+
+heap = Heap()
+heap.insert(10)
+heap.insert(20)
+heap.insert(15)
+heap.insert(30)
+
+hd = HeapDraw(heap)
+hd.set_figsize((10, 8))
+hd.save("heap_visual.png")
+```
+</CodeGroup>
+
+---
+
+## TrieDraw
+
+Class for drawing trie structures.
+
+```python
+from dsa.draw import TrieDraw
+from dsa.trie import Trie
+
+trd = TrieDraw(trie)
+```
+
+<ParamField path="trie" type="Trie" required>
+  The trie structure to be drawn
+</ParamField>
+
+### Methods
+
+##### to_networkx
+
+Converts the trie into a NetworkX directed graph.
+
+```python
+graph = trd.to_networkx()
+```
+
+<ResponseField name="graph" type="networkx.DiGraph">
+  NetworkX graph representation of the trie
+</ResponseField>
+
+##### hierarchical_pos
+
+Computes hierarchical positions for nodes in the graph.
+
+```python
+pos = trd.hierarchical_pos(G, root=None, width=1.0, vert_gap=0.2, vert_loc=0, xcenter=0.5)
+```
+
+<ParamField path="G" type="networkx.Graph" required>
+  The graph for which to compute positions
+</ParamField>
+
+<ParamField path="root" type="str" default="None">
+  Root node of the graph (auto-determined if None)
+</ParamField>
+
+<ParamField path="width" type="float" default="1.0">
+  Width of the entire drawing
+</ParamField>
+
+<ParamField path="vert_gap" type="float" default="0.2">
+  Gap between levels in the hierarchy
+</ParamField>
+
+<ParamField path="vert_loc" type="float" default="0">
+  Vertical location of the root node
+</ParamField>
+
+<ParamField path="xcenter" type="float" default="0.5">
+  Horizontal center of the root node
+</ParamField>
+
+<ResponseField name="pos" type="dict">
+  Dictionary mapping each node to its (x, y) position
+</ResponseField>
+
+<CodeGroup>
+```python Visualize Trie
+from dsa.trie import Trie
+from dsa.draw import TrieDraw
+
+trie = Trie()
+words = ["cat", "car", "card", "care", "careful", "dog", "dodge"]
+for word in words:
+    trie.insert(word)
+
+trd = TrieDraw(trie)
+trd.draw()
+```
+
+```python Save Trie with Custom Size
+from dsa.trie import Trie
+from dsa.draw import TrieDraw
+
+trie = Trie()
+for word in ["hello", "help", "world"]:
+    trie.insert(word)
+
+trd = TrieDraw(trie)
+trd.set_figsize((12, 8))
+trd.save("trie_visual.png")
+```
+</CodeGroup>
+
+---
+
+## GraphDraw
+
+Class for drawing graphs (both directed and undirected, weighted and unweighted).
+
+```python
+from dsa.draw import GraphDraw
+
+gd = GraphDraw(graph, directed=None, weighted=None)
+```
+
+<ParamField path="graph" type="Graph" required>
+  The graph to be drawn (any graph type: AdjacencyMatrixGraph, AdjacencyListGraph, etc.)
+</ParamField>
+
+<ParamField path="directed" type="bool" default="None">
+  Specifies if the graph is directed (inferred from graph if None)
+</ParamField>
+
+<ParamField path="weighted" type="bool" default="None">
+  Specifies if the graph has weighted edges (inferred from graph if None)
+</ParamField>
+
+### Methods
+
+##### render
+
+Renders the graph using Matplotlib.
+
+```python
+plt = gd.render(pos=None, show_mst=False, mst_only=False, **kwargs)
+```
+
+<ParamField path="pos" type="dict" default="None">
+  Node positions dictionary (auto-computed if None)
+</ParamField>
+
+<ParamField path="show_mst" type="bool" default="False">
+  If True, highlights the minimum spanning tree in red
+</ParamField>
+
+<ParamField path="mst_only" type="bool" default="False">
+  If True, shows only the MST edges
+</ParamField>
+
+<ParamField path="kwargs" type="dict">
+  Additional keyword arguments
+</ParamField>
+
+<ResponseField name="plt" type="matplotlib.pyplot">
+  Matplotlib plot object
+</ResponseField>
+
+<CodeGroup>
+```python Visualize Unweighted Graph
+from dsa.graph import AdjacencyListGraph
+from dsa.draw import GraphDraw
+
+graph = AdjacencyListGraph()
+graph.add_edge("A", "B")
+graph.add_edge("B", "C")
+graph.add_edge("C", "D")
+graph.add_edge("D", "A")
+
+gd = GraphDraw(graph)
+gd.draw()
+```
+
+```python Visualize Weighted Graph
+from dsa.graph import AdjacencyListWeightedGraph
+from dsa.draw import GraphDraw
+
+graph = AdjacencyListWeightedGraph()
+graph.add_edge("A", "B", 5)
+graph.add_edge("B", "C", 3)
+graph.add_edge("C", "D", 7)
+graph.add_edge("D", "A", 2)
+
+gd = GraphDraw(graph)
+gd.draw()
+```
+
+```python Show Minimum Spanning Tree
+from dsa.graph import AdjacencyListWeightedGraph
+from dsa.draw import GraphDraw
+
+graph = AdjacencyListWeightedGraph()
+graph.add_edge("A", "B", 4)
+graph.add_edge("A", "C", 2)
+graph.add_edge("B", "C", 1)
+graph.add_edge("B", "D", 5)
+graph.add_edge("C", "D", 8)
+
+gd = GraphDraw(graph)
+# Highlight MST in red
+gd.draw(show_mst=True)
+```
+
+```python Show Only MST
+from dsa.graph import AdjacencyListWeightedGraph
+from dsa.draw import GraphDraw
+
+graph = AdjacencyListWeightedGraph()
+graph.add_edge("A", "B", 4)
+graph.add_edge("A", "C", 2)
+graph.add_edge("B", "C", 1)
+
+gd = GraphDraw(graph)
+# Show only MST edges
+gd.draw(mst_only=True)
+```
+
+```python Save Graph Visualization
+from dsa.graph import AdjacencyMatrixGraph
+from dsa.draw import GraphDraw
+
+graph = AdjacencyMatrixGraph(vertices=["A", "B", "C", "D"])
+graph.add_edge("A", "B")
+graph.add_edge("B", "C")
+
+gd = GraphDraw(graph)
+gd.set_figsize((10, 10))
+gd.save("graph.png")
+```
+</CodeGroup>
+
+<Accordion title="Visualization Tips">
+  **Choosing Figure Size:**
+  - Small structures (< 10 nodes): `(5, 3)` or `(6, 4)`
+  - Medium structures (10-50 nodes): `(10, 6)` or `(12, 8)`
+  - Large structures (> 50 nodes): `(15, 10)` or larger
+  
+  **Graph Layouts:**
+  - Default layout is `shell_layout` for graphs
+  - For hierarchical structures (trees, heaps, tries), custom hierarchical positioning is used
+  
+  **MST Visualization:**
+  - Use `show_mst=True` to overlay MST edges in red on the full graph
+  - Use `mst_only=True` to show only the MST edges
+  - MST is computed using NetworkX's minimum spanning tree algorithm
+  
+  **Saving vs Drawing:**
+  - `draw()` displays the plot interactively
+  - `save()` writes the plot to a file without displaying
+  - Both methods accept the same kwargs for customization
+</Accordion>

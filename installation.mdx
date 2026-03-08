@@ -1,0 +1,154 @@
+---
+title: Installation
+description: How to install and set up the UCX DSA package
+---
+
+## Requirements
+
+The UCX DSA package requires:
+
+- **Python 3.7 or higher**
+- Dependencies:
+  - `networkx` - For graph visualization features
+  - `matplotlib` - For drawing and plotting data structures
+
+<Note>
+  Dependencies are automatically installed when you install the package via pip.
+</Note>
+
+## Installing UCX DSA
+
+<Steps>
+  <Step title="Install via pip">
+    The easiest way to install UCX DSA is using pip:
+
+    ```bash
+    pip install ucxdsa
+    ```
+
+    This will install the latest version of the package and all required dependencies.
+  </Step>
+
+  <Step title="Verify installation">
+    After installation, verify that the package is installed correctly:
+
+    <CodeGroup>
+      ```python Python/Jupyter
+      import dsa
+      print(dsa.version)
+      ```
+
+      ```bash Terminal
+      pip show ucxdsa
+      ```
+    </CodeGroup>
+
+    The first method will print the version number (e.g., `2026.02.13`), while the second shows detailed package information.
+  </Step>
+
+  <Step title="Start using the package">
+    Import the data structures you need:
+
+    ```python
+    from dsa.stack import Stack
+    from dsa.queue import Queue
+    from dsa.array import Array, DynamicArray
+    from dsa.graph import Graph
+    ```
+
+    You're now ready to use UCX DSA in your projects!
+  </Step>
+</Steps>
+
+## Updating UCX DSA
+
+To update to the latest version of the package:
+
+```bash
+pip install --upgrade ucxdsa
+```
+
+This will download and install the newest version, replacing your current installation.
+
+<Tip>
+  The package uses date-based versioning (YYYY.MM.DD format). Check the [revision history](https://github.com/ucxinstructor/dsa_package) to see what's new in each release.
+</Tip>
+
+## Checking your version
+
+There are multiple ways to check which version of UCX DSA you have installed:
+
+<CodeGroup>
+  ```python dsa.version
+  import dsa
+  print(dsa.version)
+  # Output: 2026.02.13
+  ```
+
+  ```python dsa.__version__
+  import dsa
+  print(dsa.__version__)
+  # Output: 2026.02.13
+  ```
+
+  ```bash pip show
+  pip show ucxdsa
+  # Shows: Name, Version, Summary, Home-page, Author, License, etc.
+  ```
+</CodeGroup>
+
+## Version format
+
+The package uses **date-based semantic versioning** in the format `YYYY.MM.DD`:
+
+- **2026.02.13** - Released on February 13, 2026
+- **2025.12.24** - Released on December 24, 2025
+- **2025.12.09** - Released on December 9, 2025
+
+This makes it easy to see how recent your installed version is.
+
+## Installation troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Python version too old">
+    If you get an error about Python version compatibility, make sure you're using Python 3.7 or higher:
+
+    ```bash
+    python --version
+    ```
+
+    If you have multiple Python versions installed, you may need to use `pip3` instead of `pip`:
+
+    ```bash
+    pip3 install ucxdsa
+    ```
+  </Accordion>
+
+  <Accordion title="Permission errors">
+    If you encounter permission errors during installation, you can install for your user only:
+
+    ```bash
+    pip install --user ucxdsa
+    ```
+
+    Alternatively, use a virtual environment (recommended for course work):
+
+    ```bash
+    python -m venv myenv
+    source myenv/bin/activate  # On Windows: myenv\Scripts\activate
+    pip install ucxdsa
+    ```
+  </Accordion>
+
+  <Accordion title="Import errors after installation">
+    If the package installed successfully but you can't import it:
+
+    1. Make sure you're using the correct Python interpreter
+    2. Try restarting your Python REPL or Jupyter kernel
+    3. Verify the package is installed: `pip list | grep ucxdsa`
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+Now that you have UCX DSA installed, check out the [Quickstart guide](/quickstart) to learn how to use the package with real code examples.

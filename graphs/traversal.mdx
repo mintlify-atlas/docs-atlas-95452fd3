@@ -1,0 +1,671 @@
+---
+title: "Graph Traversal"
+description: "Breadth-First Search (BFS) and Depth-First Search (DFS) algorithms"
+icon: "route"
+---
+
+## Overview
+
+Graph traversal algorithms systematically visit all vertices in a graph. UCX DSA provides two fundamental traversal algorithms: Breadth-First Search (BFS) and Depth-First Search (DFS), along with path-finding variants.
+
+<Note>
+  Both BFS and DFS work with any graph implementation (adjacency matrix or adjacency list) that provides an `adjacents(vertex)` method.
+</Note>
+
+## Breadth-First Search (BFS)
+
+BFS explores the graph level by level, visiting all neighbors of a vertex before moving to their neighbors. It uses a queue to track vertices to visit.
+
+### Key Characteristics
+
+<CardGroup cols={2}>
+  <Card title="Level-by-Level" icon="layer-group">
+    Visits vertices in order of their distance from the start vertex
+  </Card>
+  <Card title="Shortest Path" icon="route">
+    Finds the shortest path in unweighted graphs
+  </Card>
+  <Card title="Queue-Based" icon="rectangle-list">
+    Uses a queue (FIFO) to manage traversal order
+  </Card>
+  <Card title="Complete" icon="check-double">
+    Guarantees visiting all reachable vertices
+  </Card>
+</CardGroup>
+
+### bfs(graph, start, debug)
+
+Perform a breadth-first traversal starting from a given vertex.
+
+```python
+from dsa.graph import Graph
+from dsa.graph_traversal import bfs
+
+# Create a sample graph
+g = Graph.create('adjacency_list', directed=False)
+edges = [
+    ('A', 'B'), ('A', 'C'),
+    ('B', 'D'), ('C', 'D'),
+    ('D', 'E'), ('E', 'F')
+]
+for start, end in edges:
+    g.add_edge(start, end)
+
+# Perform BFS
+path = bfs(g, 'A')
+print(path)  # ['A', 'B', 'C', 'D', 'E', 'F']
+```
+
+**Parameters:**
+- `graph`: Graph object with an `adjacents(vertex)` method
+- `start` (str): Starting vertex label
+- `debug` (bool, optional): If `True`, prints internal state during traversal. Defaults to `False`
+
+**Returns:** List of vertices in BFS order
+
+**Time Complexity:** O(V + E)
+
+**Space Complexity:** O(V) for the queue and visited set
+
+### BFS with Debug Output
+
+```python
+from dsa.graph import Graph
+from dsa.graph_traversal import bfs
+
+g = Graph.create('adjacency_list', directed=False)
+g.add_edge('A', 'B')
+g.add_edge('A', 'C')
+g.add_edge('B', 'D')
+
+# Enable debug mode to see internal state
+path = bfs(g, 'A', debug=True)
+
+# Output shows:
+# Queue: [current queue state]
+# Current: A    Adjacents: ['B', 'C']
+# Queue: [queue after processing A]
+# Current: B    Adjacents: ['A', 'D']
+# ...
+```
+
+### bfs_path(graph, start, end)
+
+Find the shortest path between two vertices using BFS.
+
+```python
+from dsa.graph import Graph
+from dsa.graph_traversal import bfs_path
+
+g = Graph.create('adjacency_list', directed=False)
+edges = [
+    ('A', 'B'), ('A', 'C'),
+    ('B', 'D'), ('C', 'E'),
+    ('D', 'F'), ('E', 'F')
+]
+for start, end in edges:
+    g.add_edge(start, end)
+
+# Find shortest path from A to F
+path = bfs_path(g, 'A', 'F')
+print(path)  # ['A', 'B', 'D', 'F'] or ['A', 'C', 'E', 'F']
+
+# No path exists
+path = bfs_path(g, 'A', 'Z')
+print(path)  # None
+```
+
+**Parameters:**
+- `graph`: Graph object with an `adjacents(vertex)` method
+- `start` (str): Starting vertex label
+- `end` (str): Target vertex label
+
+**Returns:** 
+- List representing the shortest path from start to end
+- `None` if no path exists
+
+**Time Complexity:** O(V + E)
+
+**Space Complexity:** O(V)
+
+### BFS Algorithm Steps
+
+<Steps>
+  <Step title="Initialize">
+    Create a queue and add the start vertex. Mark it as visited.
+  </Step>
+  
+  <Step title="Dequeue">
+    Remove the front vertex from the queue and add it to the result path.
+  </Step>
+  
+  <Step title="Explore Neighbors">
+    For each unvisited neighbor, mark it as visited and add it to the queue.
+  </Step>
+  
+  <Step title="Repeat">
+    Continue steps 2-3 until the queue is empty.
+  </Step>
+</Steps>
+
+## Depth-First Search (DFS)
+
+DFS explores as far as possible along each branch before backtracking. It uses recursion (implicit stack) to track the traversal path.
+
+### Key Characteristics
+
+<CardGroup cols={2}>
+  <Card title="Deep Exploration" icon="arrow-down-wide-short">
+    Follows each path to its end before backtracking
+  </Card>
+  <Card title="Cycle Detection" icon="arrows-spin">
+    Useful for detecting cycles in graphs
+  </Card>
+  <Card title="Stack-Based" icon="layer-plus">
+    Uses recursion (implicit stack) or explicit stack
+  </Card>
+  <Card title="Path Finding" icon="map-location-dot">
+    Can find any path (not necessarily shortest)
+  </Card>
+</CardGroup>
+
+### dfs(graph, vertex, visited, path, debug, stack)
+
+Perform a depth-first traversal starting from a given vertex.
+
+```python
+from dsa.graph import Graph
+from dsa.graph_traversal import dfs
+
+# Create a sample graph
+g = Graph.create('adjacency_list', directed=False)
+edges = [
+    ('A', 'B'), ('A', 'C'),
+    ('B', 'D'), ('C', 'D'),
+    ('D', 'E'), ('E', 'F')
+]
+for start, end in edges:
+    g.add_edge(start, end)
+
+# Perform DFS
+path = dfs(g, 'A')
+print(path)  # ['A', 'B', 'D', 'C', 'E', 'F'] (order may vary)
+```
+
+**Parameters:**
+- `graph`: Graph object with an `adjacents(vertex)` method
+- `vertex` (str): Starting vertex label
+- `visited` (set, optional): Set of already visited vertices. Defaults to empty set
+- `path` (list, optional): Accumulated traversal path. Defaults to empty list
+- `debug` (bool, optional): If `True`, prints internal state. Defaults to `False`
+- `stack` (list, optional): Internal recursion stack for debugging. Defaults to empty list
+
+**Returns:** List of vertices in DFS order
+
+**Time Complexity:** O(V + E)
+
+**Space Complexity:** O(V) for the recursion stack and visited set
+
+### DFS with Debug Output
+
+```python
+from dsa.graph import Graph
+from dsa.graph_traversal import dfs
+
+g = Graph.create('adjacency_list', directed=False)
+g.add_edge('A', 'B')
+g.add_edge('A', 'C')
+g.add_edge('B', 'D')
+
+# Enable debug mode
+path = dfs(g, 'A', debug=True)
+
+# Output shows:
+# Current: A    Adjacents: ['B', 'C']
+# Stack: ['A']
+# Visited: {'A'}
+# Current: B    Adjacents: ['A', 'D']
+# Stack: ['A', 'B']
+# ...
+```
+
+### dfs_path(graph, start, end, visited)
+
+Find a path between two vertices using DFS.
+
+```python
+from dsa.graph import Graph
+from dsa.graph_traversal import dfs_path
+
+g = Graph.create('adjacency_list', directed=False)
+edges = [
+    ('A', 'B'), ('A', 'C'),
+    ('B', 'D'), ('C', 'E'),
+    ('D', 'F'), ('E', 'F')
+]
+for start, end in edges:
+    g.add_edge(start, end)
+
+# Find a path from A to F (not necessarily shortest)
+path = dfs_path(g, 'A', 'F')
+print(path)  # ['A', 'B', 'D', 'F'] (order depends on adjacency order)
+
+# No path exists
+path = dfs_path(g, 'A', 'Z')
+print(path)  # None
+```
+
+**Parameters:**
+- `graph`: Graph object with an `adjacents(vertex)` method
+- `start` (str): Starting vertex label
+- `end` (str): Target vertex label
+- `visited` (set, optional): Set of visited vertices. Defaults to empty set
+
+**Returns:**
+- List representing a path from start to end
+- `None` if no path exists
+
+**Time Complexity:** O(V + E) worst case
+
+**Space Complexity:** O(V)
+
+### DFS Algorithm Steps
+
+<Steps>
+  <Step title="Mark Visited">
+    Mark the current vertex as visited and add it to the path.
+  </Step>
+  
+  <Step title="Explore Recursively">
+    For each unvisited neighbor, recursively call DFS.
+  </Step>
+  
+  <Step title="Backtrack">
+    When all neighbors are explored, backtrack to the previous vertex.
+  </Step>
+  
+  <Step title="Complete">
+    Continue until all reachable vertices are visited.
+  </Step>
+</Steps>
+
+## Comparison: BFS vs DFS
+
+<Tabs>
+  <Tab title="Traversal Order">
+    ```python
+    from dsa.graph import Graph
+    from dsa.graph_traversal import bfs, dfs
+    
+    g = Graph.create('adjacency_list', directed=False)
+    edges = [('A', 'B'), ('A', 'C'), ('B', 'D'), 
+             ('B', 'E'), ('C', 'F'), ('C', 'G')]
+    for s, e in edges:
+        g.add_edge(s, e)
+    
+    bfs_order = bfs(g, 'A')
+    # ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+    # Level 0: A
+    # Level 1: B, C
+    # Level 2: D, E, F, G
+    
+    dfs_order = dfs(g, 'A')
+    # ['A', 'B', 'D', 'E', 'C', 'F', 'G']
+    # Goes deep: A -> B -> D (dead end) -> back to B -> E ...
+    ```
+  </Tab>
+  
+  <Tab title="Data Structure">
+    **BFS uses Queue (FIFO):**
+    ```python
+    # Processes vertices in order they were discovered
+    # Uses DynamicQueue from dsa.queue
+    queue = DynamicQueue()
+    queue.enqueue(start)
+    # Process in FIFO order
+    ```
+    
+    **DFS uses Stack (LIFO):**
+    ```python
+    # Processes most recently discovered vertex first
+    # Uses recursion (implicit stack)
+    def dfs(graph, vertex, visited, path):
+        visited.add(vertex)
+        path.append(vertex)
+        for neighbor in graph.adjacents(vertex):
+            if neighbor not in visited:
+                dfs(graph, neighbor, visited, path)
+    ```
+  </Tab>
+  
+  <Tab title="Use Cases">
+    **Use BFS when:**
+    - Finding shortest path in unweighted graphs
+    - Finding all nodes within k distance
+    - Level-order traversal is needed
+    - Finding connected components
+    - Social network friend suggestions (friends of friends)
+    
+    **Use DFS when:**
+    - Detecting cycles in graphs
+    - Topological sorting
+    - Finding strongly connected components
+    - Solving mazes or puzzles
+    - Checking if a path exists (may be faster than BFS)
+  </Tab>
+</Tabs>
+
+| Aspect | BFS | DFS |
+|--------|-----|-----|
+| **Data Structure** | Queue | Stack (recursion) |
+| **Traversal** | Level by level | Deep exploration |
+| **Path Found** | Shortest | Any path |
+| **Memory** | O(V) - can be large | O(height) - often smaller |
+| **Completeness** | Yes | Yes |
+| **Optimality** | Yes (unweighted) | No |
+
+## Usage Examples
+
+### Finding Connected Components
+
+```python
+from dsa.graph import Graph
+from dsa.graph_traversal import bfs
+
+def find_connected_components(graph):
+    """
+    Find all connected components in an undirected graph.
+    """
+    visited = set()
+    components = []
+    
+    for vertex in graph.vertices():
+        if vertex not in visited:
+            # BFS from this vertex finds one component
+            component = bfs(graph, vertex)
+            components.append(component)
+            visited.update(component)
+    
+    return components
+
+# Example usage
+g = Graph.create('adjacency_list', directed=False)
+# Component 1
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+# Component 2
+g.add_edge('D', 'E')
+g.add_edge('E', 'F')
+# Component 3 (isolated)
+g.add_vertex('G')
+
+components = find_connected_components(g)
+for i, comp in enumerate(components, 1):
+    print(f"Component {i}: {comp}")
+# Component 1: ['A', 'B', 'C']
+# Component 2: ['D', 'E', 'F']
+# Component 3: ['G']
+```
+
+### Detecting Cycles with DFS
+
+```python
+from dsa.graph import Graph
+
+def has_cycle_undirected(graph, vertex, visited, parent):
+    """
+    Detect if an undirected graph has a cycle using DFS.
+    """
+    visited.add(vertex)
+    
+    for neighbor in graph.adjacents(vertex):
+        if neighbor not in visited:
+            if has_cycle_undirected(graph, neighbor, visited, vertex):
+                return True
+        elif neighbor != parent:
+            # Found a back edge (not to parent)
+            return True
+    
+    return False
+
+def detect_cycle(graph):
+    """Check if the graph contains a cycle."""
+    visited = set()
+    
+    for vertex in graph.vertices():
+        if vertex not in visited:
+            if has_cycle_undirected(graph, vertex, visited, None):
+                return True
+    
+    return False
+
+# Example
+g = Graph.create('adjacency_list', directed=False)
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+g.add_edge('C', 'A')  # Creates a cycle
+
+print(f"Has cycle: {detect_cycle(g)}")  # True
+```
+
+### Finding Shortest Distance
+
+```python
+from dsa.graph import Graph
+from dsa.graph_traversal import bfs_path
+
+def shortest_distance(graph, start, end):
+    """
+    Find the shortest distance between two vertices.
+    Returns -1 if no path exists.
+    """
+    path = bfs_path(graph, start, end)
+    if path is None:
+        return -1
+    return len(path) - 1  # Number of edges
+
+# Example: Social network
+social = Graph.create('adjacency_list', directed=False)
+connections = [
+    ('Alice', 'Bob'),
+    ('Bob', 'Charlie'),
+    ('Charlie', 'David'),
+    ('Alice', 'Eve'),
+    ('Eve', 'David')
+]
+
+for p1, p2 in connections:
+    social.add_edge(p1, p2)
+
+dist = shortest_distance(social, 'Alice', 'David')
+print(f"Degrees of separation: {dist}")  # 2
+
+path = bfs_path(social, 'Alice', 'David')
+print(f"Path: {' -> '.join(path)}")  # Alice -> Eve -> David
+```
+
+### Web Crawler Simulation
+
+```python
+from dsa.graph import Graph
+from dsa.graph_traversal import bfs
+
+def crawl_website(graph, start_page, max_depth=None):
+    """
+    Simulate crawling a website using BFS.
+    """
+    from dsa.queue import DynamicQueue
+    
+    visited = set()
+    queue = DynamicQueue()
+    queue.enqueue((start_page, 0))  # (page, depth)
+    visited.add(start_page)
+    
+    crawled = []
+    
+    while not queue.is_empty():
+        page, depth = queue.dequeue()
+        
+        if max_depth is not None and depth > max_depth:
+            continue
+        
+        print(f"Crawling: {page} (depth {depth})")
+        crawled.append(page)
+        
+        for link in graph.adjacents(page):
+            if link not in visited:
+                visited.add(link)
+                queue.enqueue((link, depth + 1))
+    
+    return crawled
+
+# Example website structure
+website = Graph.create('adjacency_list', directed=True)
+links = [
+    ('index.html', 'about.html'),
+    ('index.html', 'products.html'),
+    ('products.html', 'product1.html'),
+    ('products.html', 'product2.html'),
+    ('about.html', 'contact.html')
+]
+
+for from_page, to_page in links:
+    website.add_edge(from_page, to_page)
+
+pages = crawl_website(website, 'index.html', max_depth=2)
+print(f"\nTotal pages crawled: {len(pages)}")
+```
+
+### Maze Solving with DFS
+
+```python
+from dsa.graph import Graph
+from dsa.graph_traversal import dfs_path
+
+def solve_maze(maze_graph, start, end):
+    """
+    Find a path through a maze using DFS.
+    """
+    path = dfs_path(maze_graph, start, end)
+    
+    if path:
+        print(f"Solution found: {' → '.join(path)}")
+        print(f"Number of steps: {len(path) - 1}")
+        return path
+    else:
+        print("No solution exists!")
+        return None
+
+# Create a maze as a graph
+maze = Graph.create('adjacency_list', directed=False)
+
+# Define maze connections (room connections)
+rooms = [
+    ('Start', 'R1'), ('R1', 'R2'), ('R1', 'R3'),
+    ('R2', 'R4'), ('R3', 'R5'), ('R5', 'End'),
+    ('R4', 'R6'), ('R6', 'End')
+]
+
+for r1, r2 in rooms:
+    maze.add_edge(r1, r2)
+
+# Solve the maze
+path = solve_maze(maze, 'Start', 'End')
+```
+
+## Performance Characteristics
+
+<CardGroup cols={2}>
+  <Card title="Time Complexity" icon="clock">
+    Both BFS and DFS:
+    - **O(V + E)** for adjacency list
+    - **O(V²)** for adjacency matrix
+    - Visit each vertex once
+    - Explore each edge once
+  </Card>
+  
+  <Card title="Space Complexity" icon="memory">
+    - **BFS:** O(V) for queue
+    - **DFS:** O(h) for recursion stack (h = height)
+    - Both: O(V) for visited set
+    - DFS often uses less memory
+  </Card>
+</CardGroup>
+
+## Complete Example: Social Network Analysis
+
+```python
+from dsa.graph import Graph
+from dsa.graph_traversal import bfs, bfs_path
+
+class SocialNetwork:
+    def __init__(self):
+        self.graph = Graph.create('adjacency_list', directed=False)
+    
+    def add_friendship(self, person1, person2):
+        self.graph.add_edge(person1, person2)
+    
+    def get_friends(self, person):
+        return self.graph[person]
+    
+    def degrees_of_separation(self, person1, person2):
+        path = bfs_path(self.graph, person1, person2)
+        if path:
+            return len(path) - 1
+        return -1
+    
+    def friend_suggestions(self, person):
+        """Suggest friends (friends of friends not already friends)."""
+        direct_friends = set(self.graph[person])
+        direct_friends.add(person)  # Don't suggest themselves
+        
+        suggestions = set()
+        for friend in self.graph[person]:
+            for fof in self.graph[friend]:  # Friend of friend
+                if fof not in direct_friends:
+                    suggestions.add(fof)
+        
+        return list(suggestions)
+    
+    def network_size(self, person):
+        """Find all people reachable from this person."""
+        return bfs(self.graph, person)
+
+# Build a social network
+network = SocialNetwork()
+friendships = [
+    ('Alice', 'Bob'), ('Alice', 'Charlie'),
+    ('Bob', 'David'), ('Charlie', 'Eve'),
+    ('David', 'Frank'), ('Eve', 'Frank'),
+    ('Frank', 'Grace')
+]
+
+for p1, p2 in friendships:
+    network.add_friendship(p1, p2)
+
+# Analyze the network
+print(f"Alice's friends: {network.get_friends('Alice')}")
+print(f"Degrees from Alice to Grace: {network.degrees_of_separation('Alice', 'Grace')}")
+print(f"Friend suggestions for Alice: {network.friend_suggestions('Alice')}")
+print(f"Alice's network size: {len(network.network_size('Alice'))} people")
+```
+
+## Related Pages
+
+<CardGroup cols={2}>
+  <Card title="Graphs Overview" icon="diagram-project" href="/graphs/overview">
+    Learn about graph concepts and types
+  </Card>
+  
+  <Card title="Adjacency List" icon="list" href="/graphs/adjacency-list">
+    Optimal graph structure for BFS and DFS
+  </Card>
+  
+  <Card title="Adjacency Matrix" icon="table-cells" href="/graphs/adjacency-matrix">
+    Alternative graph representation
+  </Card>
+  
+  <Card title="Graph Factory" icon="industry" href="/graphs/graph-factory">
+    Creating graphs for traversal
+  </Card>
+</CardGroup>

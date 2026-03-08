@@ -1,0 +1,325 @@
+---
+title: "Graphs Overview"
+description: "Introduction to graph data structures in UCX DSA"
+icon: "diagram-project"
+---
+
+## What is a Graph?
+
+A graph is a data structure consisting of vertices (nodes) and edges (connections between nodes). Graphs are fundamental for representing relationships and networks in computer science, from social networks to road maps to dependency systems.
+
+<Note>
+  UCX DSA provides comprehensive graph implementations supporting both adjacency matrix and adjacency list representations, with support for directed/undirected and weighted/unweighted graphs.
+</Note>
+
+## Graph Components
+
+<CardGroup cols={2}>
+  <Card title="Vertices" icon="circle-dot">
+    Nodes in the graph that represent entities. In UCX DSA, vertices are identified by string labels.
+  </Card>
+  <Card title="Edges" icon="arrow-right-arrow-left">
+    Connections between vertices. Edges can be directed (one-way) or undirected (two-way).
+  </Card>
+  <Card title="Weights" icon="weight-hanging">
+    Optional numeric values assigned to edges representing cost, distance, or other metrics.
+  </Card>
+  <Card title="Neighbors" icon="users">
+    Vertices directly connected to a given vertex through an edge.
+  </Card>
+</CardGroup>
+
+## Graph Types
+
+### Directed vs Undirected
+
+<Tabs>
+  <Tab title="Directed Graph">
+    In a directed graph, edges have a direction. An edge from vertex A to vertex B does not imply an edge from B to A.
+    
+    **Use Cases:**
+    - Web page links
+    - Social media followers (following relationship)
+    - Task dependencies
+    - One-way streets in a road network
+    
+    ```python
+    from dsa.graph import Graph
+    
+    # Create a directed graph
+    g = Graph.create('adjacency_list', directed=True)
+    g.add_edge('A', 'B')  # A → B
+    g.add_edge('B', 'C')  # B → C
+    
+    # A can reach B, but B cannot reach A (unless explicitly added)
+    print(g.has_edge('A', 'B'))  # True
+    print(g.has_edge('B', 'A'))  # False
+    ```
+  </Tab>
+  
+  <Tab title="Undirected Graph">
+    In an undirected graph, edges are bidirectional. An edge between vertices A and B allows travel in both directions.
+    
+    **Use Cases:**
+    - Social networks (friendship is mutual)
+    - Road networks (most roads are two-way)
+    - Computer networks
+    - Collaboration networks
+    
+    ```python
+    from dsa.graph import Graph
+    
+    # Create an undirected graph
+    g = Graph.create('adjacency_list', directed=False)
+    g.add_edge('A', 'B')  # A ↔ B
+    g.add_edge('B', 'C')  # B ↔ C
+    
+    # Both directions exist
+    print(g.has_edge('A', 'B'))  # True
+    print(g.has_edge('B', 'A'))  # True
+    ```
+  </Tab>
+</Tabs>
+
+### Weighted vs Unweighted
+
+<Tabs>
+  <Tab title="Weighted Graph">
+    In a weighted graph, each edge has an associated numeric value (weight) representing cost, distance, capacity, or other metrics.
+    
+    **Use Cases:**
+    - Road networks with distances
+    - Flight routes with costs
+    - Network flow problems
+    - Shortest path algorithms
+    
+    ```python
+    from dsa.graph import Graph
+    
+    # Create a weighted graph
+    g = Graph.create('adjacency_list', weighted=True)
+    g.add_edge('A', 'B', 5)   # Edge with weight 5
+    g.add_edge('B', 'C', 10)  # Edge with weight 10
+    g.add_edge('A', 'C', 3)   # Edge with weight 3
+    
+    # Get edge weight
+    weight = g.get_weight('A', 'B')  # Returns 5
+    ```
+  </Tab>
+  
+  <Tab title="Unweighted Graph">
+    In an unweighted graph, edges simply represent the presence or absence of a connection, without any associated value.
+    
+    **Use Cases:**
+    - Social network connections
+    - Prerequisites in a curriculum
+    - Reachability analysis
+    - Simple connectivity problems
+    
+    ```python
+    from dsa.graph import Graph
+    
+    # Create an unweighted graph
+    g = Graph.create('adjacency_list', weighted=False)
+    g.add_edge('A', 'B')  # Simple connection
+    g.add_edge('B', 'C')  # Simple connection
+    
+    # Check if edge exists
+    connected = g.has_edge('A', 'B')  # True or False
+    ```
+  </Tab>
+</Tabs>
+
+## Graph Representations
+
+UCX DSA supports two primary graph representations:
+
+<CardGroup cols={2}>
+  <Card title="Adjacency Matrix" icon="table-cells" href="/graphs/adjacency-matrix">
+    A 2D matrix where cell (i, j) indicates if there's an edge from vertex i to vertex j.
+    
+    **Pros:**
+    - O(1) edge lookup
+    - Good for dense graphs
+    - Simple to implement
+    
+    **Cons:**
+    - O(V²) space complexity
+    - Inefficient for sparse graphs
+  </Card>
+  
+  <Card title="Adjacency List" icon="list" href="/graphs/adjacency-list">
+    Each vertex stores a list of its adjacent vertices.
+    
+    **Pros:**
+    - O(V + E) space complexity
+    - Efficient for sparse graphs
+    - Fast neighbor iteration
+    
+    **Cons:**
+    - O(degree) edge lookup
+    - More complex structure
+  </Card>
+</CardGroup>
+
+## Graph Terminology
+
+| Term | Definition |
+|------|------------|
+| **Order** | The number of vertices in the graph |
+| **Size** | The number of edges in the graph |
+| **Degree** | The number of edges connected to a vertex |
+| **Path** | A sequence of vertices where each consecutive pair is connected by an edge |
+| **Cycle** | A path that starts and ends at the same vertex |
+| **Connected** | A graph where there's a path between every pair of vertices |
+| **Adjacency** | Two vertices are adjacent if they're connected by an edge |
+
+## Common Graph Operations
+
+All graph implementations in UCX DSA support these core operations:
+
+```python
+from dsa.graph import Graph
+
+# Create a graph (example with adjacency list)
+g = Graph.create('adjacency_list', directed=False)
+
+# Add vertices
+g.add_vertex('A')
+g.add_vertex('B')
+g.add_vertex('C')
+
+# Add edges
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+g.add_edge('A', 'C')
+
+# Query the graph
+print(f"Vertices: {g.vertices()}")  # ['A', 'B', 'C']
+print(f"Edges: {g.edges()}")        # [('A', 'B'), ('B', 'C'), ...]
+print(f"Order: {g.order()}")        # 3 vertices
+print(f"Size: {g.size()}")          # 3 edges
+
+# Check existence
+print(g.has_vertex('A'))      # True
+print(g.has_edge('A', 'B'))   # True
+
+# Get neighbors
+print(g.adjacents('A'))       # ['B', 'C']
+print(g['A'])                 # ['B', 'C'] (using indexing)
+
+# Delete operations
+g.delete_edge('A', 'C')
+g.delete_vertex('B')
+```
+
+## Choosing a Graph Type
+
+Use this guide to choose the right graph implementation:
+
+<AccordionGroup>
+  <Accordion title="When to use Adjacency Matrix">
+    Choose adjacency matrix when:
+    - The graph is dense (many edges)
+    - You need O(1) edge existence checks
+    - You have a fixed number of vertices
+    - Memory is not a primary concern
+    - You need to frequently check if edges exist
+  </Accordion>
+  
+  <Accordion title="When to use Adjacency List">
+    Choose adjacency list when:
+    - The graph is sparse (few edges)
+    - You need to iterate over neighbors frequently
+    - The number of vertices may change
+    - Memory efficiency is important
+    - You're implementing graph traversal algorithms
+  </Accordion>
+  
+  <Accordion title="When to use Weighted Graphs">
+    Choose weighted graphs when:
+    - Edges have associated costs or distances
+    - You're implementing shortest path algorithms (Dijkstra, Bellman-Ford)
+    - You need to optimize routes or flows
+    - You're working with network capacity problems
+  </Accordion>
+  
+  <Accordion title="When to use Directed Graphs">
+    Choose directed graphs when:
+    - Relationships are one-way
+    - You're modeling dependencies or hierarchies
+    - You need to represent asymmetric relationships
+    - You're implementing topological sorting
+  </Accordion>
+</AccordionGroup>
+
+## Graph Traversal
+
+UCX DSA provides two fundamental graph traversal algorithms:
+
+<CardGroup cols={2}>
+  <Card title="Breadth-First Search (BFS)" icon="layer-group" href="/graphs/traversal">
+    Explores neighbors level by level. Useful for finding shortest paths in unweighted graphs.
+  </Card>
+  
+  <Card title="Depth-First Search (DFS)" icon="arrow-down-wide-short" href="/graphs/traversal">
+    Explores as far as possible along each branch before backtracking. Useful for cycle detection and topological sorting.
+  </Card>
+</CardGroup>
+
+## Quick Start Example
+
+```python
+from dsa.graph import Graph
+from dsa.graph_traversal import bfs, dfs
+
+# Create a social network graph
+social = Graph.create('adjacency_list', directed=False)
+
+# Add friendships
+friendships = [
+    ('Alice', 'Bob'),
+    ('Alice', 'Charlie'),
+    ('Bob', 'David'),
+    ('Charlie', 'David'),
+    ('David', 'Eve')
+]
+
+for person1, person2 in friendships:
+    social.add_edge(person1, person2)
+
+# Find Alice's friends
+print(f"Alice's friends: {social['Alice']}")
+
+# Check if two people are friends
+if social.has_edge('Alice', 'Bob'):
+    print("Alice and Bob are friends")
+
+# Find all people reachable from Alice using BFS
+reachable = bfs(social, 'Alice')
+print(f"Alice can reach: {reachable}")
+
+# Find network size
+print(f"Network has {social.order()} people")
+print(f"Network has {social.size()} friendships")
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Graph Factory" icon="industry" href="/graphs/graph-factory">
+    Learn how to create different types of graphs using the Graph factory class
+  </Card>
+  
+  <Card title="Adjacency Matrix" icon="table-cells" href="/graphs/adjacency-matrix">
+    Explore matrix-based graph implementations
+  </Card>
+  
+  <Card title="Adjacency List" icon="list" href="/graphs/adjacency-list">
+    Explore list-based graph implementations
+  </Card>
+  
+  <Card title="Graph Traversal" icon="route" href="/graphs/traversal">
+    Learn BFS and DFS algorithms for graph traversal
+  </Card>
+</CardGroup>

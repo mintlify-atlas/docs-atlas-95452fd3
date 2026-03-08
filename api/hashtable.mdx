@@ -1,0 +1,405 @@
+---
+title: 'HashTable'
+description: 'A hashtable implementation using separate chaining for collision resolution'
+---
+
+## Overview
+
+The `HashTable` class provides a hash table data structure that maps keys to values. It uses separate chaining (linked lists) to handle hash collisions and provides O(1) average-case performance for insertions, deletions, and lookups.
+
+## Constructor
+
+<ParamField path="capacity" type="int" default="20">
+  The initial capacity of the hashtable (number of buckets)
+</ParamField>
+
+```python
+from dsa.hashtable import HashTable
+
+# Create a hashtable with default capacity
+ht = HashTable()
+
+# Create a hashtable with custom capacity
+ht = HashTable(capacity=50)
+```
+
+## Attributes
+
+<ResponseField name="count" type="int">
+  The number of items currently stored in the hashtable
+</ResponseField>
+
+<ResponseField name="capacity" type="int">
+  The total capacity (number of buckets) of the hashtable
+</ResponseField>
+
+## Methods
+
+### hash_function
+
+Compute a hash value for a given key.
+
+```python
+hash_function(key) -> int
+```
+
+<ParamField path="key" type="any">
+  The key to convert to a hash value
+</ParamField>
+
+<ResponseField name="return" type="int">
+  Hash value modded to the hashtable capacity
+</ResponseField>
+
+```python
+ht = HashTable()
+hash_val = ht.hash_function("mykey")
+print(hash_val)  # Integer between 0 and capacity-1
+```
+
+### set
+
+Set a key-value pair in the hashtable. If the key exists, replace the value; otherwise, create a new key-value pair.
+
+```python
+set(key, value)
+```
+
+<ParamField path="key" type="any">
+  The key to set or update
+</ParamField>
+
+<ParamField path="value" type="any">
+  The value to associate with the key
+</ParamField>
+
+```python
+ht = HashTable()
+ht.set("name", "Alice")
+ht.set("age", 30)
+ht.set("name", "Bob")  # Updates existing key
+```
+
+### get
+
+Get the value associated with a given key.
+
+```python
+get(key) -> any
+```
+
+<ParamField path="key" type="any">
+  The key to look up
+</ParamField>
+
+<ResponseField name="return" type="any">
+  The value associated with the key, or `None` if the key is not found
+</ResponseField>
+
+```python
+ht = HashTable()
+ht.set("name", "Alice")
+value = ht.get("name")  # Returns "Alice"
+missing = ht.get("missing")  # Returns None
+```
+
+### key_exists
+
+Check whether a key exists in the hashtable.
+
+```python
+key_exists(key) -> bool
+```
+
+<ParamField path="key" type="any">
+  The key to check for
+</ParamField>
+
+<ResponseField name="return" type="bool">
+  `True` if the key exists, `False` otherwise
+</ResponseField>
+
+```python
+ht = HashTable()
+ht.set("name", "Alice")
+print(ht.key_exists("name"))  # True
+print(ht.key_exists("age"))   # False
+```
+
+### remove
+
+Remove a key-value pair from the hashtable.
+
+```python
+remove(key)
+```
+
+<ParamField path="key" type="any">
+  The key to remove
+</ParamField>
+
+**Raises:** `KeyError` if the key is not found in the hashtable
+
+```python
+ht = HashTable()
+ht.set("name", "Alice")
+ht.remove("name")  # Removes the key-value pair
+
+try:
+    ht.remove("missing")
+except KeyError as e:
+    print(f"Key not found: {e}")
+```
+
+### pop
+
+Remove a key and return its value. If the key is not found, return a default value.
+
+```python
+pop(key, default=None) -> any
+```
+
+<ParamField path="key" type="any">
+  The key to remove
+</ParamField>
+
+<ParamField path="default" type="any" default="None">
+  The value to return if the key is not found
+</ParamField>
+
+<ResponseField name="return" type="any">
+  The value associated with the key, or the default value if not found
+</ResponseField>
+
+```python
+ht = HashTable()
+ht.set("name", "Alice")
+value = ht.pop("name")  # Returns "Alice" and removes the key
+missing = ht.pop("age", "Unknown")  # Returns "Unknown"
+```
+
+### enumerate
+
+Return an enumeration of key-value pairs in the hashtable.
+
+```python
+enumerate() -> enumerate
+```
+
+<ResponseField name="return" type="enumerate">
+  Enumeration of key-value pairs as `[key, value]` lists
+</ResponseField>
+
+```python
+ht = HashTable()
+ht.set("name", "Alice")
+ht.set("age", 30)
+
+for idx, (key, value) in ht.enumerate():
+    print(f"{idx}: {key} = {value}")
+```
+
+### show_buckets
+
+Return a string displaying the contents of all buckets in the hashtable.
+
+```python
+show_buckets() -> str
+```
+
+<ResponseField name="return" type="str">
+  A string representation of all buckets and their contents
+</ResponseField>
+
+```python
+ht = HashTable()
+ht.set("name", "Alice")
+ht.set("age", 30)
+print(ht.show_buckets())
+# Output shows each bucket and its chain of key-value pairs
+```
+
+## Special Methods
+
+### \_\_len\_\_
+
+Return the number of items in the hashtable.
+
+```python
+ht = HashTable()
+ht.set("name", "Alice")
+ht.set("age", 30)
+print(len(ht))  # 2
+```
+
+### \_\_getitem\_\_
+
+Get a value using bracket notation.
+
+```python
+ht = HashTable()
+ht.set("name", "Alice")
+print(ht["name"])  # "Alice"
+```
+
+### \_\_setitem\_\_
+
+Set a value using bracket notation.
+
+```python
+ht = HashTable()
+ht["name"] = "Alice"
+ht["age"] = 30
+```
+
+### \_\_delitem\_\_
+
+Delete a key-value pair using the `del` keyword.
+
+```python
+ht = HashTable()
+ht["name"] = "Alice"
+del ht["name"]
+```
+
+### \_\_contains\_\_
+
+Check if a key exists using the `in` operator.
+
+```python
+ht = HashTable()
+ht["name"] = "Alice"
+print("name" in ht)  # True
+print("age" in ht)   # False
+```
+
+### \_\_iter\_\_
+
+Iterate over all keys in the hashtable.
+
+```python
+ht = HashTable()
+ht["name"] = "Alice"
+ht["age"] = 30
+
+for key in ht:
+    print(key, ht[key])
+```
+
+### \_\_eq\_\_
+
+Compare two hashtables for equality.
+
+```python
+ht1 = HashTable()
+ht1["name"] = "Alice"
+
+ht2 = HashTable()
+ht2["name"] = "Alice"
+
+print(ht1 == ht2)  # True
+```
+
+### \_\_repr\_\_
+
+Return a string representation of the hashtable.
+
+```python
+ht = HashTable()
+ht["name"] = "Alice"
+ht["age"] = 30
+print(ht)  # {name:Alice, age:30}
+```
+
+## Complete Example
+
+<CodeGroup>
+
+```python Basic Usage
+from dsa.hashtable import HashTable
+
+# Create a hashtable
+ht = HashTable(capacity=10)
+
+# Add key-value pairs
+ht["name"] = "Alice"
+ht["age"] = 30
+ht["city"] = "New York"
+
+# Get values
+print(ht["name"])  # Alice
+print(ht.get("age"))  # 30
+
+# Check existence
+if "city" in ht:
+    print(f"City: {ht['city']}")
+
+# Update value
+ht["age"] = 31
+
+# Remove key
+del ht["city"]
+
+# Get size
+print(len(ht))  # 2
+
+# Iterate over keys
+for key in ht:
+    print(f"{key}: {ht[key]}")
+```
+
+```python Advanced Usage
+from dsa.hashtable import HashTable
+
+# Create hashtable with custom capacity
+ht = HashTable(capacity=50)
+
+# Bulk insert
+data = {
+    "user1": {"name": "Alice", "score": 100},
+    "user2": {"name": "Bob", "score": 85},
+    "user3": {"name": "Charlie", "score": 92}
+}
+
+for user_id, user_data in data.items():
+    ht[user_id] = user_data
+
+# Pop with default
+score = ht.pop("user1")
+print(score)  # {"name": "Alice", "score": 100}
+
+missing = ht.pop("user999", "Not found")
+print(missing)  # "Not found"
+
+# Compare hashtables
+ht2 = HashTable()
+ht2["user2"] = {"name": "Bob", "score": 85}
+ht2["user3"] = {"name": "Charlie", "score": 92}
+
+print(ht == ht2)  # True
+
+# Debug: view bucket distribution
+print(ht.show_buckets())
+```
+
+</CodeGroup>
+
+## Performance
+
+- **Average Case:**
+  - Insert: O(1)
+  - Lookup: O(1)
+  - Delete: O(1)
+
+- **Worst Case:**
+  - Insert: O(n) (all keys hash to same bucket)
+  - Lookup: O(n)
+  - Delete: O(n)
+
+## Notes
+
+- The hashtable uses separate chaining to handle collisions
+- Keys are converted to strings before hashing
+- The hash function uses polynomial rolling hash with multiplier 31
+- Default capacity is 20 buckets
+- The hashtable does not automatically resize

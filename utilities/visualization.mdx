@@ -1,0 +1,548 @@
+---
+title: "Visualization Tools"
+description: "Visualize graphs, trees, heaps, and tries using NetworkX and Matplotlib"
+---
+
+## Overview
+
+The `draw` module provides visualization tools for various data structures using NetworkX and Matplotlib. Each data structure has a dedicated draw class that can render, save, and display visual representations.
+
+<Note>
+All draw classes inherit from the base `Draw` class and provide consistent `draw()`, `save()`, and `render()` methods.
+</Note>
+
+## Base Draw Class
+
+All visualization classes inherit from the `Draw` base class.
+
+```python draw.py:10
+class Draw:
+    """
+    A base class for drawing various data structures.
+    
+    This class provides basic functionalities for rendering, saving, and displaying
+    visual representations of data structures.
+    """
+```
+
+### Common Methods
+
+#### set_figsize
+
+Sets the figure size for the plot.
+
+```python draw.py:33
+def set_figsize(self, figsize):
+    """
+    Set the figure size for the plot.
+    
+    Args:
+        figsize (tuple): A tuple representing the figure size (width, height).
+    """
+```
+
+#### draw
+
+Displays the rendered plot.
+
+```python draw.py:54
+def draw(self, **kwargs):
+    """
+    Display the rendered plot.
+
+    Args:
+        **kwargs: Additional keyword arguments.
+    """
+```
+
+#### save
+
+Saves the rendered plot to a file.
+
+```python draw.py:42
+def save(self, filename, **kwargs):
+    """
+    Save the rendered plot to a file.
+    
+    Args:
+        filename (str): The name of the file to save the plot to.
+        **kwargs: Additional keyword arguments.
+    """
+```
+
+## TreeDraw
+
+Visualizes binary tree structures.
+
+```python draw.py:65
+class TreeDraw(Draw):
+    """
+    A class for drawing a tree structure using the NetworkX library.
+
+    This class extends the `Draw` class to visualize tree structures. It organizes the nodes
+    in a hierarchical tree layout and provides options for customization through the `render` method.
+
+    Attributes:
+        tree (Tree): The tree structure to be drawn.
+
+    Usage Example:
+        t = Tree(root_node)  # Define your tree structure with a root node
+        td = TreeDraw(t)
+        td.draw()
+    """
+```
+
+### Constructor
+
+```python draw.py:81
+def __init__(self, tree: Tree):
+    """ 
+    Initializes the TreeDraw object.
+
+    Args:
+        tree (Tree): The tree structure to be drawn.
+    """
+```
+
+**Parameters:**
+- `tree` (Tree): The tree to visualize
+
+### Usage Example
+
+```python
+from dsa.tree import Tree, TreeNode
+from dsa.draw import TreeDraw
+
+# Create a binary tree
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+root.left.left = TreeNode(4)
+root.left.right = TreeNode(5)
+
+tree = Tree(root)
+
+# Visualize the tree
+td = TreeDraw(tree)
+td.set_figsize((8, 6))
+td.draw()
+
+# Or save to file
+td.save("tree.png")
+```
+
+## HeapDraw
+
+Visualizes heap structures as binary trees.
+
+```python draw.py:138
+class HeapDraw(Draw):
+    """
+    A class for drawing a heap structure using the NetworkX library.
+
+    This class extends the `Draw` class to visualize heap structures, such as binary heaps or min-heaps.
+
+    Attributes:
+        heap (Heap): The heap structure to be drawn.
+
+    Usage Example:
+        h = MinHeap()  # Define your heap, e.g., MinHeap or Heap
+        hd = HeapDraw(h)
+        hd.draw()
+    """
+```
+
+### Constructor
+
+```python draw.py:153
+def __init__(self, heap: Heap, **kwargs):
+    """
+    Initializes the HeapDraw object.
+
+    Args:
+        heap (Heap): The heap structure to be drawn.
+        **kwargs: Additional keyword arguments passed to the parent `Draw` class.
+    """
+```
+
+**Parameters:**
+- `heap` (Heap): The heap to visualize
+
+### Usage Example
+
+```python
+from dsa.heap import MinHeap
+from dsa.draw import HeapDraw
+
+# Create and populate a min-heap
+heap = MinHeap()
+values = [5, 3, 7, 1, 9, 4, 6]
+for val in values:
+    heap.insert(val)
+
+# Visualize the heap
+hd = HeapDraw(heap)
+hd.draw()
+
+# Save to file
+hd.save("heap.png")
+```
+
+<Note>
+The heap is automatically converted to a tree structure for visualization using the `array_to_node()` helper method (draw.py:164-187).
+</Note>
+
+## TrieDraw
+
+Visualizes trie (prefix tree) structures.
+
+```python draw.py:206
+class TrieDraw(Draw):
+    """
+    A class for drawing a Trie structure using the NetworkX library.
+
+    This class extends the `Draw` class to visualize Trie structures, commonly used for storing strings
+    or prefix trees. It provides methods to convert the Trie into a networkx graph, arrange nodes
+    hierarchically, and render the visualization using Matplotlib.
+
+    Attributes:
+        trie (Trie): The Trie structure to be drawn.
+
+    Usage Example:
+        trie = Trie()  # Initialize your Trie and populate it with words
+        trd = TrieDraw(trie)
+        trd.draw()
+    """
+```
+
+### Constructor
+
+```python draw.py:223
+def __init__(self, trie: Trie, **kwargs):
+    """
+    Initializes the TrieDraw object.
+
+    Args:
+        trie (Trie): The Trie structure to be drawn.
+        **kwargs: Additional keyword arguments passed to the parent `Draw` class.
+    """
+```
+
+**Parameters:**
+- `trie` (Trie): The trie to visualize
+
+### Usage Example
+
+```python
+from dsa.trie import Trie
+from dsa.draw import TrieDraw
+
+# Create and populate a trie
+trie = Trie()
+words = ["cat", "car", "card", "dog", "dodge", "door"]
+for word in words:
+    trie.insert(word)
+
+# Visualize the trie
+td = TrieDraw(trie)
+td.set_figsize((12, 8))
+td.draw()
+
+# Save to file
+td.save("trie.png")
+```
+
+### Alternative Rendering
+
+The TrieDraw class also provides a rectangle-based rendering method:
+
+```python draw.py:310
+def render_rectangle(self, **kwargs):
+    """
+    Renders the Trie as a hierarchical graph using Matplotlib. Not to be called directly. Call draw() instead.
+
+    This method uses the hierarchical positions of the nodes to render the Trie
+    as a directed graph. Nodes are drawn as rectangles, and edges represent the transitions
+    between prefixes.
+
+    Returns:
+        matplotlib.pyplot: The Matplotlib plot object for further customization or display.
+    """
+```
+
+## GraphDraw
+
+Visualizes graph structures (directed, undirected, weighted, unweighted).
+
+```python draw.py:368
+class GraphDraw(Draw):
+    """
+    A class for drawing graphs using the NetworkX library.
+
+    This class extends the `Draw` class to visualize graphs. It supports both directed 
+    and undirected graphs, as well as weighted and unweighted graphs. Additionally, 
+    it provides an option to display the Minimum Spanning Tree (MST) of the graph.
+    
+    If directed or weighted parameters are not provided, they will be inferred from the graph type.
+
+    Attributes:
+        graph: The graph to be drawn
+        directed (bool): Specifies if the graph is directed. Defaults to None
+        weighted (bool): Specifies if the graph has weighted edges. Defaults to None
+
+    Usage Example:
+        gd = GraphDraw(g) # g is a Graph type (AdjacencyMatrixGraph, AdjacencyMatrixWeightedGraph, AdjacencyListWeightedGraph, AdjacencyListGraph)
+        gd.draw()
+    """
+```
+
+### Constructor
+
+```python draw.py:387
+def __init__(self, graph, directed=None, weighted=None):
+    """
+    Initializes the GraphDraw object.
+    """
+```
+
+**Parameters:**
+- `graph`: The graph to visualize (any graph type from the DSA package)
+- `directed` (bool, optional): Override graph direction detection
+- `weighted` (bool, optional): Override weight detection
+
+### Render Method
+
+```python draw.py:404
+def render(self, pos=None, show_mst=False, mst_only=False, **kwargs):
+    """
+    Renders the graph using Matplotlib. Not to be called directly. Call draw() instead.
+    """
+```
+
+**Parameters:**
+- `pos` (dict, optional): Custom node positions
+- `show_mst` (bool): Highlight the minimum spanning tree in red
+- `mst_only` (bool): Show only the MST edges (automatically sets show_mst=True)
+
+### Usage Examples
+
+<Steps>
+  <Step title="Basic graph visualization">
+    ```python
+    from dsa.graph import AdjacencyListGraph
+    from dsa.draw import GraphDraw
+
+    # Create an undirected graph
+    graph = AdjacencyListGraph()
+    graph.add_edge('A', 'B')
+    graph.add_edge('B', 'C')
+    graph.add_edge('C', 'D')
+    graph.add_edge('D', 'A')
+    graph.add_edge('A', 'C')
+
+    # Visualize
+    gd = GraphDraw(graph)
+    gd.draw()
+    ```
+  </Step>
+
+  <Step title="Weighted graph visualization">
+    ```python
+    from dsa.graph import AdjacencyListWeightedGraph
+    from dsa.draw import GraphDraw
+
+    # Create a weighted graph
+    graph = AdjacencyListWeightedGraph()
+    graph.add_edge('A', 'B', 4)
+    graph.add_edge('A', 'C', 2)
+    graph.add_edge('B', 'C', 1)
+    graph.add_edge('B', 'D', 5)
+    graph.add_edge('C', 'D', 8)
+
+    # Visualize with edge weights
+    gd = GraphDraw(graph)
+    gd.set_figsize((10, 8))
+    gd.draw()
+    ```
+  </Step>
+
+  <Step title="Visualize Minimum Spanning Tree">
+    ```python
+    from dsa.graph import AdjacencyListWeightedGraph
+    from dsa.draw import GraphDraw
+
+    # Create a weighted graph
+    graph = AdjacencyListWeightedGraph()
+    graph.add_edge('A', 'B', 4)
+    graph.add_edge('A', 'C', 2)
+    graph.add_edge('B', 'C', 1)
+    graph.add_edge('B', 'D', 5)
+    graph.add_edge('C', 'D', 8)
+    graph.add_edge('C', 'E', 10)
+    graph.add_edge('D', 'E', 2)
+
+    # Show graph with MST highlighted in red
+    gd = GraphDraw(graph)
+    gd.draw(show_mst=True)
+
+    # Or show only the MST
+    gd.draw(mst_only=True)
+    ```
+  </Step>
+
+  <Step title="Directed graph visualization">
+    ```python
+    from dsa.graph import AdjacencyListGraph
+    from dsa.draw import GraphDraw
+
+    # Create a directed graph
+    graph = AdjacencyListGraph()
+    graph.add_edge('A', 'B', directed=True)
+    graph.add_edge('B', 'C', directed=True)
+    graph.add_edge('C', 'D', directed=True)
+    graph.add_edge('D', 'A', directed=True)
+
+    # Visualize with arrows
+    gd = GraphDraw(graph)
+    gd.draw()
+    ```
+  </Step>
+</Steps>
+
+## Complete Workflow Examples
+
+<CodeGroup>
+
+```python Generate and Visualize
+from dsa.generators import random_binary_tree
+from dsa.draw import TreeDraw
+
+# Generate random tree
+tree = random_binary_tree(15)
+
+# Visualize
+td = TreeDraw(tree)
+td.set_figsize((10, 8))
+td.draw()
+```
+
+```python Algorithm Visualization
+from dsa.generators import random_adjacency_list_weighted_graph
+from dsa.prim import prims_mst
+from dsa.draw import GraphDraw
+
+# Generate graph
+graph = random_adjacency_list_weighted_graph(8, density=0.3)
+
+# Find MST
+mst = prims_mst(graph, 'A')
+
+# Visualize original graph with MST highlighted
+gd = GraphDraw(graph)
+gd.draw(show_mst=True)
+```
+
+```python Save Multiple Formats
+from dsa.generators import random_heap
+from dsa.draw import HeapDraw
+
+heap = random_heap(20)
+hd = HeapDraw(heap)
+hd.set_figsize((12, 8))
+
+# Save in different formats
+hd.save("heap.png")
+hd.save("heap.pdf")
+hd.save("heap.svg")
+```
+
+```python Custom Styling
+from dsa.tree import Tree, TreeNode
+from dsa.draw import TreeDraw
+import matplotlib.pyplot as plt
+
+# Create tree
+root = TreeNode(10)
+root.left = TreeNode(5)
+root.right = TreeNode(15)
+tree = Tree(root)
+
+# Draw with custom style
+td = TreeDraw(tree)
+td.set_figsize((8, 6))
+
+# Use matplotlib for additional customization
+plt = td.render()
+plt.title("My Binary Tree")
+plt.tight_layout()
+plt.show()
+```
+
+</CodeGroup>
+
+## Visualization Tips
+
+### Adjusting Figure Size
+
+```python
+# Default sizes vary by data structure
+td = TreeDraw(tree)
+td.set_figsize((12, 8))  # Larger for complex trees
+
+hd = HeapDraw(heap)
+hd.set_figsize((10, 6))  # Medium for heaps
+
+td = TrieDraw(trie)
+td.set_figsize((14, 10))  # Large for tries with many words
+```
+
+### Saving High-Quality Images
+
+```python
+from dsa.draw import GraphDraw
+
+gd = GraphDraw(graph)
+gd.set_figsize((16, 12))
+
+# Save with high DPI for publications
+import matplotlib.pyplot as plt
+plt = gd.render()
+plt.savefig("graph_hq.png", dpi=300, bbox_inches='tight')
+```
+
+### Custom Node Positions for Graphs
+
+```python
+import networkx as nx
+from dsa.draw import GraphDraw
+
+# Define custom layout
+pos = {
+    'A': (0, 0),
+    'B': (1, 0),
+    'C': (0.5, 1),
+    'D': (1.5, 1)
+}
+
+gd = GraphDraw(graph)
+gd.draw(pos=pos)
+```
+
+## Supported Data Structures
+
+| Data Structure | Draw Class | Key Features |
+|----------------|------------|-------------|
+| Binary Tree | `TreeDraw` | Hierarchical layout, automatic positioning |
+| Heap | `HeapDraw` | Array-to-tree conversion, complete binary tree layout |
+| Trie | `TrieDraw` | Prefix paths, hierarchical positioning |
+| Graph (all types) | `GraphDraw` | Directed/undirected, weighted/unweighted, MST highlighting |
+
+<Note>
+All draw classes use NetworkX for graph construction and Matplotlib for rendering, providing consistent and high-quality visualizations.
+</Note>
+
+## Related
+
+- [Test Data Generators](/utilities/generators) - Generate data structures to visualize
+- [Prim's Algorithm](/algorithms/prim) - Visualize MSTs with `show_mst=True`
+- [Graph Data Structures](/data-structures/graph) - Learn about graph types

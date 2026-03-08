@@ -1,0 +1,489 @@
+---
+title: 'Array'
+description: 'A static array implementation with fixed capacity'
+---
+
+## Overview
+
+The `Array` class provides a static array implementation with a fixed capacity. Unlike Python's built-in list, this array has a predetermined maximum size and will raise exceptions if capacity is exceeded.
+
+### Special Methods
+
+- **Index Operator**: `array[index]` - Access elements by index
+- **Assignment**: `array[index] = value` - Set values at specific indices
+- **Equality**: Array instances can be compared for equality with other `Array` or `DynamicArray` instances based on their contents
+
+---
+
+## Constructor
+
+### `__init__(contents=None, capacity: int=10)`
+
+Initialize the array with optional contents and a fixed capacity.
+
+<ParamField path="contents" type="iterable" default="None">
+  An optional iterable to fill the array with initial values. If the length of contents exceeds the specified capacity, the capacity will be automatically adjusted to fit.
+</ParamField>
+
+<ParamField path="capacity" type="int" default="10">
+  The initial size of the array. Determines the maximum number of elements the array can hold.
+</ParamField>
+
+<CodeGroup>
+```python Example
+from dsa.array import Array
+
+# Create an empty array with default capacity of 10
+arr = Array()
+
+# Create an array with specific capacity
+arr = Array(capacity=20)
+
+# Create an array with initial contents
+arr = Array(contents=[1, 2, 3, 4, 5])
+
+# Create with contents larger than default capacity
+arr = Array(contents=range(15))  # capacity automatically set to 15
+```
+</CodeGroup>
+
+---
+
+## Methods
+
+### `append(element)`
+
+Append an element to the end of the array.
+
+<ParamField path="element" type="any" required>
+  The element to append to the array.
+</ParamField>
+
+**Raises:**
+- `Exception`: If the array is full and capacity is exceeded
+
+**Time Complexity:** O(1)
+
+**Space Complexity:** O(1)
+
+<CodeGroup>
+```python Example
+arr = Array(capacity=5)
+arr.append(10)
+arr.append(20)
+arr.append(30)
+print(arr)  # [10, 20, 30] Count: 3 Capacity: 5
+```
+
+```python Error Handling
+arr = Array(capacity=2)
+arr.append(1)
+arr.append(2)
+
+try:
+    arr.append(3)  # This will raise an exception
+except Exception as e:
+    print(e)  # "Capacity Error: Maximum capacity 2 reached."
+```
+</CodeGroup>
+
+---
+
+### `extend(array)`
+
+Append multiple elements from a given iterable.
+
+<ParamField path="array" type="iterable" required>
+  An iterable containing elements to append to the array.
+</ParamField>
+
+**Raises:**
+- `Exception`: If appending the elements exceeds the array's capacity
+
+**Time Complexity:** O(n) where n is the number of elements to add
+
+**Space Complexity:** O(1)
+
+<CodeGroup>
+```python Example
+arr = Array(capacity=10)
+arr.extend([1, 2, 3, 4, 5])
+print(arr)  # [1, 2, 3, 4, 5] Count: 5 Capacity: 10
+
+# Extend with another iterable
+arr.extend(range(6, 9))
+print(arr)  # [1, 2, 3, 4, 5, 6, 7, 8] Count: 8 Capacity: 10
+```
+</CodeGroup>
+
+---
+
+### `insert(index: int, element)`
+
+Insert an element at a specified index, shifting existing elements to the right.
+
+<ParamField path="index" type="int" required>
+  The index at which to insert the element. Must be between 0 and the current count (inclusive).
+</ParamField>
+
+<ParamField path="element" type="any" required>
+  The element to insert.
+</ParamField>
+
+**Raises:**
+- `IndexError`: If the index is out of bounds
+- `Exception`: If the array is full and cannot accommodate the shift
+
+**Time Complexity:** O(n) where n is the number of elements to shift
+
+**Space Complexity:** O(1)
+
+<CodeGroup>
+```python Example
+arr = Array(contents=[1, 2, 4, 5], capacity=10)
+arr.insert(2, 3)  # Insert 3 at index 2
+print(arr)  # [1, 2, 3, 4, 5] Count: 5 Capacity: 10
+
+# Insert at the beginning
+arr.insert(0, 0)
+print(arr)  # [0, 1, 2, 3, 4, 5] Count: 6 Capacity: 10
+```
+</CodeGroup>
+
+---
+
+### `delete(index: int)`
+
+Delete an element at a specified index, shifting subsequent elements to the left.
+
+<ParamField path="index" type="int" required>
+  The index of the element to delete. Must be between 0 and count - 1.
+</ParamField>
+
+**Raises:**
+- `IndexError`: If the index is out of bounds
+
+**Time Complexity:** O(n) where n is the number of elements to shift
+
+**Space Complexity:** O(1)
+
+<CodeGroup>
+```python Example
+arr = Array(contents=[1, 2, 3, 4, 5])
+arr.delete(2)  # Delete element at index 2
+print(arr)  # [1, 2, 4, 5] Count: 4 Capacity: 5
+
+# Delete the first element
+arr.delete(0)
+print(arr)  # [2, 4, 5] Count: 3 Capacity: 5
+```
+</CodeGroup>
+
+---
+
+### `shift_right(start: int)`
+
+Helper method to shift elements to the right from a specified start index until the last element. This is primarily used internally by the `insert` method.
+
+<ParamField path="start" type="int" required>
+  The index at which to start shifting (inclusive).
+</ParamField>
+
+**Raises:**
+- `Exception`: If the array is full and cannot accommodate the shift
+
+<Accordion title="Note">
+  This method may delete an element but does not affect the count. It is typically used internally and not called directly by users.
+</Accordion>
+
+**Time Complexity:** O(n) where n is the number of elements to shift
+
+**Space Complexity:** O(1)
+
+---
+
+### `shift_left(start: int)`
+
+Helper method to shift elements to the left starting at a start index. This is primarily used internally by the `delete` method.
+
+<ParamField path="start" type="int" required>
+  The starting index of the shift.
+</ParamField>
+
+<Accordion title="Note">
+  This method may delete an element but does not affect the count. It is typically used internally and not called directly by users.
+</Accordion>
+
+**Time Complexity:** O(n) where n is the number of elements to shift
+
+**Space Complexity:** O(1)
+
+---
+
+### `is_empty() -> bool`
+
+Check if the array is empty.
+
+<ResponseField name="return" type="bool">
+  Returns `True` if the array contains no elements, `False` otherwise.
+</ResponseField>
+
+**Time Complexity:** O(1)
+
+**Space Complexity:** O(1)
+
+<CodeGroup>
+```python Example
+arr = Array()
+print(arr.is_empty())  # True
+
+arr.append(1)
+print(arr.is_empty())  # False
+```
+</CodeGroup>
+
+---
+
+### `capacity() -> int`
+
+Get the total capacity of the array.
+
+<ResponseField name="return" type="int">
+  The maximum number of elements the array can hold.
+</ResponseField>
+
+**Time Complexity:** O(1)
+
+**Space Complexity:** O(1)
+
+<CodeGroup>
+```python Example
+arr = Array(capacity=20)
+print(arr.capacity())  # 20
+
+arr.append(1)
+print(arr.capacity())  # 20 (capacity doesn't change)
+print(len(arr))        # 1 (but count does)
+```
+</CodeGroup>
+
+---
+
+### `to_list() -> list`
+
+Convert the array's elements to a standard Python list.
+
+<ResponseField name="return" type="list">
+  A list containing only the active elements of the array (not including unused capacity).
+</ResponseField>
+
+**Time Complexity:** O(n) where n is the number of elements
+
+**Space Complexity:** O(n)
+
+<CodeGroup>
+```python Example
+arr = Array(contents=[1, 2, 3, 4, 5], capacity=10)
+py_list = arr.to_list()
+print(py_list)  # [1, 2, 3, 4, 5]
+print(type(py_list))  # <class 'list'>
+```
+</CodeGroup>
+
+---
+
+### `from_list(mylist: list)` (classmethod)
+
+Create an array from a standard Python list.
+
+<ParamField path="mylist" type="list" required>
+  A Python list to initialize the array with.
+</ParamField>
+
+<ResponseField name="return" type="Array">
+  An instance of the Array class with capacity equal to the length of the input list.
+</ResponseField>
+
+**Time Complexity:** O(n) where n is the length of the list
+
+**Space Complexity:** O(n)
+
+<CodeGroup>
+```python Example
+py_list = [10, 20, 30, 40, 50]
+arr = Array.from_list(py_list)
+print(arr)  # [10, 20, 30, 40, 50] Count: 5 Capacity: 5
+```
+</CodeGroup>
+
+---
+
+## Special Methods
+
+### `__getitem__(index: int)`
+
+Retrieve the element at the specified index. Enables the use of bracket notation `array[index]`.
+
+<ParamField path="index" type="int" required>
+  The index of the element to retrieve. Must be between 0 and count - 1.
+</ParamField>
+
+<ResponseField name="return" type="any">
+  The element at the specified index.
+</ResponseField>
+
+**Raises:**
+- `IndexError`: If the index is out of bounds
+
+**Time Complexity:** O(1)
+
+**Space Complexity:** O(1)
+
+<CodeGroup>
+```python Example
+arr = Array(contents=[10, 20, 30, 40, 50])
+print(arr[0])   # 10
+print(arr[2])   # 30
+print(arr[4])   # 50
+
+try:
+    print(arr[10])  # IndexError
+except IndexError:
+    print("Index out of bounds")
+```
+</CodeGroup>
+
+---
+
+### `__setitem__(index: int, value)`
+
+Set a new value at the specified index. Enables the use of bracket notation `array[index] = value`.
+
+<ParamField path="index" type="int" required>
+  The index at which to set the value. Must be between 0 and count - 1.
+</ParamField>
+
+<ParamField path="value" type="any" required>
+  The new value to assign.
+</ParamField>
+
+**Raises:**
+- `IndexError`: If the index is out of bounds
+
+**Time Complexity:** O(1)
+
+**Space Complexity:** O(1)
+
+<CodeGroup>
+```python Example
+arr = Array(contents=[10, 20, 30, 40, 50])
+arr[2] = 100
+print(arr)  # [10, 20, 100, 40, 50] Count: 5 Capacity: 5
+
+arr[0] = 5
+print(arr[0])  # 5
+```
+</CodeGroup>
+
+---
+
+### `__len__() -> int`
+
+Return the number of elements in the array. Enables the use of `len(array)`.
+
+<ResponseField name="return" type="int">
+  The number of active elements in the array (not the capacity).
+</ResponseField>
+
+**Time Complexity:** O(1)
+
+**Space Complexity:** O(1)
+
+<CodeGroup>
+```python Example
+arr = Array(capacity=20)
+print(len(arr))  # 0
+
+arr.append(1)
+arr.append(2)
+print(len(arr))  # 2
+```
+</CodeGroup>
+
+---
+
+### `__repr__() -> str`
+
+Represent the array's contents, count, and capacity as a string.
+
+<ResponseField name="return" type="str">
+  A string representation showing the array's elements, current count, and total capacity.
+</ResponseField>
+
+**Time Complexity:** O(n) where n is the number of elements
+
+**Space Complexity:** O(n)
+
+<CodeGroup>
+```python Example
+arr = Array(contents=[1, 2, 3], capacity=10)
+print(arr)  # [1, 2, 3] Count: 3 Capacity: 10
+```
+</CodeGroup>
+
+---
+
+### `__eq__(other) -> bool`
+
+Compare this array to another for equality.
+
+<ParamField path="other" type="any" required>
+  The object to compare with.
+</ParamField>
+
+<ResponseField name="return" type="bool | NotImplemented">
+  Returns `True` if both objects are `Array`, `DynamicArray`, or `CircularArray` instances and their contents are equal. For non-array types, returns `NotImplemented` to allow reverse comparison.
+</ResponseField>
+
+**Time Complexity:** O(n) where n is the number of elements
+
+**Space Complexity:** O(1)
+
+<CodeGroup>
+```python Example
+arr1 = Array(contents=[1, 2, 3])
+arr2 = Array(contents=[1, 2, 3])
+arr3 = Array(contents=[1, 2, 4])
+
+print(arr1 == arr2)  # True
+print(arr1 == arr3)  # False
+
+# Works with DynamicArray too
+from dsa.array import DynamicArray
+dyn_arr = DynamicArray(contents=[1, 2, 3])
+print(arr1 == dyn_arr)  # True
+```
+</CodeGroup>
+
+---
+
+## Attributes
+
+### `count`
+
+<ResponseField name="count" type="int">
+  The number of elements currently stored in the array. This is updated automatically when elements are added or removed.
+</ResponseField>
+
+<CodeGroup>
+```python Example
+arr = Array(capacity=10)
+print(arr.count)  # 0
+
+arr.append(1)
+print(arr.count)  # 1
+
+arr.extend([2, 3, 4])
+print(arr.count)  # 4
+```
+</CodeGroup>

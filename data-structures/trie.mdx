@@ -1,0 +1,378 @@
+---
+title: 'Trie'
+description: 'Prefix tree implementation for efficient string operations'
+icon: 'network-wired'
+---
+
+## Overview
+
+A Trie (pronounced "try"), also called a prefix tree or digital tree, is a tree-like data structure used for efficiently storing and retrieving strings. Each node represents a single character, and paths from the root to special end markers represent complete words.
+
+The UCX DSA package provides a complete `Trie` implementation with `TrieNode` for building efficient string-based systems.
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Autocomplete" icon="keyboard">
+    Implement search suggestions and autocomplete features
+  </Card>
+  <Card title="Spell Checking" icon="spell-check">
+    Validate words and suggest corrections efficiently
+  </Card>
+  <Card title="Prefix Matching" icon="filter">
+    Find all strings with a common prefix quickly
+  </Card>
+  <Card title="Dictionary" icon="book">
+    Store and search large vocabularies with shared prefixes
+  </Card>
+</CardGroup>
+
+## TrieNode Class
+
+The `TrieNode` class represents a single node in the trie.
+
+```python
+from dsa.trie import TrieNode
+
+# Each node contains a dictionary of children
+node = TrieNode()
+print(node.children)  # Output: {}
+
+# Children are stored as {character: TrieNode}
+node.children['a'] = TrieNode()
+node.children['b'] = TrieNode()
+```
+
+<Note>
+  The trie uses a special end marker (`"*"`) to indicate that a path represents a complete word.
+</Note>
+
+## Trie Class
+
+The `Trie` class provides the main interface for trie operations.
+
+### Creating a Trie
+
+```python
+from dsa.trie import Trie
+
+# Create an empty trie
+trie = Trie()
+
+# The root node is automatically created
+print(type(trie.root))  # <class 'dsa.trie.TrieNode'>
+```
+
+## Core Operations
+
+<Steps>
+  <Step title="Insert Words">
+    Add words to the trie. Each character becomes a node in the path.
+    
+    ```python
+    trie = Trie()
+    trie.insert("cat")
+    trie.insert("car")
+    trie.insert("card")
+    trie.insert("care")
+    trie.insert("careful")
+    trie.insert("dog")
+    ```
+    
+    <Info>
+      Words that share prefixes will share nodes in the trie, making it space-efficient for storing related words.
+    </Info>
+  </Step>
+  
+  <Step title="Search for Words">
+    Check if a complete word exists in the trie.
+    
+    ```python
+    # Search for complete words
+    print(trie.search("cat"))     # True
+    print(trie.search("car"))     # True
+    print(trie.search("ca"))      # False (prefix, not a complete word)
+    print(trie.search("cats"))    # False (not inserted)
+    print(trie.search(""))        # False (empty string)
+    ```
+    
+    <Warning>
+      `search()` returns `False` for prefixes that don't form complete words. Use `search_node()` for prefix checking.
+    </Warning>
+  </Step>
+  
+  <Step title="Search for Prefixes">
+    Find the node where a prefix ends.
+    
+    ```python
+    # Search for a prefix
+    node = trie.search_node("car")
+    if node:
+        print("Prefix 'car' exists")
+        # node.children contains possible continuations
+    else:
+        print("Prefix not found")
+    ```
+  </Step>
+  
+  <Step title="Delete Words">
+    Remove a word from the trie.
+    
+    ```python
+    # Delete a word
+    success = trie.delete("careful")
+    print(trie.search("careful"))  # False
+    print(trie.search("care"))     # True (not affected)
+    ```
+    
+    <Note>
+      The delete operation recursively removes nodes that are no longer needed, preserving other words.
+    </Note>
+  </Step>
+</Steps>
+
+## Advanced Operations
+
+### Prefix Matching
+
+Find all words that start with a given prefix:
+
+```python
+trie = Trie()
+words = ["cat", "car", "card", "care", "careful", "dog", "dodge", "door"]
+for word in words:
+    trie.insert(word)
+
+# Get all words starting with "car"
+matches = trie.prefix("car")
+print(matches)  # ['car', 'card', 'care', 'careful']
+
+# Get all words starting with "do"
+matches = trie.prefix("do")
+print(matches)  # ['dog', 'dodge', 'door']
+
+# Non-existent prefix
+matches = trie.prefix("xyz")
+print(matches)  # None
+```
+
+### Autocomplete / Suggestions
+
+The `suggest()` method provides fuzzy prefix matching by progressively removing characters:
+
+```python
+trie = Trie()
+for word in ["apple", "application", "apply", "banana", "band"]:
+    trie.insert(word)
+
+# Exact prefix exists
+suggestions = trie.suggest("app")
+print(suggestions)  # ['apple', 'application', 'apply']
+
+# Typo - will backtrack to find matches
+suggestions = trie.suggest("appx")  # 'x' doesn't exist
+print(suggestions)  # ['apple', 'application', 'apply'] (matches 'app')
+
+# Empty or None
+suggestions = trie.suggest("")
+print(suggestions)  # None
+```
+
+<Accordion title="How suggest() works">
+  The `suggest()` method recursively removes the last character until it finds a valid prefix:
+  1. Try to find words with prefix "appx" → not found
+  2. Try to find words with prefix "app" → found matches
+  3. Return the matches
+  
+  This is useful for handling typos in autocomplete systems.
+</Accordion>
+
+### List All Words
+
+Retrieve all words stored in the trie:
+
+```python
+trie = Trie()
+for word in ["cat", "car", "dog"]:
+    trie.insert(word)
+
+all_words = trie.list_words()
+print(all_words)  # ['car', 'cat', 'dog'] (sorted alphabetically)
+```
+
+## Deep Copy
+
+Create an independent copy of a trie:
+
+```python
+trie1 = Trie()
+trie1.insert("hello")
+trie1.insert("world")
+
+# Create a deep copy
+trie2 = trie1.copy()
+
+# Modifications to trie2 don't affect trie1
+trie2.insert("goodbye")
+
+print(trie1.search("goodbye"))  # False
+print(trie2.search("goodbye"))  # True
+print(trie1.search("hello"))    # True
+print(trie2.search("hello"))    # True
+```
+
+## Complete Example
+
+```python
+from dsa.trie import Trie
+
+# Create a dictionary trie
+dictionary = Trie()
+
+# Add words
+words = [
+    "algorithm", "array", "binary", "tree", "trie",
+    "graph", "heap", "hash", "stack", "queue"
+]
+
+for word in words:
+    dictionary.insert(word)
+
+print(f"Total words: {len(dictionary.list_words())}")
+
+# Search functionality
+print("\n=== Search ===")
+print(f"'trie' exists: {dictionary.search('trie')}")      # True
+print(f"'tri' exists: {dictionary.search('tri')}")        # False
+print(f"'python' exists: {dictionary.search('python')}")  # False
+
+# Autocomplete functionality
+print("\n=== Autocomplete ===")
+prefix = "tr"
+suggestions = dictionary.prefix(prefix)
+print(f"Words starting with '{prefix}': {suggestions}")
+# Output: ['tree', 'trie']
+
+# Spell check with suggestions
+print("\n=== Spell Check ===")
+user_input = "triex"
+if not dictionary.search(user_input):
+    suggestions = dictionary.suggest(user_input)
+    print(f"Did you mean: {suggestions}")
+    # Output: Did you mean: ['tree', 'trie']
+
+# Delete a word
+print("\n=== Delete ===")
+dictionary.delete("queue")
+print(f"'queue' exists after delete: {dictionary.search('queue')}")  # False
+
+# List all words
+print("\n=== All Words ===")
+print(dictionary.list_words())
+```
+
+## Visualization
+
+Visualize the trie structure using the `TrieDraw` class:
+
+```python
+from dsa.trie import Trie
+from dsa.draw import TrieDraw
+
+# Create and populate a trie
+trie = Trie()
+for word in ["cat", "car", "card", "dog", "dodge"]:
+    trie.insert(word)
+
+# Visualize the trie
+td = TrieDraw(trie)
+td.draw()  # Display the trie graph
+
+# Save to file
+td.save("my_trie.png")
+
+# Adjust figure size for larger tries
+td.set_figsize((12, 8))
+td.draw()
+```
+
+<Note>
+  The visualization shows each character as a node, with edges representing character transitions. End markers indicate complete words.
+</Note>
+
+## Comparison
+
+```python
+# Trie equality comparison
+trie1 = Trie()
+trie2 = Trie()
+
+for word in ["hello", "world"]:
+    trie1.insert(word)
+    trie2.insert(word)
+
+print(trie1 == trie2)  # True (same set of words)
+
+# Order doesn't matter
+trie3 = Trie()
+trie3.insert("world")
+trie3.insert("hello")
+
+print(trie1 == trie3)  # True (same words, different insertion order)
+```
+
+## Implementation Details
+
+<Accordion title="End Marker">
+  The trie uses a special character `"*"` (stored in `Trie.end_marker`) to mark the end of words. This allows the trie to distinguish between complete words and prefixes.
+  
+  ```python
+  print(Trie.end_marker)  # Output: *
+  ```
+</Accordion>
+
+<Accordion title="Storage Structure">
+  Each `TrieNode` stores its children in a dictionary:
+  ```python
+  node.children = {
+      'c': TrieNode(...),
+      'a': TrieNode(...),
+      't': TrieNode(...),
+      '*': None  # End marker
+  }
+  ```
+</Accordion>
+
+<Accordion title="Delete Implementation">
+  The `delete()` method uses post-order traversal to remove nodes safely:
+  1. Recursively traverse to the end of the word
+  2. Remove the end marker
+  3. On the way back, delete nodes that have no other children
+  4. Preserve nodes that are part of other words
+  
+  There's also a `delete_preorder()` method for demonstration purposes, but it should not be used in production.
+</Accordion>
+
+## Time Complexity
+
+| Operation      | Time Complexity | Space Complexity |
+|----------------|----------------|------------------|
+| insert(word)   | O(m)          | O(m)            |
+| search(word)   | O(m)          | O(1)            |
+| delete(word)   | O(m)          | O(1)            |
+| prefix(prefix) | O(m + n)      | O(n)            |
+| list_words()   | O(n)          | O(n)            |
+
+Where:
+- `m` = length of the word/prefix
+- `n` = total number of characters in all words with the given prefix
+
+<Info>
+  Tries excel at prefix-based operations, making them ideal for autocomplete systems where you need to find all words with a common prefix.
+</Info>
+
+## API Reference
+
+For detailed API documentation, see:
+- [TrieNode API Reference](/api-reference/dsa/trie-node)
+- [Trie API Reference](/api-reference/dsa/trie)

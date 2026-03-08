@@ -1,0 +1,532 @@
+---
+title: 'AdjacencyListWeightedGraph'
+description: 'A weighted adjacency list graph implementation'
+---
+
+## Overview
+
+The `AdjacencyListWeightedGraph` class represents a weighted graph using an adjacency list. It extends `AdjacencyListGraph` and stores each vertex with a dictionary mapping adjacent vertices to edge weights, making it space-efficient for sparse weighted graphs.
+
+## Constructor
+
+```python
+AdjacencyListWeightedGraph(directed=False, vertices=None)
+```
+
+<ParamField path="directed" type="bool" default="False">
+  Whether the graph is directed
+</ParamField>
+
+<ParamField path="vertices" type="list[str]" default="None">
+  List of vertex labels to initialize the graph with
+</ParamField>
+
+```python
+from dsa.graph import AdjacencyListWeightedGraph
+
+# Create empty weighted graph
+g = AdjacencyListWeightedGraph()
+
+# Create directed weighted graph
+g = AdjacencyListWeightedGraph(directed=True)
+
+# Create with initial vertices
+g = AdjacencyListWeightedGraph(vertices=['A', 'B', 'C'])
+```
+
+## Attributes
+
+<ResponseField name="is_directed" type="bool">
+  Whether the graph is directed
+</ResponseField>
+
+<ResponseField name="is_weighted" type="bool">
+  Whether the graph is weighted (always True)
+</ResponseField>
+
+## Methods
+
+### add_edge
+
+Add a weighted edge between two vertices.
+
+```python
+add_edge(start_label: str, end_label: str, weight, directed=None)
+```
+
+<ParamField path="start_label" type="str" required>
+  Starting vertex label
+</ParamField>
+
+<ParamField path="end_label" type="str" required>
+  Ending vertex label
+</ParamField>
+
+<ParamField path="weight" type="numeric" required>
+  The weight of the edge
+</ParamField>
+
+<ParamField path="directed" type="bool" default="None">
+  Override the graph's default directed behavior. If None, uses `self.is_directed`
+</ParamField>
+
+```python
+g = AdjacencyListWeightedGraph()
+
+# Add weighted edges
+g.add_edge('A', 'B', 5)
+g.add_edge('B', 'C', 10)
+g.add_edge('A', 'C', 15)
+
+# Add directed edge in undirected graph
+g.add_edge('C', 'D', 7, directed=True)
+
+# Vertices are auto-created if they don't exist
+g.add_edge('E', 'F', 20)
+```
+
+### delete_edge
+
+Delete a weighted edge between two vertices.
+
+```python
+delete_edge(start_label: str, end_label: str, directed=None)
+```
+
+<ParamField path="start_label" type="str" required>
+  Starting vertex label
+</ParamField>
+
+<ParamField path="end_label" type="str" required>
+  Ending vertex label
+</ParamField>
+
+<ParamField path="directed" type="bool" default="None">
+  Override the graph's default directed behavior. If None, uses `self.is_directed`
+</ParamField>
+
+**Raises:** `KeyError` if either vertex or the edge does not exist
+
+```python
+g = AdjacencyListWeightedGraph()
+g.add_edge('A', 'B', 5)
+g.delete_edge('A', 'B')
+```
+
+### get_weight
+
+Get the weight of an edge between two vertices.
+
+```python
+get_weight(start_label: str, end_label: str) -> numeric
+```
+
+<ParamField path="start_label" type="str" required>
+  Starting vertex label
+</ParamField>
+
+<ParamField path="end_label" type="str" required>
+  Ending vertex label
+</ParamField>
+
+<ResponseField name="return" type="numeric">
+  The weight of the edge from start to end
+</ResponseField>
+
+```python
+g = AdjacencyListWeightedGraph()
+g.add_edge('A', 'B', 5)
+weight = g.get_weight('A', 'B')
+print(weight)  # 5
+```
+
+### adjacents
+
+Get a list of adjacent vertices for a given vertex.
+
+```python
+adjacents(vertex: str) -> list
+```
+
+<ParamField path="vertex" type="str" required>
+  The vertex label
+</ParamField>
+
+<ResponseField name="return" type="list[str]">
+  List of adjacent vertex labels (without weights)
+</ResponseField>
+
+```python
+g = AdjacencyListWeightedGraph()
+g.add_edge('A', 'B', 5)
+g.add_edge('A', 'C', 10)
+print(g.adjacents('A'))  # ['B', 'C']
+```
+
+### adjacent_items
+
+Get a list of adjacent vertices with their edge weights.
+
+```python
+adjacent_items(vertex: str) -> dict_items
+```
+
+<ParamField path="vertex" type="str" required>
+  The vertex label
+</ParamField>
+
+<ResponseField name="return" type="dict_items">
+  Dictionary items view of `(neighbor_label, weight)` pairs
+</ResponseField>
+
+```python
+g = AdjacencyListWeightedGraph()
+g.add_edge('A', 'B', 5)
+g.add_edge('A', 'C', 10)
+
+for neighbor, weight in g.adjacent_items('A'):
+    print(f"{neighbor}: {weight}")
+# Output:
+# B: 5
+# C: 10
+```
+
+### edges
+
+Get a list of all weighted edges in the graph.
+
+```python
+edges() -> list
+```
+
+<ResponseField name="return" type="list[tuple]">
+  List of edges, each represented as a tuple `(start, end, weight)`
+</ResponseField>
+
+```python
+g = AdjacencyListWeightedGraph()
+g.add_edge('A', 'B', 5)
+g.add_edge('B', 'C', 10)
+print(g.edges())  # [('A', 'B', 5), ('B', 'A', 5), ('B', 'C', 10), ('C', 'B', 10)]
+```
+
+### undirected_edges
+
+Get a list of weighted edges without duplicates for undirected graphs.
+
+```python
+undirected_edges() -> list
+```
+
+<ResponseField name="return" type="list[tuple]">
+  List of unique weighted edges, each represented as a tuple `(start, end, weight)`
+</ResponseField>
+
+```python
+g = AdjacencyListWeightedGraph()
+g.add_edge('A', 'B', 5)
+g.add_edge('B', 'C', 10)
+print(g.undirected_edges())  # [('A', 'B', 5), ('B', 'C', 10)]
+```
+
+## Class Methods
+
+### from_dict
+
+Create a weighted graph from a dictionary representation.
+
+```python
+@classmethod
+from_dict(data: dict, directed: bool = False) -> AdjacencyListWeightedGraph
+```
+
+<ParamField path="data" type="dict" required>
+  Dictionary where keys are vertices and values are dictionaries mapping neighbors to weights
+</ParamField>
+
+<ParamField path="directed" type="bool" default="False">
+  Whether the graph is directed
+</ParamField>
+
+<ResponseField name="return" type="AdjacencyListWeightedGraph">
+  A new weighted graph instance
+</ResponseField>
+
+```python
+data = {
+    'A': {'B': 5, 'C': 10},
+    'B': {'A': 5, 'D': 15},
+    'C': {'A': 10},
+    'D': {'B': 15}
+}
+g = AdjacencyListWeightedGraph.from_dict(data)
+```
+
+## Special Methods
+
+### \_\_getitem\_\_
+
+Get adjacent vertices and weights using bracket notation.
+
+```python
+g = AdjacencyListWeightedGraph()
+g.add_edge('A', 'B', 5)
+g.add_edge('A', 'C', 10)
+print(g['A'])  # {'B': 5, 'C': 10}
+```
+
+### \_\_len\_\_
+
+Get the number of vertices.
+
+```python
+g = AdjacencyListWeightedGraph(vertices=['A', 'B', 'C'])
+print(len(g))  # 3
+```
+
+## Inherited Methods
+
+The following methods are inherited from `AdjacencyListGraph`:
+
+- `add_vertex(label)` - Add a vertex
+- `delete_vertex(label)` - Delete a vertex
+- `has_vertex(label)` - Check if vertex exists
+- `has_edge(start, end)` - Check if edge exists
+- `vertices()` - Get all vertices
+- `order()` - Get number of vertices
+- `size()` - Get number of edges
+- `to_dict()` - Convert to dictionary (returns weighted format)
+- `__contains__(label)` - Check vertex membership
+
+## Complete Examples
+
+<CodeGroup>
+
+```python Shortest Path (Dijkstra)
+from dsa.graph import AdjacencyListWeightedGraph
+import sys
+
+# Create city road network
+g = AdjacencyListWeightedGraph()
+
+g.add_edge('Seattle', 'Portland', 173)
+g.add_edge('Seattle', 'Vancouver', 140)
+g.add_edge('Portland', 'Eugene', 110)
+g.add_edge('Vancouver', 'Kelowna', 390)
+g.add_edge('Eugene', 'Medford', 165)
+g.add_edge('Kelowna', 'Calgary', 610)
+
+def dijkstra(graph, start, end):
+    distances = {v: sys.maxsize for v in graph.vertices()}
+    distances[start] = 0
+    previous = {v: None for v in graph.vertices()}
+    unvisited = set(graph.vertices())
+    
+    while unvisited:
+        # Find minimum distance vertex
+        current = min(unvisited, key=lambda v: distances[v])
+        
+        if distances[current] == sys.maxsize:
+            break
+        
+        unvisited.remove(current)
+        
+        if current == end:
+            break
+        
+        # Update neighbor distances
+        for neighbor, weight in graph.adjacent_items(current):
+            if neighbor in unvisited:
+                new_distance = distances[current] + weight
+                if new_distance < distances[neighbor]:
+                    distances[neighbor] = new_distance
+                    previous[neighbor] = current
+    
+    # Reconstruct path
+    path = []
+    current = end
+    while current is not None:
+        path.insert(0, current)
+        current = previous[current]
+    
+    return path, distances[end]
+
+path, distance = dijkstra(g, 'Seattle', 'Medford')
+print(f"Shortest route: {' -> '.join(path)}")
+print(f"Total distance: {distance} miles")
+```
+
+```python Flight Routes (Directed Weighted)
+from dsa.graph import AdjacencyListWeightedGraph
+
+# Create flight network with costs
+g = AdjacencyListWeightedGraph(directed=True)
+
+# Add flights (one-way with different costs)
+g.add_edge('NYC', 'LAX', 350)
+g.add_edge('LAX', 'NYC', 380)
+g.add_edge('NYC', 'ORD', 150)
+g.add_edge('ORD', 'NYC', 160)
+g.add_edge('ORD', 'LAX', 200)
+g.add_edge('LAX', 'ORD', 220)
+g.add_edge('LAX', 'SFO', 80)
+g.add_edge('SFO', 'LAX', 85)
+g.add_edge('SFO', 'ORD', 250)
+
+def find_cheapest_routes_from(graph, city):
+    """Find all direct flights from a city sorted by cost."""
+    routes = []
+    for destination, cost in graph.adjacent_items(city):
+        routes.append((destination, cost))
+    return sorted(routes, key=lambda x: x[1])
+
+print("Cheapest flights from LAX:")
+for dest, cost in find_cheapest_routes_from(g, 'LAX'):
+    print(f"  {dest}: ${cost}")
+
+# Find all routes with one layover
+def find_one_stop_routes(graph, start, end):
+    """Find all routes from start to end with exactly one stop."""
+    routes = []
+    for middle in graph.adjacents(start):
+        if graph.has_edge(middle, end):
+            cost = graph.get_weight(start, middle) + graph.get_weight(middle, end)
+            routes.append((start, middle, end, cost))
+    return sorted(routes, key=lambda x: x[3])
+
+print("\nOne-stop routes NYC to LAX:")
+for route in find_one_stop_routes(g, 'NYC', 'LAX'):
+    start, middle, end, cost = route
+    print(f"  {start} -> {middle} -> {end}: ${cost}")
+```
+
+```python Network Routing
+from dsa.graph import AdjacencyListWeightedGraph
+from collections import defaultdict
+
+# Create network with latencies (ms)
+g = AdjacencyListWeightedGraph()
+
+g.add_edge('Router1', 'Router2', 5)
+g.add_edge('Router1', 'Router3', 10)
+g.add_edge('Router2', 'Router4', 8)
+g.add_edge('Router3', 'Router4', 3)
+g.add_edge('Router2', 'Router5', 15)
+g.add_edge('Router4', 'Router5', 6)
+
+# Find all paths with total latency
+def find_all_paths_weighted(graph, start, end, path=None, weight=0):
+    if path is None:
+        path = []
+    path = path + [start]
+    
+    if start == end:
+        return [(path, weight)]
+    
+    paths = []
+    for neighbor, edge_weight in graph.adjacent_items(start):
+        if neighbor not in path:
+            new_paths = find_all_paths_weighted(
+                graph, neighbor, end, path, weight + edge_weight
+            )
+            paths.extend(new_paths)
+    
+    return paths
+
+all_paths = find_all_paths_weighted(g, 'Router1', 'Router5')
+print("All paths from Router1 to Router5:")
+for path, latency in sorted(all_paths, key=lambda x: x[1]):
+    print(f"  {' -> '.join(path)}: {latency}ms")
+
+# Find k shortest paths
+def k_shortest_paths(graph, start, end, k=3):
+    all_paths = find_all_paths_weighted(graph, start, end)
+    sorted_paths = sorted(all_paths, key=lambda x: x[1])
+    return sorted_paths[:k]
+
+print(f"\n{3} shortest paths:")
+for i, (path, latency) in enumerate(k_shortest_paths(g, 'Router1', 'Router5', 3), 1):
+    print(f"{i}. {' -> '.join(path)}: {latency}ms")
+```
+
+```python Minimum Spanning Tree (Prim's Algorithm)
+from dsa.graph import AdjacencyListWeightedGraph
+import sys
+
+# Create graph
+g = AdjacencyListWeightedGraph()
+
+g.add_edge('A', 'B', 4)
+g.add_edge('A', 'H', 8)
+g.add_edge('B', 'C', 8)
+g.add_edge('B', 'H', 11)
+g.add_edge('C', 'D', 7)
+g.add_edge('C', 'F', 4)
+g.add_edge('C', 'I', 2)
+g.add_edge('D', 'E', 9)
+g.add_edge('D', 'F', 14)
+g.add_edge('E', 'F', 10)
+g.add_edge('F', 'G', 2)
+g.add_edge('G', 'H', 1)
+g.add_edge('G', 'I', 6)
+g.add_edge('H', 'I', 7)
+
+def prims_mst(graph):
+    """Find minimum spanning tree using Prim's algorithm."""
+    start = graph.vertices()[0]
+    visited = {start}
+    mst_edges = []
+    total_weight = 0
+    
+    while len(visited) < len(graph.vertices()):
+        min_edge = None
+        min_weight = sys.maxsize
+        
+        # Find minimum weight edge connecting visited to unvisited
+        for v in visited:
+            for neighbor, weight in graph.adjacent_items(v):
+                if neighbor not in visited and weight < min_weight:
+                    min_weight = weight
+                    min_edge = (v, neighbor, weight)
+        
+        if min_edge:
+            start, end, weight = min_edge
+            mst_edges.append(min_edge)
+            total_weight += weight
+            visited.add(end)
+    
+    return mst_edges, total_weight
+
+mst, total = prims_mst(g)
+print("Minimum Spanning Tree:")
+for start, end, weight in mst:
+    print(f"  {start} - {end}: {weight}")
+print(f"Total weight: {total}")
+```
+
+</CodeGroup>
+
+## Performance
+
+- **Space Complexity:** O(V + E) where V = vertices, E = edges
+- **Add Vertex:** O(1)
+- **Delete Vertex:** O(V + E)
+- **Add Edge:** O(1) average case
+- **Delete Edge:** O(1) average case (dictionary deletion)
+- **Has Edge:** O(1) average case
+- **Get Weight:** O(1) average case
+- **Get Adjacents:** O(1)
+- **Get Adjacent Items:** O(1)
+- **Get All Edges:** O(V + E)
+
+## Notes
+
+- Best for sparse weighted graphs where E is much less than V²
+- More space-efficient than weighted adjacency matrix
+- Fast edge weight lookups using dictionary structure
+- Weights can be any numeric type (int, float, etc.)
+- Vertex labels must be strings
+- Ideal for shortest path algorithms (Dijkstra, Bellman-Ford)
+- Good for minimum spanning tree algorithms (Prim, Kruskal)
+- For undirected graphs, edge weights are stored in both directions
+- Adjacent items are stored as dictionary items for efficient iteration

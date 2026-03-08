@@ -1,0 +1,355 @@
+---
+title: 'Heap'
+description: 'Max Heap, Min Heap, and Priority Queue implementations'
+icon: 'layer-group'
+---
+
+## Overview
+
+The UCX DSA package provides three heap-based data structures:
+- **Heap** - A max heap implementation
+- **MinHeap** - A min heap implementation
+- **PriorityQueue** - A priority queue built on top of MinHeap
+
+Heaps are complete binary trees that maintain the heap property: in a max heap, each parent node is greater than or equal to its children; in a min heap, each parent is less than or equal to its children.
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Priority Queues" icon="list-ol">
+    Process items based on priority rather than insertion order
+  </Card>
+  <Card title="Heap Sort" icon="arrow-down-a-z">
+    Efficient in-place sorting algorithm with O(n log n) complexity
+  </Card>
+  <Card title="Top K Elements" icon="trophy">
+    Find the k largest or smallest elements efficiently
+  </Card>
+  <Card title="Task Scheduling" icon="calendar-check">
+    Schedule tasks based on priority or deadline
+  </Card>
+</CardGroup>
+
+## Heap Class (Max Heap)
+
+The `Heap` class implements a max heap where the largest element is always at the root.
+
+### Creating a Heap
+
+<CodeGroup>
+```python Empty Heap
+from dsa.heap import Heap
+
+# Create an empty heap
+heap = Heap()
+```
+
+```python From List
+from dsa.heap import Heap
+
+# Create a heap from a list
+heap = Heap.from_list([5, 3, 8, 1, 9, 2])
+print(heap.peek())  # Output: 9 (max value)
+```
+</CodeGroup>
+
+### Core Operations
+
+<Steps>
+  <Step title="Insert Elements">
+    Add elements to the heap while maintaining the heap property.
+    
+    ```python
+    heap = Heap()
+    heap.insert(10)
+    heap.insert(20)
+    heap.insert(5)
+    heap.insert(30)
+    
+    print(heap.peek())  # Output: 30 (max value at root)
+    ```
+  </Step>
+  
+  <Step title="Extract Maximum">
+    Remove and return the maximum element (root).
+    
+    ```python
+    max_val = heap.pop()
+    print(max_val)  # Output: 30
+    
+    # Alternative method name
+    max_val = heap.extract_max()
+    ```
+    
+    <Note>
+      After extraction, the heap automatically restructures to maintain the heap property.
+    </Note>
+  </Step>
+  
+  <Step title="Peek at Root">
+    View the maximum element without removing it.
+    
+    ```python
+    top = heap.peek()
+    print(top)  # Returns max value without removing it
+    ```
+  </Step>
+</Steps>
+
+### Navigation Methods
+
+The heap is stored as an array with parent-child relationships:
+
+```python
+heap = Heap.from_list([10, 20, 30, 40, 50])
+
+# Get child indices
+left_idx = heap.left_index(0)   # Left child of root
+right_idx = heap.right_index(0)  # Right child of root
+
+# Get parent index
+parent_idx = heap.parent_index(2)  # Parent of node at index 2
+
+# Check for children
+has_left = heap.has_left(0)   # Returns True if left child exists
+has_right = heap.has_right(0)  # Returns True if right child exists
+```
+
+### Heapify Operations
+
+<Accordion title="heapify_up(index)">
+  Moves an element up the tree until the heap property is restored.
+  
+  ```python
+  # Called automatically during insert
+  heap.heapify_up(len(heap) - 1)
+  ```
+  
+  Used after inserting an element at the end of the array.
+</Accordion>
+
+<Accordion title="heapify_down(index)">
+  Moves an element down the tree until the heap property is restored.
+  
+  ```python
+  # Called automatically during pop
+  heap.heapify_down(0)
+  ```
+  
+  Used after removing the root element.
+</Accordion>
+
+### Utility Methods
+
+```python
+heap = Heap.from_list([5, 3, 8, 1, 9])
+
+# Check if empty
+if heap.is_empty():
+    print("Heap is empty")
+
+# Get count
+count = heap.count()
+print(f"Heap has {count} elements")
+
+# Or use len()
+print(len(heap))  # Same as count()
+
+# View raw array representation
+array = heap.raw_view()
+print(array)  # [9, 5, 8, 1, 3]
+
+# Get sorted list (non-destructive)
+sorted_list = heap.to_sorted_list()
+print(sorted_list)  # [9, 8, 5, 3, 1] (descending)
+```
+
+## MinHeap Class
+
+The `MinHeap` class extends `Heap` to implement a min heap where the smallest element is at the root.
+
+```python
+from dsa.heap import MinHeap
+
+# Create a min heap
+min_heap = MinHeap()
+min_heap.insert(10)
+min_heap.insert(5)
+min_heap.insert(20)
+min_heap.insert(3)
+
+print(min_heap.peek())  # Output: 3 (min value)
+
+# Extract minimum
+min_val = min_heap.extract_min()
+print(min_val)  # Output: 3
+
+# Create from list
+min_heap = MinHeap.from_list([8, 3, 10, 1, 6])
+print(min_heap.peek())  # Output: 1
+```
+
+<Note>
+  `MinHeap` overrides the `heapify_up()` and `heapify_down()` methods to maintain the min heap property instead of max heap property.
+</Note>
+
+## PriorityQueue Class
+
+The `PriorityQueue` class is built on top of `MinHeap` and stores (priority, item) pairs. Lower priority values are extracted first.
+
+### Basic Usage
+
+```python
+from dsa.heap import PriorityQueue
+
+# Create a priority queue
+pq = PriorityQueue()
+
+# Push items with priorities
+pq.push(priority=3, item="Low priority task")
+pq.push(priority=1, item="High priority task")
+pq.push(priority=2, item="Medium priority task")
+
+# Pop returns only the item (not the priority)
+item = pq.pop()
+print(item)  # Output: "High priority task" (priority 1)
+
+# Pop with priority
+priority, item = pq.pop_pair()
+print(f"Priority: {priority}, Item: {item}")
+# Output: Priority: 2, Item: Medium priority task
+```
+
+### Peek Operations
+
+<CodeGroup>
+```python Item Only
+# Peek at highest priority item
+item = pq.peek()
+print(item)  # Returns item without removing it
+```
+
+```python Item with Priority
+# Peek at highest priority item and its priority
+priority, item = pq.peek_pair()
+print(f"Next: {item} (priority {priority})")
+```
+</CodeGroup>
+
+### Real-World Example
+
+```python
+from dsa.heap import PriorityQueue
+
+# Task scheduling system
+task_queue = PriorityQueue()
+
+# Add tasks with priorities (1 = highest)
+task_queue.push(priority=2, item="Write documentation")
+task_queue.push(priority=1, item="Fix critical bug")
+task_queue.push(priority=3, item="Update dependencies")
+task_queue.push(priority=1, item="Security patch")
+
+# Process tasks by priority
+while not task_queue.is_empty():
+    priority, task = task_queue.pop_pair()
+    print(f"Processing (priority {priority}): {task}")
+
+# Output:
+# Processing (priority 1): Fix critical bug
+# Processing (priority 1): Security patch
+# Processing (priority 2): Write documentation
+# Processing (priority 3): Update dependencies
+```
+
+## Visualization
+
+Visualize heaps as binary trees using the `HeapDraw` class:
+
+```python
+from dsa.heap import Heap
+from dsa.draw import HeapDraw
+
+# Create and populate a heap
+heap = Heap.from_list([50, 30, 70, 20, 40, 60, 80])
+
+# Visualize the heap
+hd = HeapDraw(heap)
+hd.draw()  # Display the heap as a tree
+
+# Save to file
+hd.save("my_heap.png")
+
+# Adjust figure size
+hd.set_figsize((8, 6))
+hd.draw()
+```
+
+<Note>
+  The visualization converts the array-based heap into a tree structure for better understanding of the heap property.
+</Note>
+
+## Complete Example
+
+```python
+from dsa.heap import Heap, MinHeap, PriorityQueue
+
+# Max Heap Example
+print("=== Max Heap ===")
+max_heap = Heap.from_list([3, 1, 4, 1, 5, 9, 2, 6])
+print(f"Max element: {max_heap.peek()}")
+print(f"Sorted (desc): {max_heap.to_sorted_list()}")
+
+# Min Heap Example
+print("\n=== Min Heap ===")
+min_heap = MinHeap.from_list([3, 1, 4, 1, 5, 9, 2, 6])
+print(f"Min element: {min_heap.peek()}")
+print(f"Raw array: {min_heap.raw_view()}")
+
+# Priority Queue Example
+print("\n=== Priority Queue ===")
+pq = PriorityQueue()
+pq.push(5, "Task E")
+pq.push(1, "Task A")
+pq.push(3, "Task C")
+
+while not pq.is_empty():
+    priority, task = pq.pop_pair()
+    print(f"{task} (priority: {priority})")
+```
+
+## Comparison
+
+```python
+# Heap equality comparison
+heap1 = Heap.from_list([1, 2, 3])
+heap2 = Heap.from_list([1, 2, 3])
+
+print(heap1 == heap2)  # True (same internal array)
+
+# Note: Compares raw array representation, not logical heap structure
+```
+
+## Time Complexity
+
+| Operation      | Time Complexity |
+|----------------|----------------|
+| insert()       | O(log n)       |
+| pop()          | O(log n)       |
+| peek()         | O(1)           |
+| heapify_up()   | O(log n)       |
+| heapify_down() | O(log n)       |
+| from_list()    | O(n log n)     |
+| is_empty()     | O(1)           |
+| count()        | O(1)           |
+
+<Info>
+  All heap operations maintain O(log n) complexity by keeping the tree height minimal through the complete binary tree property.
+</Info>
+
+## API Reference
+
+For detailed API documentation, see:
+- [Heap API Reference](/api-reference/dsa/heap)
+- [MinHeap API Reference](/api-reference/dsa/min-heap)
+- [PriorityQueue API Reference](/api-reference/dsa/priority-queue)

@@ -1,0 +1,341 @@
+---
+title: 'HashSet'
+description: 'A set implementation using a hash table for storage'
+---
+
+## Overview
+
+The `HashSet` class provides a set data structure that stores unique elements. It is implemented using the `HashTable` class internally and provides O(1) average-case performance for insertions, deletions, and membership tests.
+
+## Constructor
+
+<ParamField path="capacity" type="int" default="10">
+  The initial capacity of the underlying hash table
+</ParamField>
+
+```python
+from dsa.hashset import HashSet
+
+# Create a hash set with default capacity
+hs = HashSet()
+
+# Create a hash set with custom capacity
+hs = HashSet(capacity=50)
+```
+
+## Methods
+
+### add
+
+Add an item to the set. If the item already exists, this operation has no effect.
+
+```python
+add(item)
+```
+
+<ParamField path="item" type="any">
+  The item to add to the set
+</ParamField>
+
+```python
+hs = HashSet()
+hs.add("apple")
+hs.add("banana")
+hs.add("apple")  # No effect, already exists
+```
+
+### remove
+
+Remove an item from the set.
+
+```python
+remove(item)
+```
+
+<ParamField path="item" type="any">
+  The item to remove from the set
+</ParamField>
+
+**Raises:** `KeyError` if the item is not found in the set
+
+```python
+hs = HashSet()
+hs.add("apple")
+hs.remove("apple")  # Removes the item
+
+try:
+    hs.remove("missing")
+except KeyError as e:
+    print(f"Item not found: {e}")
+```
+
+### contains
+
+Check if an item is in the set.
+
+```python
+contains(item) -> bool
+```
+
+<ParamField path="item" type="any">
+  The item to check for
+</ParamField>
+
+<ResponseField name="return" type="bool">
+  `True` if the item is in the set, `False` otherwise
+</ResponseField>
+
+```python
+hs = HashSet()
+hs.add("apple")
+print(hs.contains("apple"))  # True
+print(hs.contains("banana"))  # False
+```
+
+### to_list
+
+Convert the hash set to a list.
+
+```python
+to_list() -> list
+```
+
+<ResponseField name="return" type="list">
+  A list containing all items in the set
+</ResponseField>
+
+```python
+hs = HashSet()
+hs.add("apple")
+hs.add("banana")
+hs.add("cherry")
+
+items = hs.to_list()
+print(items)  # ['apple', 'banana', 'cherry'] (order may vary)
+```
+
+## Class Methods
+
+### from_list
+
+Construct a hash set from an iterable.
+
+```python
+@classmethod
+from_list(iterable=None) -> HashSet
+```
+
+<ParamField path="iterable" type="iterable" default="None">
+  An optional iterable of initial elements
+</ParamField>
+
+<ResponseField name="return" type="HashSet">
+  A new HashSet instance containing the elements from the iterable
+</ResponseField>
+
+```python
+# Create from list
+hs = HashSet.from_list(["apple", "banana", "cherry"])
+
+# Create from tuple
+hs = HashSet.from_list(("x", "y", "z"))
+
+# Create from generator
+hs = HashSet.from_list(x for x in range(10))
+
+# Create empty set
+hs = HashSet.from_list()
+```
+
+## Special Methods
+
+### \_\_len\_\_
+
+Get the number of items in the set.
+
+```python
+hs = HashSet()
+hs.add("apple")
+hs.add("banana")
+print(len(hs))  # 2
+```
+
+### \_\_contains\_\_
+
+Check if an item is in the set using the `in` operator.
+
+```python
+hs = HashSet()
+hs.add("apple")
+print("apple" in hs)  # True
+print("banana" in hs)  # False
+```
+
+### \_\_iter\_\_
+
+Iterate over the items in the set.
+
+```python
+hs = HashSet()
+hs.add("apple")
+hs.add("banana")
+hs.add("cherry")
+
+for item in hs:
+    print(item)
+```
+
+### \_\_eq\_\_
+
+Check if two sets are equal.
+
+```python
+hs1 = HashSet()
+hs1.add("apple")
+hs1.add("banana")
+
+hs2 = HashSet()
+hs2.add("banana")
+hs2.add("apple")
+
+print(hs1 == hs2)  # True
+```
+
+### \_\_repr\_\_
+
+Get a string representation of the set.
+
+```python
+hs = HashSet()
+hs.add("apple")
+hs.add("banana")
+print(hs)  # HashSet(['apple', 'banana'])
+```
+
+## Complete Example
+
+<CodeGroup>
+
+```python Basic Usage
+from dsa.hashset import HashSet
+
+# Create a hash set
+hs = HashSet()
+
+# Add items
+hs.add("apple")
+hs.add("banana")
+hs.add("cherry")
+hs.add("apple")  # Duplicate, no effect
+
+# Check membership
+if "apple" in hs:
+    print("Apple is in the set")
+
+# Remove item
+hs.remove("banana")
+
+# Get size
+print(f"Set size: {len(hs)}")  # 2
+
+# Iterate over items
+for item in hs:
+    print(item)
+
+# Convert to list
+items = hs.to_list()
+print(items)
+```
+
+```python Set Operations
+from dsa.hashset import HashSet
+
+# Create sets from lists
+set1 = HashSet.from_list([1, 2, 3, 4, 5])
+set2 = HashSet.from_list([4, 5, 6, 7, 8])
+
+# Manual union
+union = HashSet()
+for item in set1:
+    union.add(item)
+for item in set2:
+    union.add(item)
+print(f"Union: {union.to_list()}")  # [1, 2, 3, 4, 5, 6, 7, 8]
+
+# Manual intersection
+intersection = HashSet()
+for item in set1:
+    if item in set2:
+        intersection.add(item)
+print(f"Intersection: {intersection.to_list()}")  # [4, 5]
+
+# Manual difference
+difference = HashSet()
+for item in set1:
+    if item not in set2:
+        difference.add(item)
+print(f"Difference: {difference.to_list()}")  # [1, 2, 3]
+```
+
+```python Removing Duplicates
+from dsa.hashset import HashSet
+
+# Remove duplicates from a list
+data = [1, 2, 2, 3, 4, 4, 4, 5, 1, 2]
+hs = HashSet.from_list(data)
+unique_items = hs.to_list()
+print(unique_items)  # [1, 2, 3, 4, 5]
+
+# Count unique words in text
+text = "the quick brown fox jumps over the lazy dog"
+words = text.split()
+word_set = HashSet.from_list(words)
+print(f"Unique words: {len(word_set)}")  # 8
+```
+
+```python Membership Testing
+from dsa.hashset import HashSet
+
+# Track visited URLs
+visited = HashSet()
+
+urls = [
+    "https://example.com",
+    "https://example.com/page1",
+    "https://example.com",  # Duplicate
+    "https://example.com/page2",
+    "https://example.com/page1",  # Duplicate
+]
+
+for url in urls:
+    if url not in visited:
+        print(f"Visiting: {url}")
+        visited.add(url)
+    else:
+        print(f"Already visited: {url}")
+
+print(f"Total unique URLs: {len(visited)}")  # 3
+```
+
+</CodeGroup>
+
+## Performance
+
+- **Average Case:**
+  - Add: O(1)
+  - Remove: O(1)
+  - Contains: O(1)
+
+- **Worst Case:**
+  - Add: O(n)
+  - Remove: O(n)
+  - Contains: O(n)
+
+## Notes
+
+- The HashSet internally uses a `HashTable` to store items
+- All items are stored as keys in the underlying hashtable with `True` as the value
+- The set does not maintain insertion order
+- Items must be hashable (the `HashTable` converts them to strings for hashing)
+- The capacity parameter controls the initial size of the underlying hashtable
+- When creating from an iterable, the capacity is automatically set to `len(iterable) * 2` for better performance

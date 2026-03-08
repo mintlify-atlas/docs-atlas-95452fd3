@@ -1,0 +1,473 @@
+---
+title: 'AdjacencyMatrixWeightedGraph'
+description: 'A weighted adjacency matrix graph implementation'
+---
+
+## Overview
+
+The `AdjacencyMatrixWeightedGraph` class represents a weighted graph using an adjacency matrix. It extends `AdjacencyMatrixGraph` and stores edge weights as numeric values in a 2D matrix. Supports both directed and undirected graphs.
+
+## Constructor
+
+```python
+AdjacencyMatrixWeightedGraph(directed=False, vertices=None)
+```
+
+<ParamField path="directed" type="bool" default="False">
+  Whether the graph is directed
+</ParamField>
+
+<ParamField path="vertices" type="list[str]" default="None">
+  List of vertex labels to initialize the graph with
+</ParamField>
+
+**Raises:** `ValueError` if duplicate vertex labels are provided
+
+```python
+from dsa.graph import AdjacencyMatrixWeightedGraph
+
+# Create empty weighted graph
+g = AdjacencyMatrixWeightedGraph()
+
+# Create directed weighted graph
+g = AdjacencyMatrixWeightedGraph(directed=True)
+
+# Create with initial vertices
+g = AdjacencyMatrixWeightedGraph(vertices=['A', 'B', 'C'])
+```
+
+## Attributes
+
+<ResponseField name="is_directed" type="bool">
+  Whether the graph is directed
+</ResponseField>
+
+<ResponseField name="is_weighted" type="bool">
+  Whether the graph is weighted (always True)
+</ResponseField>
+
+<ResponseField name="labels" type="list[str]">
+  List of all vertex labels in the graph
+</ResponseField>
+
+## Methods
+
+### add_edge
+
+Add a weighted edge between two vertices.
+
+```python
+add_edge(start_label: str, end_label: str, weight, directed=None)
+```
+
+<ParamField path="start_label" type="str" required>
+  Starting vertex label
+</ParamField>
+
+<ParamField path="end_label" type="str" required>
+  Ending vertex label
+</ParamField>
+
+<ParamField path="weight" type="numeric" required>
+  The weight of the edge
+</ParamField>
+
+<ParamField path="directed" type="bool" default="None">
+  Override the graph's default directed behavior. If None, uses `self.is_directed`
+</ParamField>
+
+```python
+g = AdjacencyMatrixWeightedGraph()
+
+# Add weighted edges
+g.add_edge('A', 'B', 5)
+g.add_edge('B', 'C', 10)
+g.add_edge('A', 'C', 15)
+
+# Add directed edge in undirected graph
+g.add_edge('C', 'D', 7, directed=True)
+
+# Vertices are auto-created if they don't exist
+g.add_edge('E', 'F', 20)
+```
+
+### get_weight
+
+Get the weight of an edge between two vertices.
+
+```python
+get_weight(start_label: str, end_label: str) -> numeric
+```
+
+<ParamField path="start_label" type="str" required>
+  Starting vertex label
+</ParamField>
+
+<ParamField path="end_label" type="str" required>
+  Ending vertex label
+</ParamField>
+
+<ResponseField name="return" type="numeric">
+  The weight of the edge from start to end
+</ResponseField>
+
+```python
+g = AdjacencyMatrixWeightedGraph()
+g.add_edge('A', 'B', 5)
+weight = g.get_weight('A', 'B')
+print(weight)  # 5
+```
+
+### edges
+
+Get a list of all weighted edges in the graph.
+
+```python
+edges() -> list
+```
+
+<ResponseField name="return" type="list[tuple]">
+  List of edges, each represented as a tuple `(start, end, weight)`
+</ResponseField>
+
+```python
+g = AdjacencyMatrixWeightedGraph()
+g.add_edge('A', 'B', 5)
+g.add_edge('B', 'C', 10)
+print(g.edges())  # [('A', 'B', 5), ('B', 'A', 5), ('B', 'C', 10), ('C', 'B', 10)]
+```
+
+### undirected_edges
+
+Get a list of weighted edges without duplicates for undirected graphs.
+
+```python
+undirected_edges() -> list
+```
+
+<ResponseField name="return" type="list[tuple]">
+  List of unique weighted edges, each represented as a tuple `(start, end, weight)`
+</ResponseField>
+
+```python
+g = AdjacencyMatrixWeightedGraph()
+g.add_edge('A', 'B', 5)
+g.add_edge('B', 'C', 10)
+print(g.undirected_edges())  # [('A', 'B', 5), ('B', 'C', 10)]
+```
+
+### adjacent_items
+
+Get a list of adjacent vertices with their edge weights.
+
+```python
+adjacent_items(vertex: str) -> list
+```
+
+<ParamField path="vertex" type="str" required>
+  The vertex label
+</ParamField>
+
+<ResponseField name="return" type="list[tuple]">
+  List of tuples `(neighbor_label, weight)`
+</ResponseField>
+
+```python
+g = AdjacencyMatrixWeightedGraph()
+g.add_edge('A', 'B', 5)
+g.add_edge('A', 'C', 10)
+print(g.adjacent_items('A'))  # [('B', 5), ('C', 10)]
+```
+
+### print_graph
+
+Print a visual representation of the weighted adjacency matrix.
+
+```python
+print_graph()
+```
+
+```python
+g = AdjacencyMatrixWeightedGraph(vertices=['A', 'B', 'C'])
+g.add_edge('A', 'B', 5)
+g.add_edge('B', 'C', 10)
+g.print_graph()
+# Output:
+#    |  A   B   C  
+# ----------------
+#  A |      5      
+#  B |  5      10  
+#  C |     10      
+```
+
+### to_dict
+
+Convert the graph to a dictionary representation.
+
+```python
+to_dict() -> dict
+```
+
+<ResponseField name="return" type="dict">
+  Dictionary where keys are vertices and values are dictionaries mapping neighbors to weights
+</ResponseField>
+
+```python
+g = AdjacencyMatrixWeightedGraph()
+g.add_edge('A', 'B', 5)
+g.add_edge('B', 'C', 10)
+print(g.to_dict())
+# {'A': {'B': 5}, 'B': {'A': 5, 'C': 10}, 'C': {'B': 10}}
+```
+
+## Class Methods
+
+### from_dict
+
+Create a weighted graph from a dictionary representation.
+
+```python
+@classmethod
+from_dict(data: dict, directed: bool = False) -> AdjacencyMatrixWeightedGraph
+```
+
+<ParamField path="data" type="dict" required>
+  Dictionary where keys are vertices and values are dictionaries mapping neighbors to weights
+</ParamField>
+
+<ParamField path="directed" type="bool" default="False">
+  Whether the graph is directed
+</ParamField>
+
+<ResponseField name="return" type="AdjacencyMatrixWeightedGraph">
+  A new weighted graph instance
+</ResponseField>
+
+```python
+data = {
+    'A': {'B': 5, 'C': 10},
+    'B': {'A': 5, 'D': 15},
+    'C': {'A': 10},
+    'D': {'B': 15}
+}
+g = AdjacencyMatrixWeightedGraph.from_dict(data)
+```
+
+## Special Methods
+
+### \_\_getitem\_\_
+
+Get adjacent vertices and weights using bracket notation.
+
+```python
+g = AdjacencyMatrixWeightedGraph()
+g.add_edge('A', 'B', 5)
+g.add_edge('A', 'C', 10)
+print(g['A'])  # {'B': 5, 'C': 10}
+```
+
+## Inherited Methods
+
+The following methods are inherited from `AdjacencyMatrixGraph`:
+
+- `add_vertex(label)` - Add a vertex
+- `delete_vertex(label)` - Delete a vertex
+- `delete_edge(start, end, directed=None)` - Delete an edge
+- `has_vertex(label)` - Check if vertex exists
+- `has_edge(start, end)` - Check if edge exists
+- `vertices()` - Get all vertices
+- `adjacents(vertex)` - Get adjacent vertices (without weights)
+- `order()` - Get number of vertices
+- `size()` - Get number of edges
+- `__len__()` - Get number of vertices
+- `__contains__(label)` - Check vertex membership
+
+## Complete Examples
+
+<CodeGroup>
+
+```python Road Network
+from dsa.graph import AdjacencyMatrixWeightedGraph
+
+# Create road network with distances
+g = AdjacencyMatrixWeightedGraph()
+
+# Add roads with distances in km
+g.add_edge('Seattle', 'Portland', 280)
+g.add_edge('Portland', 'Eugene', 175)
+g.add_edge('Seattle', 'Spokane', 450)
+g.add_edge('Spokane', 'Boise', 630)
+g.add_edge('Eugene', 'Boise', 665)
+
+print(f"Cities: {g.vertices()}")
+print(f"Roads: {g.undirected_edges()}")
+
+# Get distance between cities
+distance = g.get_weight('Seattle', 'Portland')
+print(f"Seattle to Portland: {distance} km")
+
+# Get all distances from Seattle
+seattle_routes = g.adjacent_items('Seattle')
+print(f"Routes from Seattle: {seattle_routes}")
+```
+
+```python Flight Network (Directed)
+from dsa.graph import AdjacencyMatrixWeightedGraph
+
+# Create flight network with costs
+g = AdjacencyMatrixWeightedGraph(directed=True)
+
+# Add flights with ticket prices
+g.add_edge('NYC', 'LAX', 350)
+g.add_edge('LAX', 'NYC', 380)  # Different price for return
+g.add_edge('NYC', 'ORD', 150)
+g.add_edge('ORD', 'LAX', 200)
+g.add_edge('LAX', 'SFO', 100)
+g.add_edge('SFO', 'NYC', 400)
+
+print(f"Airports: {g.vertices()}")
+print(f"All flights: {g.edges()}")
+
+# Check specific flight costs
+if g.has_edge('NYC', 'LAX'):
+    cost = g.get_weight('NYC', 'LAX')
+    print(f"NYC to LAX: ${cost}")
+
+if g.has_edge('NYC', 'SFO'):
+    print("Direct flight exists")
+else:
+    print("No direct flight from NYC to SFO")
+```
+
+```python Network Latency
+from dsa.graph import AdjacencyMatrixWeightedGraph
+import sys
+
+# Create network with latency in ms
+g = AdjacencyMatrixWeightedGraph(directed=True)
+
+# Add connections with latencies
+g.add_edge('Server1', 'Server2', 10)
+g.add_edge('Server1', 'Server3', 25)
+g.add_edge('Server2', 'Server4', 15)
+g.add_edge('Server3', 'Server4', 5)
+g.add_edge('Server4', 'Server5', 20)
+
+# Dijkstra's shortest path algorithm
+def dijkstra(graph, start, end):
+    vertices = graph.vertices()
+    distances = {v: sys.maxsize for v in vertices}
+    distances[start] = 0
+    visited = set()
+    previous = {v: None for v in vertices}
+    
+    while len(visited) < len(vertices):
+        # Find unvisited vertex with minimum distance
+        current = None
+        min_dist = sys.maxsize
+        for v in vertices:
+            if v not in visited and distances[v] < min_dist:
+                min_dist = distances[v]
+                current = v
+        
+        if current is None or current == end:
+            break
+            
+        visited.add(current)
+        
+        # Update distances to neighbors
+        for neighbor, weight in graph.adjacent_items(current):
+            if neighbor not in visited:
+                new_dist = distances[current] + weight
+                if new_dist < distances[neighbor]:
+                    distances[neighbor] = new_dist
+                    previous[neighbor] = current
+    
+    # Reconstruct path
+    path = []
+    current = end
+    while current is not None:
+        path.insert(0, current)
+        current = previous[current]
+    
+    return path, distances[end]
+
+path, latency = dijkstra(g, 'Server1', 'Server5')
+print(f"Shortest path: {' -> '.join(path)}")
+print(f"Total latency: {latency} ms")
+```
+
+```python Minimum Spanning Tree
+from dsa.graph import AdjacencyMatrixWeightedGraph
+
+# Create graph for MST
+g = AdjacencyMatrixWeightedGraph()
+
+# Add edges with costs
+g.add_edge('A', 'B', 4)
+g.add_edge('A', 'C', 2)
+g.add_edge('B', 'C', 1)
+g.add_edge('B', 'D', 5)
+g.add_edge('C', 'D', 8)
+g.add_edge('C', 'E', 10)
+g.add_edge('D', 'E', 2)
+g.add_edge('D', 'F', 6)
+g.add_edge('E', 'F', 3)
+
+# Kruskal's MST algorithm (simplified)
+def find_mst(graph):
+    edges = sorted(graph.undirected_edges(), key=lambda x: x[2])
+    parent = {v: v for v in graph.vertices()}
+    
+    def find(v):
+        if parent[v] != v:
+            parent[v] = find(parent[v])
+        return parent[v]
+    
+    def union(v1, v2):
+        root1 = find(v1)
+        root2 = find(v2)
+        parent[root1] = root2
+    
+    mst = []
+    total_cost = 0
+    
+    for start, end, weight in edges:
+        if find(start) != find(end):
+            union(start, end)
+            mst.append((start, end, weight))
+            total_cost += weight
+    
+    return mst, total_cost
+
+mst, cost = find_mst(g)
+print("Minimum Spanning Tree:")
+for start, end, weight in mst:
+    print(f"  {start} - {end}: {weight}")
+print(f"Total cost: {cost}")
+```
+
+</CodeGroup>
+
+## Performance
+
+- **Space Complexity:** O(V²) where V is the number of vertices
+- **Add Vertex:** O(V²) - requires resizing matrix
+- **Delete Vertex:** O(V²) - requires resizing matrix
+- **Add Edge:** O(1)
+- **Delete Edge:** O(1)
+- **Has Edge:** O(1)
+- **Get Weight:** O(1)
+- **Get Adjacents:** O(V)
+- **Get All Edges:** O(V²)
+
+## Notes
+
+- Best for dense graphs where most vertices are connected
+- Provides O(1) edge weight lookup
+- Weights can be any numeric type (int, float, etc.)
+- Self-loops are prevented (diagonal is set to None)
+- For undirected graphs, edge weights are stored symmetrically
+- Vertex labels must be strings
+- Useful for shortest path algorithms (Dijkstra, Floyd-Warshall)
+- Ideal for minimum spanning tree algorithms (Prim, Kruskal)

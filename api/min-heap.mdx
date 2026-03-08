@@ -1,0 +1,253 @@
+---
+title: 'MinHeap'
+description: 'API reference for the min heap class'
+---
+
+## MinHeap
+
+A min heap implementation where the smallest element is always at the root. Inherits from `Heap` and overrides the heapify operations to maintain min heap property.
+
+### Constructor
+
+```python
+MinHeap()
+```
+
+Create an empty min heap.
+
+**Example:**
+
+```python
+from ucx_dsa import MinHeap
+
+min_heap = MinHeap()
+```
+
+---
+
+### Class Methods
+
+#### from_list(mylist)
+
+Create a min heap from a list of elements.
+
+```python
+MinHeap.from_list(mylist)
+```
+
+<ParamField path="mylist" type="list" required>
+  The list of elements to be inserted into the heap.
+</ParamField>
+
+<ResponseField name="return" type="MinHeap">
+  An instance of the min heap with all elements from the list inserted.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import MinHeap
+
+min_heap = MinHeap.from_list([3, 1, 4, 1, 5, 9, 2, 6])
+print(min_heap.peek())  # Output: 1
+```
+
+**Time Complexity:** O(n log n) where n is the number of elements
+
+---
+
+### Methods
+
+MinHeap inherits all methods from `Heap`, including:
+- `raw_view()` - Get internal array representation
+- `root()` - Get the root (minimum) value
+- `peek()` - Get the minimum value
+- `last()` - Get the last element
+- `left_index(index)` - Get left child index
+- `right_index(index)` - Get right child index
+- `parent_index(index)` - Get parent index
+- `has_left(index)` - Check if node has left child
+- `has_right(index)` - Check if node has right child
+- `has_parent(index)` - Check if node has parent
+- `insert(value)` - Insert a value
+- `enumerate()` - Get enumeration of heap
+- `count()` - Get number of items
+- `is_empty()` - Check if heap is empty
+- `print()` - Print heap contents
+- `to_sorted_list()` - Get sorted list (ascending for min heap)
+
+The following methods are overridden to maintain min heap property:
+
+#### heapify_up(index)
+
+Perform heapify up operation for a min heap, moving smaller elements up the tree.
+
+```python
+min_heap.heapify_up(index)
+```
+
+<ParamField path="index" type="int" required>
+  The starting index.
+</ParamField>
+
+**Example:**
+
+```python
+from ucx_dsa import MinHeap
+
+min_heap = MinHeap()
+min_heap.insert(10)
+min_heap.insert(5)  # heapify_up ensures 5 becomes the root
+print(min_heap.peek())  # Output: 5
+```
+
+**Time Complexity:** O(log n)
+
+---
+
+#### heapify_down(index)
+
+Perform heapify down operation for a min heap, moving larger elements down the tree.
+
+```python
+min_heap.heapify_down(index)
+```
+
+<ParamField path="index" type="int" required>
+  The starting index.
+</ParamField>
+
+**Time Complexity:** O(log n)
+
+---
+
+#### extract_min()
+
+Return the minimum value from the heap and remove it.
+
+```python
+min_heap.extract_min()
+```
+
+<ResponseField name="return" type="any">
+  The minimum value from the heap.
+</ResponseField>
+
+**Raises:**
+- `Exception`: If the heap is empty
+
+**Example:**
+
+```python
+from ucx_dsa import MinHeap
+
+min_heap = MinHeap.from_list([5, 3, 7, 1, 9])
+min_val = min_heap.extract_min()
+print(min_val)  # Output: 1
+print(min_heap.peek())  # Output: 3
+```
+
+**Time Complexity:** O(log n)
+
+---
+
+## Usage Examples
+
+### Basic Operations
+
+```python
+from ucx_dsa import MinHeap
+
+# Create a min heap
+min_heap = MinHeap()
+
+# Insert elements
+min_heap.insert(10)
+min_heap.insert(5)
+min_heap.insert(20)
+min_heap.insert(1)
+
+print(min_heap.peek())  # Output: 1
+print(len(min_heap))    # Output: 4
+
+# Extract minimum
+min_val = min_heap.extract_min()
+print(min_val)          # Output: 1
+print(min_heap.peek())  # Output: 5
+```
+
+### Creating from List
+
+```python
+from ucx_dsa import MinHeap
+
+values = [15, 10, 20, 8, 21, 5]
+min_heap = MinHeap.from_list(values)
+
+print(min_heap.peek())  # Output: 5
+
+# Extract all elements in sorted order
+sorted_values = []
+while not min_heap.is_empty():
+    sorted_values.append(min_heap.extract_min())
+
+print(sorted_values)  # Output: [5, 8, 10, 15, 20, 21]
+```
+
+### Finding K Smallest Elements
+
+```python
+from ucx_dsa import MinHeap
+
+def k_smallest(arr, k):
+    """Find k smallest elements using a min heap."""
+    min_heap = MinHeap.from_list(arr)
+    result = []
+    for _ in range(k):
+        if not min_heap.is_empty():
+            result.append(min_heap.extract_min())
+    return result
+
+data = [7, 10, 4, 3, 20, 15]
+print(k_smallest(data, 3))  # Output: [3, 4, 7]
+```
+
+---
+
+## Comparison: MinHeap vs Heap
+
+<Accordion title="Key Differences">
+
+| Feature | MinHeap | Heap (MaxHeap) |
+|---------|---------|----------------|
+| Root element | Minimum value | Maximum value |
+| peek() returns | Smallest element | Largest element |
+| Extract method | extract_min() | extract_max() |
+| Heapify direction | Smaller values up | Larger values up |
+| to_sorted_list() | Ascending order | Descending order |
+| Use case | Finding minimums, priority queue with low priority first | Finding maximums, priority queue with high priority first |
+
+</Accordion>
+
+---
+
+## Special Methods
+
+MinHeap inherits all special methods from `Heap`:
+
+- `__repr__()` - String representation in priority order
+- `__len__()` - Number of items via len()
+- `__eq__(other)` - Equality comparison
+
+**Example:**
+
+```python
+from ucx_dsa import MinHeap
+
+min_heap1 = MinHeap.from_list([1, 2, 3])
+min_heap2 = MinHeap.from_list([1, 2, 3])
+
+print(min_heap1 == min_heap2)  # Output: True
+print(len(min_heap1))           # Output: 3
+print(min_heap1)                # Output: [1 2 3]
+```

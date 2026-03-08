@@ -1,0 +1,394 @@
+---
+title: 'PriorityQueue'
+description: 'API reference for the priority queue class'
+---
+
+## PriorityQueue
+
+A priority queue implementation that stores items with associated priorities. Inherits from `MinHeap`, so lower priority values are extracted first.
+
+### Constructor
+
+```python
+PriorityQueue()
+```
+
+Create an empty priority queue.
+
+**Example:**
+
+```python
+from ucx_dsa import PriorityQueue
+
+pq = PriorityQueue()
+```
+
+---
+
+### Methods
+
+PriorityQueue inherits methods from `MinHeap` and `Heap`, including:
+- `count()` - Get number of items
+- `is_empty()` - Check if queue is empty
+- `raw_view()` - Get internal array representation
+- `enumerate()` - Get enumeration of queue
+- `print()` - Print queue contents
+
+The following methods are customized for priority queue operations:
+
+#### push(priority, item)
+
+Insert an item with a priority into the priority queue.
+
+```python
+pq.push(priority, item)
+```
+
+<ParamField path="priority" type="int" required>
+  Priority of the item. Lower values indicate higher priority.
+</ParamField>
+
+<ParamField path="item" type="any" required>
+  The item to insert.
+</ParamField>
+
+**Example:**
+
+```python
+from ucx_dsa import PriorityQueue
+
+pq = PriorityQueue()
+pq.push(3, "Low priority task")
+pq.push(1, "High priority task")
+pq.push(2, "Medium priority task")
+
+print(pq.pop())  # Output: "High priority task"
+```
+
+**Time Complexity:** O(log n)
+
+---
+
+#### pop()
+
+Return and remove the highest priority item (lowest priority number) from the queue.
+
+```python
+pq.pop()
+```
+
+<ResponseField name="return" type="any">
+  The item with the highest priority (lowest priority value).
+</ResponseField>
+
+**Raises:**
+- `Exception`: If the priority queue is empty
+
+**Example:**
+
+```python
+from ucx_dsa import PriorityQueue
+
+pq = PriorityQueue()
+pq.push(5, "Task A")
+pq.push(1, "Task B")
+pq.push(3, "Task C")
+
+print(pq.pop())  # Output: "Task B" (priority 1)
+print(pq.pop())  # Output: "Task C" (priority 3)
+print(pq.pop())  # Output: "Task A" (priority 5)
+```
+
+**Time Complexity:** O(log n)
+
+---
+
+#### pop_pair()
+
+Return and remove the highest priority item as a (priority, item) tuple.
+
+```python
+pq.pop_pair()
+```
+
+<ResponseField name="return" type="tuple">
+  A tuple of (priority, item) with the highest priority.
+</ResponseField>
+
+**Raises:**
+- `Exception`: If the priority queue is empty
+
+**Example:**
+
+```python
+from ucx_dsa import PriorityQueue
+
+pq = PriorityQueue()
+pq.push(2, "Email")
+pq.push(1, "Meeting")
+
+priority, item = pq.pop_pair()
+print(f"Priority: {priority}, Item: {item}")  # Output: Priority: 1, Item: Meeting
+```
+
+**Time Complexity:** O(log n)
+
+---
+
+#### peek()
+
+Return the highest priority item without removing it.
+
+```python
+pq.peek()
+```
+
+<ResponseField name="return" type="any">
+  The item with the highest priority, or None if the queue is empty.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import PriorityQueue
+
+pq = PriorityQueue()
+pq.push(3, "Low")
+pq.push(1, "High")
+
+print(pq.peek())    # Output: "High"
+print(pq.count())   # Output: 2 (peek doesn't remove)
+```
+
+**Time Complexity:** O(1)
+
+---
+
+#### peek_pair()
+
+Return the highest priority item as a (priority, item) tuple without removing it.
+
+```python
+pq.peek_pair()
+```
+
+<ResponseField name="return" type="tuple">
+  A tuple of (priority, item) with the highest priority, or None if empty.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import PriorityQueue
+
+pq = PriorityQueue()
+pq.push(5, "Task A")
+pq.push(2, "Task B")
+
+priority, item = pq.peek_pair()
+print(f"Next: {item} (priority {priority})")  # Output: Next: Task B (priority 2)
+```
+
+**Time Complexity:** O(1)
+
+---
+
+#### to_string_with_priority()
+
+Return a string representation of the queue showing all priority-item pairs in order.
+
+```python
+pq.to_string_with_priority()
+```
+
+<ResponseField name="return" type="str">
+  String showing all (priority, item) pairs in priority order.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import PriorityQueue
+
+pq = PriorityQueue()
+pq.push(3, "C")
+pq.push(1, "A")
+pq.push(2, "B")
+
+print(pq.to_string_with_priority())  # Output: [(1, 'A') (2, 'B') (3, 'C')]
+```
+
+---
+
+## Usage Examples
+
+### Task Scheduling
+
+```python
+from ucx_dsa import PriorityQueue
+
+# Create a task scheduler
+scheduler = PriorityQueue()
+
+# Add tasks with priorities (1 = highest, 5 = lowest)
+scheduler.push(1, "Critical bug fix")
+scheduler.push(3, "Update documentation")
+scheduler.push(2, "Code review")
+scheduler.push(1, "Security patch")
+scheduler.push(4, "Refactor old code")
+
+# Process tasks in priority order
+while not scheduler.is_empty():
+    task = scheduler.pop()
+    print(f"Processing: {task}")
+
+# Output:
+# Processing: Critical bug fix
+# Processing: Security patch
+# Processing: Code review
+# Processing: Update documentation
+# Processing: Refactor old code
+```
+
+### Event Simulation
+
+```python
+from ucx_dsa import PriorityQueue
+
+class Event:
+    def __init__(self, name, time):
+        self.name = name
+        self.time = time
+    
+    def __repr__(self):
+        return f"{self.name} at t={self.time}"
+
+# Create event queue (time-based priority)
+events = PriorityQueue()
+events.push(5, Event("Meeting", 5))
+events.push(2, Event("Email", 2))
+events.push(7, Event("Lunch", 7))
+events.push(1, Event("Standup", 1))
+
+# Process events in chronological order
+while not events.is_empty():
+    time, event = events.pop_pair()
+    print(f"Time {time}: {event.name}")
+
+# Output:
+# Time 1: Standup
+# Time 2: Email
+# Time 5: Meeting
+# Time 7: Lunch
+```
+
+### Dijkstra's Algorithm
+
+```python
+from ucx_dsa import PriorityQueue
+
+def dijkstra(graph, start):
+    """Find shortest paths using Dijkstra's algorithm."""
+    pq = PriorityQueue()
+    distances = {node: float('inf') for node in graph}
+    distances[start] = 0
+    pq.push(0, start)
+    
+    while not pq.is_empty():
+        current_dist, current_node = pq.pop_pair()
+        
+        if current_dist > distances[current_node]:
+            continue
+        
+        for neighbor, weight in graph[current_node].items():
+            distance = current_dist + weight
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                pq.push(distance, neighbor)
+    
+    return distances
+
+# Example graph
+graph = {
+    'A': {'B': 4, 'C': 2},
+    'B': {'D': 3},
+    'C': {'B': 1, 'D': 5},
+    'D': {}
+}
+
+result = dijkstra(graph, 'A')
+print(result)  # Output: {'A': 0, 'B': 3, 'C': 2, 'D': 6}
+```
+
+### Hospital Emergency Room
+
+```python
+from ucx_dsa import PriorityQueue
+
+class Patient:
+    def __init__(self, name, severity):
+        self.name = name
+        self.severity = severity  # 1=critical, 5=minor
+    
+    def __repr__(self):
+        return f"{self.name} (severity {self.severity})"
+
+er_queue = PriorityQueue()
+
+# Patients arrive
+er_queue.push(3, Patient("Alice", 3))
+er_queue.push(1, Patient("Bob", 1))     # Critical
+er_queue.push(4, Patient("Charlie", 4))
+er_queue.push(1, Patient("Diana", 1))   # Critical
+er_queue.push(2, Patient("Eve", 2))
+
+print("Treatment order:")
+while not er_queue.is_empty():
+    priority, patient = er_queue.pop_pair()
+    print(f"  {patient}")
+
+# Output:
+# Treatment order:
+#   Bob (severity 1)
+#   Diana (severity 1)
+#   Eve (severity 2)
+#   Alice (severity 3)
+#   Charlie (severity 4)
+```
+
+---
+
+## Special Methods
+
+PriorityQueue inherits special methods from `MinHeap` and `Heap`:
+
+- `__len__()` - Get number of items
+- `__eq__(other)` - Equality comparison
+
+**Example:**
+
+```python
+from ucx_dsa import PriorityQueue
+
+pq = PriorityQueue()
+pq.push(1, "Task A")
+pq.push(2, "Task B")
+
+print(len(pq))  # Output: 2
+```
+
+**Time Complexity:** O(1)
+
+---
+
+## Notes
+
+<Accordion title="Priority Queue Implementation Details">
+
+- PriorityQueue uses a min heap internally, so **lower priority numbers are served first**
+- Items are stored as `(priority, item)` tuples internally
+- When two items have the same priority, they are served in the order they were inserted (FIFO within same priority)
+- The `pop()` method returns only the item, while `pop_pair()` returns both priority and item
+- Similarly, `peek()` returns only the item, while `peek_pair()` returns the tuple
+
+</Accordion>

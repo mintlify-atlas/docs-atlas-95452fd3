@@ -1,0 +1,402 @@
+---
+title: "HashSet"
+description: "A set data structure implementation using a hash table for O(1) membership testing"
+icon: "layer-group"
+---
+
+## Overview
+
+The `HashSet` class provides a set data structure that stores unique elements with fast membership testing. It's built on top of the `HashTable` class and provides a clean interface for set operations.
+
+<Note>
+  HashSet internally uses a HashTable where each item is stored as a key with a value of `True`, ensuring uniqueness and O(1) average-case lookup time.
+</Note>
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Unique Elements" icon="fingerprint">
+    Automatically ensures all elements in the set are unique
+  </Card>
+  <Card title="Fast Membership" icon="magnifying-glass">
+    O(1) average-case time for checking if an element exists
+  </Card>
+  <Card title="Python Integration" icon="python">
+    Implements Python magic methods for set-like operations
+  </Card>
+  <Card title="Flexible Construction" icon="wrench">
+    Create from iterables or build incrementally
+  </Card>
+</CardGroup>
+
+## Class Reference
+
+### Constructor
+
+```python
+from dsa.hashset import HashSet
+
+# Create an empty hashset with default capacity
+hs = HashSet()
+
+# Create a hashset with custom capacity
+hs = HashSet(capacity=50)
+```
+
+**Parameters:**
+- `capacity` (int, optional): The initial capacity of the underlying hash table. Defaults to 10.
+
+### from_list(iterable)
+
+Create a HashSet from an iterable collection.
+
+```python
+# Create from a list
+hs = HashSet.from_list([1, 2, 3, 4, 5])
+
+# Create from a list with duplicates (duplicates are automatically removed)
+hs = HashSet.from_list([1, 2, 2, 3, 3, 3, 4])
+print(list(hs))  # [1, 2, 3, 4]
+
+# Create from a tuple
+hs = HashSet.from_list(("apple", "banana", "cherry"))
+
+# Create from a string (each character becomes an element)
+hs = HashSet.from_list("hello")
+print(list(hs))  # ['h', 'e', 'l', 'o'] - note 'l' appears once
+```
+
+**Parameters:**
+- `iterable`: An iterable collection of initial elements
+
+**Returns:** A new HashSet instance containing the elements
+
+<Note>
+  The `from_list` method automatically sets the capacity to twice the length of the input iterable for optimal performance.
+</Note>
+
+## Core Methods
+
+### add(item)
+
+Add an element to the set.
+
+```python
+hs = HashSet()
+
+# Add elements
+hs.add("apple")
+hs.add("banana")
+hs.add("cherry")
+
+print(len(hs))  # 3
+
+# Adding duplicate has no effect
+hs.add("apple")
+print(len(hs))  # Still 3
+```
+
+**Parameters:**
+- `item`: The element to add to the set
+
+**Time Complexity:** O(1) average case
+
+### remove(item)
+
+Remove an element from the set.
+
+```python
+hs = HashSet.from_list(["apple", "banana", "cherry"])
+
+# Remove an element
+hs.remove("banana")
+print(len(hs))  # 2
+
+# Attempting to remove non-existent element raises KeyError
+try:
+    hs.remove("grape")
+except KeyError as e:
+    print(f"Item not found: {e}")
+```
+
+**Parameters:**
+- `item`: The element to remove
+
+**Raises:** `KeyError` if the item is not in the set
+
+**Time Complexity:** O(1) average case
+
+### contains(item)
+
+Check if an element exists in the set.
+
+```python
+hs = HashSet.from_list(["apple", "banana", "cherry"])
+
+# Check membership
+if hs.contains("apple"):
+    print("Apple is in the set")  # This will print
+
+if not hs.contains("grape"):
+    print("Grape is not in the set")  # This will print
+```
+
+**Parameters:**
+- `item`: The element to check
+
+**Returns:** `True` if the element exists, `False` otherwise
+
+**Time Complexity:** O(1) average case
+
+### to_list()
+
+Convert the set to a list.
+
+```python
+hs = HashSet.from_list([3, 1, 4, 1, 5, 9, 2, 6])
+
+# Convert to list
+items = hs.to_list()
+print(items)  # [3, 1, 4, 5, 9, 2, 6] - duplicates removed, order may vary
+```
+
+**Returns:** A list containing all elements in the set
+
+## Python Magic Methods
+
+The HashSet implements several magic methods for intuitive Python integration:
+
+<Tabs>
+  <Tab title="Membership">
+    ```python
+    hs = HashSet.from_list(["apple", "banana", "cherry"])
+    
+    # Check membership with 'in' operator
+    if "apple" in hs:
+        print("Apple is in the set")
+    
+    if "grape" not in hs:
+        print("Grape is not in the set")
+    ```
+  </Tab>
+  
+  <Tab title="Length">
+    ```python
+    hs = HashSet.from_list([1, 2, 3, 4, 5])
+    
+    # Get number of elements
+    count = len(hs)  # Returns 5
+    
+    # Empty set
+    empty_hs = HashSet()
+    print(len(empty_hs))  # Returns 0
+    ```
+  </Tab>
+  
+  <Tab title="Iteration">
+    ```python
+    hs = HashSet.from_list(["red", "green", "blue"])
+    
+    # Iterate over elements
+    for color in hs:
+        print(color)
+    
+    # List comprehension
+    uppercase = [color.upper() for color in hs]
+    ```
+  </Tab>
+  
+  <Tab title="Representation">
+    ```python
+    hs = HashSet.from_list([1, 2, 3])
+    
+    # String representation
+    print(hs)  # HashSet([1, 2, 3])
+    print(repr(hs))  # HashSet([1, 2, 3])
+    ```
+  </Tab>
+  
+  <Tab title="Equality">
+    ```python
+    hs1 = HashSet.from_list([1, 2, 3])
+    hs2 = HashSet.from_list([3, 2, 1])
+    hs3 = HashSet.from_list([1, 2, 4])
+    
+    # Compare sets (order doesn't matter)
+    print(hs1 == hs2)  # True
+    print(hs1 == hs3)  # False
+    
+    # Comparison with non-HashSet returns False
+    print(hs1 == [1, 2, 3])  # False
+    ```
+  </Tab>
+</Tabs>
+
+## Common Use Cases
+
+### Removing Duplicates
+
+```python
+from dsa.hashset import HashSet
+
+# Remove duplicates from a list
+numbers = [1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5]
+unique_numbers = HashSet.from_list(numbers)
+print(unique_numbers.to_list())  # [1, 2, 3, 4, 5]
+```
+
+### Membership Testing
+
+```python
+from dsa.hashset import HashSet
+
+# Track visited pages in a web crawler
+visited_urls = HashSet()
+
+def crawl(url):
+    if url in visited_urls:
+        print(f"Already visited: {url}")
+        return
+    
+    visited_urls.add(url)
+    print(f"Crawling: {url}")
+    # ... crawl logic ...
+
+crawl("https://example.com")
+crawl("https://example.com/about")
+crawl("https://example.com")  # Skipped - already visited
+```
+
+### Finding Unique Elements
+
+```python
+from dsa.hashset import HashSet
+
+# Find unique characters in a string
+text = "hello world"
+unique_chars = HashSet.from_list(text)
+print(f"Unique characters: {unique_chars.to_list()}")
+print(f"Total unique characters: {len(unique_chars)}")
+```
+
+### Tracking Seen Items
+
+```python
+from dsa.hashset import HashSet
+
+# Track unique user IDs in a session
+active_users = HashSet()
+
+def user_login(user_id):
+    active_users.add(user_id)
+    print(f"User {user_id} logged in")
+    print(f"Total active users: {len(active_users)}")
+
+def user_logout(user_id):
+    if user_id in active_users:
+        active_users.remove(user_id)
+        print(f"User {user_id} logged out")
+    else:
+        print(f"User {user_id} was not logged in")
+
+user_login("user123")
+user_login("user456")
+user_login("user123")  # Already logged in
+user_logout("user123")
+user_logout("user789")  # Never logged in
+```
+
+## Performance Characteristics
+
+<CardGroup cols={2}>
+  <Card title="Average Case" icon="gauge-high">
+    - **Add:** O(1)
+    - **Remove:** O(1)
+    - **Contains:** O(1)
+    - **Iteration:** O(n)
+  </Card>
+  <Card title="Space Complexity" icon="memory">
+    - **Storage:** O(n)
+    - Where n is the number of unique elements
+  </Card>
+</CardGroup>
+
+<Note>
+  The HashSet provides excellent average-case performance for membership testing, making it ideal for scenarios where you need to quickly check if an item has been seen before.
+</Note>
+
+## Complete Example
+
+```python
+from dsa.hashset import HashSet
+
+# Create a word frequency analyzer that tracks unique words
+class WordAnalyzer:
+    def __init__(self):
+        self.unique_words = HashSet()
+    
+    def add_text(self, text):
+        # Split text into words and add to set
+        words = text.lower().split()
+        for word in words:
+            # Remove punctuation
+            clean_word = ''.join(c for c in word if c.isalnum())
+            if clean_word:
+                self.unique_words.add(clean_word)
+    
+    def word_count(self):
+        return len(self.unique_words)
+    
+    def has_word(self, word):
+        return word.lower() in self.unique_words
+    
+    def get_words(self):
+        return sorted(self.unique_words.to_list())
+
+# Usage
+analyzer = WordAnalyzer()
+analyzer.add_text("The quick brown fox jumps over the lazy dog")
+analyzer.add_text("The dog was not amused")
+
+print(f"Unique words: {analyzer.word_count()}")
+print(f"Contains 'fox': {analyzer.has_word('fox')}")
+print(f"Contains 'cat': {analyzer.has_word('cat')}")
+print(f"All words: {analyzer.get_words()}")
+```
+
+## Comparison with Python's Built-in Set
+
+<Tabs>
+  <Tab title="HashSet">
+    ```python
+    from dsa.hashset import HashSet
+    
+    hs = HashSet.from_list([1, 2, 3])
+    hs.add(4)
+    hs.remove(2)
+    
+    if 3 in hs:
+        print("Found")
+    ```
+  </Tab>
+  
+  <Tab title="Python set">
+    ```python
+    # Python's built-in set has similar functionality
+    s = set([1, 2, 3])
+    s.add(4)
+    s.remove(2)
+    
+    if 3 in s:
+        print("Found")
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+  While Python's built-in `set` is more optimized and feature-rich, the HashSet class demonstrates the underlying implementation principles and is useful for educational purposes or when you need to understand the internals.
+</Note>
+
+## Related Classes
+
+- [HashTable](/data-structures/hashtable) - The underlying hash table implementation used by HashSet

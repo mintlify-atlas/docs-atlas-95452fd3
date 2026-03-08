@@ -1,0 +1,562 @@
+---
+title: 'Trie & TrieNode'
+description: 'API reference for trie (prefix tree) and trie node classes'
+---
+
+## TrieNode
+
+A trie node implementation representing a single node in the trie structure.
+
+### Constructor
+
+```python
+TrieNode()
+```
+
+Create a new trie node with an empty children dictionary.
+
+**Example:**
+
+```python
+from ucx_dsa import TrieNode
+
+node = TrieNode()
+```
+
+### Attributes
+
+<ParamField path="children" type="dict">
+  A dictionary mapping characters to child TrieNode references. Keys are characters, values are TrieNode instances.
+</ParamField>
+
+---
+
+## Trie
+
+A trie (prefix tree) implementation for efficient string storage and retrieval.
+
+### Constructor
+
+```python
+Trie()
+```
+
+Initialize an empty trie with a root node.
+
+**Example:**
+
+```python
+from ucx_dsa import Trie
+
+trie = Trie()
+```
+
+### Attributes
+
+<ParamField path="root" type="TrieNode">
+  The root node of the trie.
+</ParamField>
+
+<ParamField path="end_marker" type="str" default="*">
+  Class-level constant used to mark the end of a word. Default is "*".
+</ParamField>
+
+---
+
+### Methods
+
+#### insert(word)
+
+Insert a word into the trie.
+
+```python
+trie.insert(word)
+```
+
+<ParamField path="word" type="str" required>
+  The word to insert.
+</ParamField>
+
+**Example:**
+
+```python
+from ucx_dsa import Trie
+
+trie = Trie()
+trie.insert("hello")
+trie.insert("help")
+trie.insert("world")
+```
+
+**Time Complexity:** O(m) where m is the length of the word
+
+---
+
+#### search(word)
+
+Search for a complete word in the trie.
+
+```python
+trie.search(word)
+```
+
+<ParamField path="word" type="str" required>
+  The word to search for.
+</ParamField>
+
+<ResponseField name="return" type="bool">
+  True if the complete word is found, False otherwise.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Trie
+
+trie = Trie()
+trie.insert("hello")
+trie.insert("help")
+
+print(trie.search("hello"))  # Output: True
+print(trie.search("hel"))    # Output: False (prefix only)
+print(trie.search("world"))  # Output: False (not inserted)
+```
+
+**Time Complexity:** O(m) where m is the length of the word
+
+---
+
+#### search_node(substr)
+
+Search for a substring in the trie and return the node where it ends.
+
+```python
+trie.search_node(substr)
+```
+
+<ParamField path="substr" type="str" required>
+  A substring to search for.
+</ParamField>
+
+<ResponseField name="return" type="TrieNode">
+  The TrieNode where the substring ends, or None if not found.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Trie
+
+trie = Trie()
+trie.insert("hello")
+
+node = trie.search_node("hel")
+if node:
+    print("Substring found")  # Output: Substring found
+```
+
+**Time Complexity:** O(m) where m is the length of the substring
+
+---
+
+#### delete(word, i=0, current=None)
+
+Delete a word from the trie.
+
+```python
+trie.delete(word, i=0, current=None)
+```
+
+<ParamField path="word" type="str" required>
+  The word to delete.
+</ParamField>
+
+<ParamField path="i" type="int" default="0">
+  The index of the character (used internally for recursion).
+</ParamField>
+
+<ParamField path="current" type="TrieNode" default="None">
+  The current node (used internally for recursion).
+</ParamField>
+
+<ResponseField name="return" type="bool">
+  True if the child node can be deleted, False otherwise.
+</ResponseField>
+
+**Raises:**
+- `ValueError`: If the word is not found
+
+**Example:**
+
+```python
+from ucx_dsa import Trie
+
+trie = Trie()
+trie.insert("hello")
+trie.insert("help")
+
+print(trie.search("hello"))  # Output: True
+trie.delete("hello")
+print(trie.search("hello"))  # Output: False
+print(trie.search("help"))   # Output: True (still exists)
+```
+
+**Time Complexity:** O(m) where m is the length of the word
+
+---
+
+#### list_words()
+
+Return a list of all words in the trie.
+
+```python
+trie.list_words()
+```
+
+<ResponseField name="return" type="list">
+  A list of all words stored in the trie, in alphabetical order.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Trie
+
+trie = Trie()
+trie.insert("cat")
+trie.insert("car")
+trie.insert("card")
+trie.insert("dog")
+
+print(trie.list_words())  # Output: ['car', 'card', 'cat', 'dog']
+```
+
+**Time Complexity:** O(n) where n is the total number of characters in all words
+
+---
+
+#### build_word_list(node=None, word="", words=None)
+
+Helper method to build a list of words given a starting node.
+
+```python
+trie.build_word_list(node=None, word="", words=None)
+```
+
+<ParamField path="node" type="TrieNode" default="None">
+  The current trie node. If None, uses the root.
+</ParamField>
+
+<ParamField path="word" type="str" default="">
+  The word being built during recursion.
+</ParamField>
+
+<ParamField path="words" type="list" default="None">
+  The list of words being accumulated.
+</ParamField>
+
+<ResponseField name="return" type="list">
+  List of words starting from the given node.
+</ResponseField>
+
+**Time Complexity:** O(n) where n is the number of characters in the subtrie
+
+---
+
+#### prefix(prefix)
+
+Return a list of words that begin with a given prefix.
+
+```python
+trie.prefix(prefix)
+```
+
+<ParamField path="prefix" type="str" required>
+  The prefix to search for.
+</ParamField>
+
+<ResponseField name="return" type="list">
+  List of words that begin with the given prefix, or None if no matches found.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Trie
+
+trie = Trie()
+trie.insert("apple")
+trie.insert("application")
+trie.insert("apply")
+trie.insert("banana")
+
+print(trie.prefix("app"))  # Output: ['apple', 'application', 'apply']
+print(trie.prefix("ban"))  # Output: ['banana']
+print(trie.prefix("xyz"))  # Output: None
+```
+
+**Time Complexity:** O(p + n) where p is the prefix length and n is the number of matching words
+
+---
+
+#### suggest(prefix)
+
+Return a list of words similar to a given prefix using a fallback strategy.
+
+```python
+trie.suggest(prefix)
+```
+
+<ParamField path="prefix" type="str" required>
+  The prefix to search for.
+</ParamField>
+
+<ResponseField name="return" type="list">
+  List of words that match the prefix. If no exact match, progressively removes characters from the end until matches are found, or None if empty prefix.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Trie
+
+trie = Trie()
+trie.insert("hello")
+trie.insert("help")
+trie.insert("helicopter")
+
+print(trie.suggest("helx"))   # Output: ['hello', 'helicopter', 'help'] (falls back to "hel")
+print(trie.suggest("hello"))  # Output: ['hello']
+print(trie.suggest("xyz"))    # Returns words starting with "xy", "x", or None
+```
+
+**Time Complexity:** O(p * (p + n)) worst case, where p is prefix length
+
+---
+
+#### copy_node(node)
+
+Recursively create a deep copy of a node and its children.
+
+```python
+trie.copy_node(node)
+```
+
+<ParamField path="node" type="TrieNode" required>
+  The node to copy.
+</ParamField>
+
+<ResponseField name="return" type="TrieNode">
+  A deep copy of the node and all its descendants.
+</ResponseField>
+
+**Time Complexity:** O(n) where n is the number of nodes in the subtrie
+
+---
+
+#### copy()
+
+Create a deep copy of the entire trie.
+
+```python
+trie.copy()
+```
+
+<ResponseField name="return" type="Trie">
+  A new Trie instance with the same structure and words.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Trie
+
+original = Trie()
+original.insert("hello")
+original.insert("world")
+
+copy = original.copy()
+copy.insert("test")
+
+print(original.list_words())  # Output: ['hello', 'world']
+print(copy.list_words())      # Output: ['hello', 'test', 'world']
+```
+
+**Time Complexity:** O(n) where n is the total number of characters
+
+---
+
+### Special Methods
+
+#### \_\_eq\_\_(other)
+
+Compare two Trie objects for value-based equality based on their word sets.
+
+```python
+trie1 == trie2
+```
+
+<ParamField path="other" type="Trie" required>
+  The other trie to compare against.
+</ParamField>
+
+<ResponseField name="return" type="bool">
+  True if both are Trie instances and contain the same set of words.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Trie
+
+trie1 = Trie()
+trie1.insert("hello")
+trie1.insert("world")
+
+trie2 = Trie()
+trie2.insert("world")
+trie2.insert("hello")
+
+print(trie1 == trie2)  # Output: True (same words, order doesn't matter)
+```
+
+**Time Complexity:** O(n) where n is the total number of characters
+
+---
+
+## Usage Examples
+
+### Autocomplete System
+
+```python
+from ucx_dsa import Trie
+
+class Autocomplete:
+    def __init__(self):
+        self.trie = Trie()
+    
+    def add_word(self, word):
+        self.trie.insert(word.lower())
+    
+    def get_suggestions(self, prefix):
+        return self.trie.prefix(prefix.lower())
+
+autocomplete = Autocomplete()
+autocomplete.add_word("python")
+autocomplete.add_word("programming")
+autocomplete.add_word("program")
+autocomplete.add_word("progress")
+autocomplete.add_word("java")
+
+print(autocomplete.get_suggestions("pro"))
+# Output: ['program', 'programming', 'progress']
+```
+
+### Spell Checker
+
+```python
+from ucx_dsa import Trie
+
+class SpellChecker:
+    def __init__(self, dictionary):
+        self.trie = Trie()
+        for word in dictionary:
+            self.trie.insert(word.lower())
+    
+    def is_valid(self, word):
+        return self.trie.search(word.lower())
+    
+    def suggest_corrections(self, word):
+        return self.trie.suggest(word.lower())
+
+dictionary = ["hello", "world", "help", "heap", "tree"]
+spell_checker = SpellChecker(dictionary)
+
+print(spell_checker.is_valid("hello"))  # Output: True
+print(spell_checker.is_valid("helo"))   # Output: False
+print(spell_checker.suggest_corrections("helo"))  # Output: ['hello', 'help', 'heap']
+```
+
+### Word Game Dictionary
+
+```python
+from ucx_dsa import Trie
+
+class WordGame:
+    def __init__(self):
+        self.trie = Trie()
+        self.used_words = set()
+    
+    def add_valid_word(self, word):
+        self.trie.insert(word)
+    
+    def is_valid_move(self, word):
+        return self.trie.search(word) and word not in self.used_words
+    
+    def mark_used(self, word):
+        if self.is_valid_move(word):
+            self.used_words.add(word)
+            return True
+        return False
+
+game = WordGame()
+game.add_valid_word("cat")
+game.add_valid_word("dog")
+game.add_valid_word("catch")
+
+print(game.is_valid_move("cat"))   # Output: True
+print(game.mark_used("cat"))       # Output: True
+print(game.is_valid_move("cat"))   # Output: False (already used)
+```
+
+### IP Routing Table
+
+```python
+from ucx_dsa import Trie
+
+class IPRouter:
+    def __init__(self):
+        self.trie = Trie()
+    
+    def add_route(self, ip_prefix):
+        self.trie.insert(ip_prefix)
+    
+    def find_routes(self, prefix):
+        return self.trie.prefix(prefix)
+
+router = IPRouter()
+router.add_route("192.168.1.1")
+router.add_route("192.168.1.2")
+router.add_route("192.168.2.1")
+router.add_route("10.0.0.1")
+
+print(router.find_routes("192.168.1"))
+# Output: ['192.168.1.1', '192.168.1.2']
+```
+
+---
+
+## Notes
+
+<Accordion title="Trie Performance Characteristics">
+
+**Advantages:**
+- Fast prefix-based lookups: O(m) where m is the word length
+- Space-efficient for storing many words with common prefixes
+- All words with a given prefix can be retrieved efficiently
+- No hash collisions unlike hash tables
+
+**Disadvantages:**
+- More memory overhead per character compared to storing strings in a list
+- Slower than hash tables for exact word lookups
+- Can be memory-intensive for sparse datasets
+
+**Best Use Cases:**
+- Autocomplete systems
+- Spell checkers
+- IP routing tables
+- Phone directories
+- Dictionary implementations
+- Prefix-based search systems
+
+</Accordion>

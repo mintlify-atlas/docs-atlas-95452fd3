@@ -1,0 +1,467 @@
+---
+title: "Graph Factory"
+description: "Creating graphs using the Graph factory class"
+icon: "industry"
+---
+
+## Overview
+
+The `Graph` class is a factory that provides a unified interface for creating different types of graph objects. It simplifies graph creation by abstracting the specific implementation details.
+
+<Note>
+  The Graph factory allows you to create adjacency matrix or adjacency list graphs with support for directed/undirected and weighted/unweighted configurations, all through a simple API.
+</Note>
+
+## Why Use a Factory?
+
+The factory pattern provides several benefits:
+
+<CardGroup cols={2}>
+  <Card title="Simplified Creation" icon="wand-magic-sparkles">
+    Create different graph types with a consistent interface
+  </Card>
+  <Card title="Flexibility" icon="sliders">
+    Switch between implementations without changing client code
+  </Card>
+  <Card title="Type Safety" icon="shield-check">
+    Ensures correct graph type is created based on parameters
+  </Card>
+  <Card title="Encapsulation" icon="box">
+    Hides complex instantiation logic from users
+  </Card>
+</CardGroup>
+
+## Factory Methods
+
+### create(graph_type, directed, weighted, vertices)
+
+The main factory method for creating graphs.
+
+```python
+from dsa.graph import Graph
+
+# Create an undirected, unweighted adjacency list graph
+g1 = Graph.create('adjacency_list', directed=False, weighted=False)
+
+# Create a directed, weighted adjacency matrix graph
+g2 = Graph.create('adjacency_matrix', directed=True, weighted=True)
+
+# Create with initial vertices
+g3 = Graph.create('adjacency_list', directed=False, vertices=['A', 'B', 'C'])
+```
+
+**Parameters:**
+- `graph_type` (str): Either `'adjacency_matrix'` or `'adjacency_list'`
+- `directed` (bool, optional): Whether the graph is directed. Defaults to `False`
+- `weighted` (bool, optional): Whether the graph is weighted. Defaults to `False`
+- `vertices` (list, optional): Initial vertex labels. Defaults to empty list
+
+**Returns:** A graph instance of the specified type
+
+**Raises:** `ValueError` if graph_type is invalid
+
+## Graph Type Combinations
+
+The factory supports creating four different graph types:
+
+<Tabs>
+  <Tab title="Adjacency List">
+    <AccordionGroup>
+      <Accordion title="Unweighted Adjacency List">
+        ```python
+        from dsa.graph import Graph
+        
+        # Create unweighted adjacency list graph
+        g = Graph.create('adjacency_list', weighted=False)
+        
+        # Add edges without weights
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        
+        # Access neighbors
+        neighbors = g['A']  # Returns list: ['B']
+        ```
+        
+        **Best For:** Sparse graphs, social networks, simple connectivity
+      </Accordion>
+      
+      <Accordion title="Weighted Adjacency List">
+        ```python
+        from dsa.graph import Graph
+        
+        # Create weighted adjacency list graph
+        g = Graph.create('adjacency_list', weighted=True)
+        
+        # Add edges with weights
+        g.add_edge('A', 'B', 10)
+        g.add_edge('B', 'C', 20)
+        
+        # Access neighbors and weights
+        neighbors = g['A']  # Returns dict: {'B': 10}
+        weight = g.get_weight('A', 'B')  # Returns 10
+        ```
+        
+        **Best For:** Road networks, flight routes, network optimization
+      </Accordion>
+    </AccordionGroup>
+  </Tab>
+  
+  <Tab title="Adjacency Matrix">
+    <AccordionGroup>
+      <Accordion title="Unweighted Adjacency Matrix">
+        ```python
+        from dsa.graph import Graph
+        
+        # Create unweighted adjacency matrix graph
+        g = Graph.create('adjacency_matrix', 
+                        vertices=['A', 'B', 'C'],
+                        weighted=False)
+        
+        # Add edges
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        
+        # O(1) edge existence check
+        exists = g.has_edge('A', 'B')  # Very fast
+        ```
+        
+        **Best For:** Dense graphs, frequent edge existence queries
+      </Accordion>
+      
+      <Accordion title="Weighted Adjacency Matrix">
+        ```python
+        from dsa.graph import Graph
+        
+        # Create weighted adjacency matrix graph
+        g = Graph.create('adjacency_matrix',
+                        vertices=['A', 'B', 'C'],
+                        weighted=True)
+        
+        # Add weighted edges
+        g.add_edge('A', 'B', 15)
+        g.add_edge('B', 'C', 25)
+        
+        # Fast weight lookup
+        weight = g.get_weight('A', 'B')  # O(1) access
+        ```
+        
+        **Best For:** Dense weighted graphs, algorithms needing fast edge weight access
+      </Accordion>
+    </AccordionGroup>
+  </Tab>
+</Tabs>
+
+## Specialized Factory Methods
+
+### create_adjacency_matrix(directed, weighted, vertices)
+
+Directly create an adjacency matrix graph.
+
+```python
+from dsa.graph import Graph
+
+# Create unweighted adjacency matrix
+g1 = Graph.create_adjacency_matrix(
+    directed=False,
+    weighted=False,
+    vertices=['A', 'B', 'C', 'D']
+)
+
+# Create weighted, directed adjacency matrix
+g2 = Graph.create_adjacency_matrix(
+    directed=True,
+    weighted=True,
+    vertices=['City1', 'City2', 'City3']
+)
+```
+
+**Parameters:**
+- `directed` (bool, optional): Whether the graph is directed. Defaults to `False`
+- `weighted` (bool, optional): Whether the graph is weighted. Defaults to `False`
+- `vertices` (list, optional): Initial vertex labels. Defaults to empty list
+
+**Returns:** An adjacency matrix graph instance (either `AdjacencyMatrixGraph` or `AdjacencyMatrixWeightedGraph`)
+
+### create_adjacency_list(directed, weighted, vertices)
+
+Directly create an adjacency list graph.
+
+```python
+from dsa.graph import Graph
+
+# Create unweighted adjacency list
+g1 = Graph.create_adjacency_list(
+    directed=False,
+    weighted=False,
+    vertices=['Alice', 'Bob', 'Charlie']
+)
+
+# Create weighted, directed adjacency list
+g2 = Graph.create_adjacency_list(
+    directed=True,
+    weighted=True
+)
+```
+
+**Parameters:**
+- `directed` (bool, optional): Whether the graph is directed. Defaults to `False`
+- `weighted` (bool, optional): Whether the graph is weighted. Defaults to `False`
+- `vertices` (list, optional): Initial vertex labels. Defaults to empty list
+
+**Returns:** An adjacency list graph instance (either `AdjacencyListGraph` or `AdjacencyListWeightedGraph`)
+
+## Creating Graphs from Dictionary
+
+### from_dict(data, graph_type, directed, weighted)
+
+Create a graph from a dictionary representation.
+
+```python
+from dsa.graph import Graph
+
+# Unweighted graph data
+data_unweighted = {
+    'A': ['B', 'C'],
+    'B': ['C', 'D'],
+    'C': ['D'],
+    'D': []
+}
+
+g1 = Graph.from_dict(
+    data_unweighted,
+    graph_type='adjacency_list',
+    directed=True,
+    weighted=False
+)
+
+# Weighted graph data
+data_weighted = {
+    'A': {'B': 10, 'C': 5},
+    'B': {'C': 2, 'D': 1},
+    'C': {'D': 9},
+    'D': {}
+}
+
+g2 = Graph.from_dict(
+    data_weighted,
+    graph_type='adjacency_list',
+    directed=True,
+    weighted=True
+)
+```
+
+**Parameters:**
+- `data` (dict): Dictionary representation of the graph
+  - For unweighted: `{vertex: [neighbor1, neighbor2, ...]}`
+  - For weighted: `{vertex: {neighbor1: weight1, neighbor2: weight2, ...}}`
+- `graph_type` (str): Either `'adjacency_matrix'` or `'adjacency_list'`
+- `directed` (bool, optional): Whether the graph is directed. Defaults to `False`
+- `weighted` (bool, optional): Whether the graph is weighted. Defaults to `False`
+
+**Returns:** A graph instance of the specified type with the provided edges
+
+**Raises:** `ValueError` if graph_type is invalid
+
+## Usage Examples
+
+### Social Network (Undirected, Unweighted)
+
+```python
+from dsa.graph import Graph
+
+# Create a social network graph
+social = Graph.create('adjacency_list', directed=False, weighted=False)
+
+# Add friendships
+social.add_edge('Alice', 'Bob')
+social.add_edge('Alice', 'Charlie')
+social.add_edge('Bob', 'David')
+social.add_edge('Charlie', 'David')
+
+# Query the network
+print(f"Alice's friends: {social['Alice']}")
+print(f"Network size: {social.order()} people, {social.size()} friendships")
+```
+
+### Road Network (Undirected, Weighted)
+
+```python
+from dsa.graph import Graph
+
+# Create a road network with distances
+roads = Graph.create('adjacency_list', directed=False, weighted=True)
+
+# Add roads with distances in miles
+roads.add_edge('CityA', 'CityB', 50)
+roads.add_edge('CityA', 'CityC', 30)
+roads.add_edge('CityB', 'CityC', 20)
+roads.add_edge('CityB', 'CityD', 40)
+roads.add_edge('CityC', 'CityD', 35)
+
+# Get distance between cities
+distance = roads.get_weight('CityA', 'CityB')
+print(f"Distance from CityA to CityB: {distance} miles")
+```
+
+### Task Dependencies (Directed, Unweighted)
+
+```python
+from dsa.graph import Graph
+
+# Create a task dependency graph
+tasks = Graph.create('adjacency_list', directed=True, weighted=False)
+
+# Add task dependencies (A must be done before B)
+tasks.add_edge('Requirements', 'Design')
+tasks.add_edge('Design', 'Implementation')
+tasks.add_edge('Design', 'Testing')
+tasks.add_edge('Implementation', 'Testing')
+tasks.add_edge('Testing', 'Deployment')
+
+# Check if one task depends on another
+if tasks.has_edge('Design', 'Implementation'):
+    print("Implementation requires Design to be complete")
+```
+
+### Flight Network (Directed, Weighted)
+
+```python
+from dsa.graph import Graph
+
+# Create a flight network with costs
+flights = Graph.create('adjacency_list', directed=True, weighted=True)
+
+# Add flights with prices
+flights.add_edge('NYC', 'LAX', 350)
+flights.add_edge('NYC', 'CHI', 200)
+flights.add_edge('CHI', 'LAX', 180)
+flights.add_edge('LAX', 'NYC', 380)  # Return flight different price
+
+# Check flight availability and cost
+if flights.has_edge('NYC', 'LAX'):
+    cost = flights.get_weight('NYC', 'LAX')
+    print(f"Flight from NYC to LAX: ${cost}")
+```
+
+### Creating from External Data
+
+```python
+from dsa.graph import Graph
+import json
+
+# Load graph from JSON file
+with open('graph_data.json', 'r') as f:
+    graph_data = json.load(f)
+
+# graph_data.json contains:
+# {
+#   "A": {"B": 10, "C": 5},
+#   "B": {"D": 3},
+#   "C": {"B": 2, "D": 7},
+#   "D": {}
+# }
+
+# Create graph from the loaded data
+g = Graph.from_dict(
+    graph_data,
+    graph_type='adjacency_list',
+    directed=True,
+    weighted=True
+)
+
+print(f"Loaded graph with {g.order()} vertices and {g.size()} edges")
+```
+
+## Decision Guide
+
+Use this flowchart to choose the right graph configuration:
+
+```
+┌─────────────────────────────────┐
+│  Do edges have weights/costs?   │
+└────────┬────────────────┬────────┘
+         │ No             │ Yes
+         ▼                ▼
+  weighted=False    weighted=True
+         │                │
+         ▼                ▼
+┌────────────────┐ ┌────────────────┐
+│  One-way or    │ │  One-way or    │
+│  two-way?      │ │  two-way?      │
+└───┬────────┬───┘ └───┬────────┬───┘
+    │        │         │        │
+  One-way Two-way   One-way Two-way
+    │        │         │        │
+    ▼        ▼         ▼        ▼
+directed  directed  directed directed
+  =True    =False     =True   =False
+    │        │         │        │
+    ▼        ▼         ▼        ▼
+┌─────────────────────────────────┐
+│  Dense or sparse?               │
+│  Dense → adjacency_matrix       │
+│  Sparse → adjacency_list        │
+└─────────────────────────────────┘
+```
+
+## Complete Example: Multi-Modal Transportation Network
+
+```python
+from dsa.graph import Graph
+from dsa.graph_traversal import bfs_path
+
+# Create a transportation network
+transport = Graph.create('adjacency_list', directed=False, weighted=True)
+
+# Add routes with travel times in minutes
+routes = [
+    ('Home', 'BusStop', 5),
+    ('BusStop', 'TrainStation', 15),
+    ('BusStop', 'Mall', 20),
+    ('TrainStation', 'Downtown', 30),
+    ('TrainStation', 'Airport', 45),
+    ('Mall', 'Downtown', 25),
+    ('Downtown', 'Office', 10),
+    ('Airport', 'Office', 60)
+]
+
+for start, end, time in routes:
+    transport.add_edge(start, end, time)
+
+# Find all locations reachable from Home
+reachable = bfs_path(transport, 'Home', 'Office')
+if reachable:
+    print(f"Route from Home to Office: {' → '.join(reachable)}")
+
+# Get all connections from a location
+print(f"From BusStop you can reach: {transport['BusStop']}")
+
+# Calculate direct travel time
+if transport.has_edge('TrainStation', 'Airport'):
+    time = transport.get_weight('TrainStation', 'Airport')
+    print(f"Train to Airport: {time} minutes")
+
+# Export graph structure
+graph_dict = transport.to_dict()
+print(f"Network structure: {graph_dict}")
+```
+
+## Related Pages
+
+<CardGroup cols={2}>
+  <Card title="Graphs Overview" icon="diagram-project" href="/graphs/overview">
+    Learn about graph concepts and terminology
+  </Card>
+  
+  <Card title="Adjacency Matrix" icon="table-cells" href="/graphs/adjacency-matrix">
+    Detailed documentation on matrix-based graphs
+  </Card>
+  
+  <Card title="Adjacency List" icon="list" href="/graphs/adjacency-list">
+    Detailed documentation on list-based graphs
+  </Card>
+  
+  <Card title="Graph Traversal" icon="route" href="/graphs/traversal">
+    Learn BFS and DFS traversal algorithms
+  </Card>
+</CardGroup>

@@ -1,0 +1,168 @@
+---
+title: "Dijkstra's Shortest Path Algorithm"
+description: "Find the shortest path between vertices in a weighted graph using Dijkstra's algorithm"
+---
+
+## Overview
+
+Dijkstra's algorithm finds the shortest path between two vertices in a weighted graph. It uses a priority queue (min-heap) to efficiently select the next vertex with the minimum distance from the starting vertex.
+
+<Note>
+This implementation works with both `AdjacencyListWeightedGraph` and `AdjacencyMatrixWeightedGraph` from the DSA package.
+</Note>
+
+## Functions
+
+### shortest_path
+
+Computes weight and predecessor tables using Dijkstra's Algorithm.
+
+```python dijkstra.py:5
+def shortest_path(graph: Graph, start: str, end: str, debug: bool=False) -> tuple:
+    """ 
+    Helper function that returns a weight table and a predecessor table using Dijkstra's Algorithm.
+
+    Args:
+        graph (Graph): The graph to search.
+        start (str): The starting vertex label.
+        end (str): The ending vertex label.
+        debug (bool): If True, display weight table as it is being built.
+    
+    Raises:
+        KeyError: If start or end vertex is not in the graph.
+
+    Returns:
+        A tuple of a weight table hashtable and a predecessor hashtable.
+    """
+```
+
+**Parameters:**
+- `graph` (Graph): The graph to search
+- `start` (str): The starting vertex label
+- `end` (str): The ending vertex label
+- `debug` (bool): Optional flag to display weight table during computation
+
+**Returns:**
+- `tuple`: A tuple containing:
+  - Weight table (dict): Maps each vertex to its shortest distance from start
+  - Predecessor table (dict): Maps each vertex to its predecessor in the shortest path
+
+**Raises:**
+- `KeyError`: If start or end vertex is not in the graph
+
+### find_path
+
+Returns the shortest path between two vertices.
+
+```python dijkstra.py:56
+def find_path(graph: Graph, start: str, end: str, debug: bool=False) -> list:
+    """ 
+    Return the shortest path of two vertices using Dijkstra's Algorithm.
+
+    Args:
+        graph (Graph): The graph to search.
+        start (str): The starting vertex label.
+        end (str): The ending vertex label.
+        debug (bool): If True, display the weight table.
+    
+    Raises:
+        KeyError: If start or end vertex is not in the graph, or if there is no path from start to end.
+
+    Returns:
+        A list of vertices that form a shortest path.
+    """
+```
+
+**Parameters:**
+- `graph` (Graph): The graph to search
+- `start` (str): The starting vertex label
+- `end` (str): The ending vertex label
+- `debug` (bool): Optional flag to display weight and predecessor tables
+
+**Returns:**
+- `list`: A list of vertex labels forming the shortest path from start to end
+
+**Raises:**
+- `KeyError`: If start or end vertex is not in the graph, or if no path exists
+
+## Usage Examples
+
+<Steps>
+  <Step title="Create a weighted graph">
+    First, create a weighted graph with vertices and edges:
+
+    ```python
+    from dsa.graph import AdjacencyListWeightedGraph
+    from dsa.dijkstra import find_path, shortest_path
+
+    # Create a weighted graph
+    graph = AdjacencyListWeightedGraph()
+    graph.add_edge('A', 'B', 4)
+    graph.add_edge('A', 'C', 2)
+    graph.add_edge('B', 'C', 1)
+    graph.add_edge('B', 'D', 5)
+    graph.add_edge('C', 'D', 8)
+    graph.add_edge('C', 'E', 10)
+    graph.add_edge('D', 'E', 2)
+    ```
+  </Step>
+
+  <Step title="Find the shortest path">
+    Use `find_path()` to get the shortest path between two vertices:
+
+    ```python
+    # Find shortest path from A to E
+    path = find_path(graph, 'A', 'E')
+    print(path)  # ['A', 'C', 'B', 'D', 'E']
+    ```
+  </Step>
+
+  <Step title="Get weight and predecessor tables">
+    Use `shortest_path()` to get detailed information:
+
+    ```python
+    # Get weight and predecessor tables
+    weight_table, predecessor = shortest_path(graph, 'A', 'E')
+    
+    # Check the shortest distance
+    print(f"Distance from A to E: {weight_table['E']}")
+    
+    # See the predecessor for each vertex
+    print(f"Predecessor table: {predecessor}")
+    ```
+  </Step>
+
+  <Step title="Use debug mode">
+    Enable debug mode to see the algorithm in action:
+
+    ```python
+    # Find path with debug output
+    path = find_path(graph, 'A', 'E', debug=True)
+    ```
+
+    This will display the weight table and predecessor table as they are built.
+  </Step>
+</Steps>
+
+## Algorithm Details
+
+The implementation uses:
+
+1. **Min-Heap Priority Queue**: Efficiently selects the next vertex with minimum distance (dijkstra.py:29)
+2. **Weight Table**: Tracks the shortest known distance to each vertex (dijkstra.py:26)
+3. **Predecessor Table**: Stores the predecessor of each vertex in the shortest path (dijkstra.py:27)
+4. **Visited Set**: Prevents reprocessing of vertices (dijkstra.py:28)
+
+<Note>
+The algorithm terminates early when the destination vertex is reached (dijkstra.py:40-41), optimizing performance for single-pair shortest path queries.
+</Note>
+
+## Time Complexity
+
+- **Time Complexity**: O((V + E) log V) where V is the number of vertices and E is the number of edges
+- **Space Complexity**: O(V) for storing the weight table, predecessor table, and priority queue
+
+## Related
+
+- [Prim's Algorithm](/algorithms/prim) - Similar approach for finding minimum spanning trees
+- [Graph Data Structure](/data-structures/graph) - Learn about graph representations

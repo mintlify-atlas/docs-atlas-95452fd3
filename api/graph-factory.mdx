@@ -1,0 +1,336 @@
+---
+title: 'Graph Factory'
+description: 'Factory class for creating graph instances'
+---
+
+## Overview
+
+The `Graph` class is a factory that provides static methods to create different types of graph objects. It supports both adjacency matrix and adjacency list representations, with options for directed/undirected and weighted/unweighted graphs.
+
+## Static Methods
+
+### create
+
+Create a graph object based on the specified parameters.
+
+```python
+@staticmethod
+create(graph_type: str, directed: bool = False, weighted: bool = False, vertices = None) -> object
+```
+
+<ParamField path="graph_type" type="str" required>
+  The type of graph representation:
+  - `'adjacency_matrix'` - Matrix-based representation
+  - `'adjacency_list'` - List-based representation
+</ParamField>
+
+<ParamField path="directed" type="bool" default="False">
+  Whether the graph is directed
+</ParamField>
+
+<ParamField path="weighted" type="bool" default="False">
+  Whether the graph edges have weights
+</ParamField>
+
+<ParamField path="vertices" type="list" default="None">
+  List of vertex labels to initialize the graph with
+</ParamField>
+
+<ResponseField name="return" type="object">
+  A graph object of the appropriate type:
+  - `AdjacencyMatrixGraph` (unweighted matrix)
+  - `AdjacencyMatrixWeightedGraph` (weighted matrix)
+  - `AdjacencyListGraph` (unweighted list)
+  - `AdjacencyListWeightedGraph` (weighted list)
+</ResponseField>
+
+**Raises:** `ValueError` if an invalid graph type is provided
+
+```python
+from dsa.graph import Graph
+
+# Create unweighted, undirected adjacency matrix graph
+g1 = Graph.create('adjacency_matrix')
+
+# Create weighted, directed adjacency list graph
+g2 = Graph.create('adjacency_list', directed=True, weighted=True)
+
+# Create graph with initial vertices
+g3 = Graph.create('adjacency_matrix', vertices=['A', 'B', 'C'])
+```
+
+### create_adjacency_matrix
+
+Create an adjacency matrix graph object.
+
+```python
+@staticmethod
+create_adjacency_matrix(directed: bool = False, weighted: bool = False, vertices = None) -> object
+```
+
+<ParamField path="directed" type="bool" default="False">
+  Whether the graph is directed
+</ParamField>
+
+<ParamField path="weighted" type="bool" default="False">
+  Whether the graph edges have weights
+</ParamField>
+
+<ParamField path="vertices" type="list" default="None">
+  List of vertex labels to initialize the graph with
+</ParamField>
+
+<ResponseField name="return" type="object">
+  An `AdjacencyMatrixGraph` or `AdjacencyMatrixWeightedGraph` instance
+</ResponseField>
+
+```python
+from dsa.graph import Graph
+
+# Create unweighted adjacency matrix
+g1 = Graph.create_adjacency_matrix()
+
+# Create weighted, directed adjacency matrix
+g2 = Graph.create_adjacency_matrix(directed=True, weighted=True)
+
+# With initial vertices
+g3 = Graph.create_adjacency_matrix(vertices=['A', 'B', 'C', 'D'])
+```
+
+### create_adjacency_list
+
+Create an adjacency list graph object.
+
+```python
+@staticmethod
+create_adjacency_list(directed: bool = False, weighted: bool = False, vertices = None) -> object
+```
+
+<ParamField path="directed" type="bool" default="False">
+  Whether the graph is directed
+</ParamField>
+
+<ParamField path="weighted" type="bool" default="False">
+  Whether the graph edges have weights
+</ParamField>
+
+<ParamField path="vertices" type="list" default="None">
+  List of vertex labels to initialize the graph with
+</ParamField>
+
+<ResponseField name="return" type="object">
+  An `AdjacencyListGraph` or `AdjacencyListWeightedGraph` instance
+</ResponseField>
+
+```python
+from dsa.graph import Graph
+
+# Create unweighted adjacency list
+g1 = Graph.create_adjacency_list()
+
+# Create weighted, directed adjacency list
+g2 = Graph.create_adjacency_list(directed=True, weighted=True)
+
+# With initial vertices
+g3 = Graph.create_adjacency_list(vertices=['X', 'Y', 'Z'])
+```
+
+### from_dict
+
+Create a graph from a dictionary representation.
+
+```python
+@staticmethod
+from_dict(data: dict, graph_type: str, directed: bool = False, weighted: bool = False) -> object
+```
+
+<ParamField path="data" type="dict" required>
+  Dictionary representation of the graph:
+  - Unweighted: `{vertex: [neighbor1, neighbor2, ...]}`
+  - Weighted: `{vertex: {neighbor1: weight1, neighbor2: weight2, ...}}`
+</ParamField>
+
+<ParamField path="graph_type" type="str" required>
+  The type of graph: `'adjacency_matrix'` or `'adjacency_list'`
+</ParamField>
+
+<ParamField path="directed" type="bool" default="False">
+  Whether the graph is directed
+</ParamField>
+
+<ParamField path="weighted" type="bool" default="False">
+  Whether the graph is weighted
+</ParamField>
+
+<ResponseField name="return" type="object">
+  A graph instance of the specified type
+</ResponseField>
+
+**Raises:** `ValueError` if an invalid graph type is provided
+
+```python
+from dsa.graph import Graph
+
+# Create unweighted graph from dictionary
+data_unweighted = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A', 'D'],
+    'D': ['B', 'C']
+}
+g1 = Graph.from_dict(data_unweighted, 'adjacency_list')
+
+# Create weighted graph from dictionary
+data_weighted = {
+    'A': {'B': 5, 'C': 3},
+    'B': {'A': 5, 'D': 2},
+    'C': {'A': 3, 'D': 7},
+    'D': {'B': 2, 'C': 7}
+}
+g2 = Graph.from_dict(data_weighted, 'adjacency_matrix', weighted=True)
+```
+
+## Complete Examples
+
+<CodeGroup>
+
+```python Creating Different Graph Types
+from dsa.graph import Graph
+
+# Undirected, unweighted adjacency matrix
+g1 = Graph.create('adjacency_matrix')
+g1.add_edge('A', 'B')
+g1.add_edge('B', 'C')
+print(g1.edges())  # [('A', 'B'), ('B', 'A'), ('B', 'C'), ('C', 'B')]
+
+# Directed, weighted adjacency list
+g2 = Graph.create('adjacency_list', directed=True, weighted=True)
+g2.add_edge('X', 'Y', 10)
+g2.add_edge('Y', 'Z', 20)
+print(g2.edges())  # [('X', 'Y', 10), ('Y', 'Z', 20)]
+
+# Using specific factory methods
+g3 = Graph.create_adjacency_matrix(directed=True)
+g3.add_edge('1', '2')
+print(g3.has_edge('1', '2'))  # True
+print(g3.has_edge('2', '1'))  # False (directed)
+```
+
+```python Creating from Dictionary
+from dsa.graph import Graph
+
+# Social network (undirected, unweighted)
+friends = {
+    'Alice': ['Bob', 'Charlie'],
+    'Bob': ['Alice', 'David'],
+    'Charlie': ['Alice', 'David'],
+    'David': ['Bob', 'Charlie']
+}
+social_graph = Graph.from_dict(friends, 'adjacency_list')
+
+# Road network (undirected, weighted with distances)
+roads = {
+    'CityA': {'CityB': 100, 'CityC': 150},
+    'CityB': {'CityA': 100, 'CityD': 200},
+    'CityC': {'CityA': 150, 'CityD': 120},
+    'CityD': {'CityB': 200, 'CityC': 120}
+}
+road_network = Graph.from_dict(roads, 'adjacency_matrix', weighted=True)
+
+# Web pages (directed, unweighted)
+links = {
+    'home.html': ['about.html', 'contact.html'],
+    'about.html': ['home.html'],
+    'contact.html': ['home.html'],
+}
+web_graph = Graph.from_dict(links, 'adjacency_list', directed=True)
+```
+
+```python Choosing Graph Type
+from dsa.graph import Graph
+
+# Dense graph -> Use adjacency matrix
+# Many edges relative to vertices
+vertices = ['A', 'B', 'C', 'D', 'E']
+dense_graph = Graph.create('adjacency_matrix', vertices=vertices)
+# Add many edges...
+for v1 in vertices:
+    for v2 in vertices:
+        if v1 != v2:
+            dense_graph.add_edge(v1, v2)
+
+# Sparse graph -> Use adjacency list
+# Few edges relative to vertices
+sparse_graph = Graph.create('adjacency_list')
+sparse_graph.add_edge('A', 'B')
+sparse_graph.add_edge('C', 'D')
+sparse_graph.add_edge('E', 'F')
+
+# Weighted graph for pathfinding
+weighted_graph = Graph.create(
+    'adjacency_list',
+    directed=True,
+    weighted=True,
+    vertices=['Start', 'Node1', 'Node2', 'End']
+)
+weighted_graph.add_edge('Start', 'Node1', 5)
+weighted_graph.add_edge('Node1', 'End', 10)
+```
+
+</CodeGroup>
+
+## Graph Type Comparison
+
+<Accordion title="Adjacency Matrix vs Adjacency List">
+
+### Adjacency Matrix
+- **Best for:** Dense graphs, frequent edge lookups, small graphs
+- **Space Complexity:** O(V²)
+- **Edge Lookup:** O(1)
+- **Get All Edges:** O(V²)
+- **Add Vertex:** O(V²) - requires matrix resize
+
+### Adjacency List
+- **Best for:** Sparse graphs, frequent vertex additions, large graphs
+- **Space Complexity:** O(V + E)
+- **Edge Lookup:** O(degree(V))
+- **Get All Edges:** O(V + E)
+- **Add Vertex:** O(1)
+
+</Accordion>
+
+<Accordion title="Directed vs Undirected">
+
+### Directed Graphs
+- Edges have a direction (one-way)
+- Adding edge A→B does not create B→A
+- Use for: Web links, dependencies, one-way relationships
+
+### Undirected Graphs
+- Edges are bidirectional
+- Adding edge A-B automatically creates B-A
+- Use for: Social networks, road maps, mutual relationships
+
+</Accordion>
+
+<Accordion title="Weighted vs Unweighted">
+
+### Weighted Graphs
+- Edges have associated weights/costs
+- Use for: Distance maps, cost optimization, network flow
+- Requires weight parameter when adding edges
+
+### Unweighted Graphs
+- Edges are either present or absent (boolean)
+- Use for: Simple connectivity, reachability problems
+- No weight parameter needed
+
+</Accordion>
+
+## Notes
+
+- All factory methods return concrete graph instances
+- Vertex labels must be strings
+- The factory automatically selects the appropriate graph class based on parameters
+- Invalid graph types raise a `ValueError`
+- Default behavior is undirected and unweighted graphs

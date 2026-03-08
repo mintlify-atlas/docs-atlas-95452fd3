@@ -1,0 +1,668 @@
+---
+title: Generators
+description: API reference for data structure generator functions
+---
+
+This module provides generator functions for creating random and linear instances of various data structures for testing and demonstration purposes.
+
+## Array Generators
+
+### random_array
+
+Generates a random array of integers.
+
+```python
+from dsa.generators import random_array
+
+array = random_array(size, min_val=0, max_val=100)
+```
+
+<ParamField path="size" type="int" required>
+  Number of elements in the array
+</ParamField>
+
+<ParamField path="min_val" type="int" default="0">
+  Minimum value of the elements
+</ParamField>
+
+<ParamField path="max_val" type="int" default="100">
+  Maximum value of the elements
+</ParamField>
+
+<ResponseField name="array" type="Array">
+  Array containing random integers
+</ResponseField>
+
+```python Example
+from dsa.generators import random_array
+
+array = random_array(10, min_val=1, max_val=50)
+```
+
+---
+
+### random_dynamicarray
+
+Generates a random dynamic array of integers.
+
+```python
+from dsa.generators import random_dynamicarray
+
+array = random_dynamicarray(size, min_val=0, max_val=100)
+```
+
+<ParamField path="size" type="int" required>
+  Number of elements in the array
+</ParamField>
+
+<ParamField path="min_val" type="int" default="0">
+  Minimum value of the elements
+</ParamField>
+
+<ParamField path="max_val" type="int" default="100">
+  Maximum value of the elements
+</ParamField>
+
+<ResponseField name="array" type="DynamicArray">
+  DynamicArray containing random integers
+</ResponseField>
+
+## Stack Generators
+
+### random_stack
+
+Generates a random stack of integers.
+
+```python
+from dsa.generators import random_stack
+
+stack = random_stack(size, min_val=0, max_val=100)
+```
+
+<ParamField path="size" type="int" required>
+  Number of elements in the stack
+</ParamField>
+
+<ParamField path="min_val" type="int" default="0">
+  Minimum value of the elements
+</ParamField>
+
+<ParamField path="max_val" type="int" default="100">
+  Maximum value of the elements
+</ParamField>
+
+<ResponseField name="stack" type="Stack">
+  Stack containing random integers
+</ResponseField>
+
+---
+
+### linear_stack
+
+Generates a stack with sequential integers.
+
+```python
+from dsa.generators import linear_stack
+
+stack = linear_stack(size, min_val=0, max_val=100)
+```
+
+<ParamField path="size" type="int" required>
+  Number of elements in the stack
+</ParamField>
+
+<ParamField path="min_val" type="int" default="0">
+  Starting value
+</ParamField>
+
+<ParamField path="max_val" type="int" default="100">
+  Maximum value (not used, kept for API consistency)
+</ParamField>
+
+<ResponseField name="stack" type="Stack">
+  Stack containing sequential integers starting from min_val
+</ResponseField>
+
+---
+
+### random_dynamic_stack
+
+Generates a random dynamic stack of integers.
+
+```python
+from dsa.generators import random_dynamic_stack
+
+stack = random_dynamic_stack(size, min_val=0, max_val=100)
+```
+
+<ParamField path="size" type="int" required>
+  Number of elements in the stack
+</ParamField>
+
+<ParamField path="min_val" type="int" default="0">
+  Minimum value of the elements
+</ParamField>
+
+<ParamField path="max_val" type="int" default="100">
+  Maximum value of the elements
+</ParamField>
+
+<ResponseField name="stack" type="DynamicStack">
+  DynamicStack containing random integers
+</ResponseField>
+
+---
+
+### linear_dynamic_stack
+
+Generates a dynamic stack with sequential integers.
+
+```python
+from dsa.generators import linear_dynamic_stack
+
+stack = linear_dynamic_stack(size, min_val=0, max_val=100)
+```
+
+<ParamField path="size" type="int" required>
+  Number of elements in the stack
+</ParamField>
+
+<ParamField path="min_val" type="int" default="0">
+  Starting value
+</ParamField>
+
+<ParamField path="max_val" type="int" default="100">
+  Maximum value (not used)
+</ParamField>
+
+<ResponseField name="stack" type="DynamicStack">
+  DynamicStack containing sequential integers
+</ResponseField>
+
+## Queue Generators
+
+### random_queue
+
+Generates a random queue of integers.
+
+```python
+from dsa.generators import random_queue
+
+queue = random_queue(size, min_val=0, max_val=100)
+```
+
+<ParamField path="size" type="int" required>
+  Number of elements in the queue
+</ParamField>
+
+<ParamField path="min_val" type="int" default="0">
+  Minimum value of the elements
+</ParamField>
+
+<ParamField path="max_val" type="int" default="100">
+  Maximum value of the elements
+</ParamField>
+
+<ResponseField name="queue" type="Queue">
+  Queue containing random integers
+</ResponseField>
+
+---
+
+### linear_queue
+
+Generates a queue with sequential integers.
+
+```python
+from dsa.generators import linear_queue
+
+queue = linear_queue(size, min_val=0, max_val=100)
+```
+
+<ParamField path="size" type="int" required>
+  Number of elements in the queue
+</ParamField>
+
+<ParamField path="min_val" type="int" default="0">
+  Starting value
+</ParamField>
+
+<ParamField path="max_val" type="int" default="100">
+  Maximum value (not used)
+</ParamField>
+
+<ResponseField name="queue" type="Queue">
+  Queue containing sequential integers
+</ResponseField>
+
+---
+
+### random_dynamic_queue
+
+Generates a random dynamic queue of integers.
+
+```python
+from dsa.generators import random_dynamic_queue
+
+queue = random_dynamic_queue(size, min_val=0, max_val=100)
+```
+
+<ParamField path="size" type="int" required>
+  Number of elements in the queue
+</ParamField>
+
+<ParamField path="min_val" type="int" default="0">
+  Minimum value of the elements
+</ParamField>
+
+<ParamField path="max_val" type="int" default="100">
+  Maximum value of the elements
+</ParamField>
+
+<ResponseField name="queue" type="DynamicQueue">
+  DynamicQueue containing random integers
+</ResponseField>
+
+---
+
+### linear_dynamic_queue
+
+Generates a dynamic queue with sequential integers.
+
+```python
+from dsa.generators import linear_dynamic_queue
+
+queue = linear_dynamic_queue(size, min_val=0, max_val=100)
+```
+
+<ParamField path="size" type="int" required>
+  Number of elements in the queue
+</ParamField>
+
+<ParamField path="min_val" type="int" default="0">
+  Starting value
+</ParamField>
+
+<ParamField path="max_val" type="int" default="100">
+  Maximum value (not used)
+</ParamField>
+
+<ResponseField name="queue" type="DynamicQueue">
+  DynamicQueue containing sequential integers
+</ResponseField>
+
+## Deque Generators
+
+### random_deque
+
+Generates a random deque of integers.
+
+```python
+from dsa.generators import random_deque
+
+deque = random_deque(size, min_val=0, max_val=100)
+```
+
+<ParamField path="size" type="int" required>
+  Number of elements in the deque
+</ParamField>
+
+<ParamField path="min_val" type="int" default="0">
+  Minimum value of the elements
+</ParamField>
+
+<ParamField path="max_val" type="int" default="100">
+  Maximum value of the elements
+</ParamField>
+
+<ResponseField name="deque" type="Deque">
+  Deque containing random integers added from both ends
+</ResponseField>
+
+## Linked List Generators
+
+### random_linked_list
+
+Generates a random singly linked list of integers.
+
+```python
+from dsa.generators import random_linked_list
+
+ll = random_linked_list(size, min_val=0, max_val=100)
+```
+
+<ParamField path="size" type="int" required>
+  Number of nodes in the linked list
+</ParamField>
+
+<ParamField path="min_val" type="int" default="0">
+  Minimum value of the elements
+</ParamField>
+
+<ParamField path="max_val" type="int" default="100">
+  Maximum value of the elements
+</ParamField>
+
+<ResponseField name="ll" type="LinkedList">
+  LinkedList containing random integers
+</ResponseField>
+
+---
+
+### linear_linked_list
+
+Generates a singly linked list with sequential integers.
+
+```python
+from dsa.generators import linear_linked_list
+
+ll = linear_linked_list(size, min_val=0, max_val=100)
+```
+
+<ParamField path="size" type="int" required>
+  Number of nodes in the linked list
+</ParamField>
+
+<ParamField path="min_val" type="int" default="0">
+  Starting value
+</ParamField>
+
+<ParamField path="max_val" type="int" default="100">
+  Maximum value (not used)
+</ParamField>
+
+<ResponseField name="ll" type="LinkedList">
+  LinkedList containing sequential integers
+</ResponseField>
+
+---
+
+### random_doubly_linked_list
+
+Generates a random doubly linked list of integers.
+
+```python
+from dsa.generators import random_doubly_linked_list
+
+dll = random_doubly_linked_list(size, min_val=0, max_val=100)
+```
+
+<ParamField path="size" type="int" required>
+  Number of nodes in the list
+</ParamField>
+
+<ParamField path="min_val" type="int" default="0">
+  Minimum value of the nodes
+</ParamField>
+
+<ParamField path="max_val" type="int" default="100">
+  Maximum value of the nodes
+</ParamField>
+
+<ResponseField name="dll" type="DoublyLinkedList">
+  DoublyLinkedList containing random integers
+</ResponseField>
+
+---
+
+### linear_doubly_linked_list
+
+Generates a doubly linked list with sequential integers.
+
+```python
+from dsa.generators import linear_doubly_linked_list
+
+dll = linear_doubly_linked_list(size, min_val=0, max_val=100)
+```
+
+<ParamField path="size" type="int" required>
+  Number of nodes in the list
+</ParamField>
+
+<ParamField path="min_val" type="int" default="0">
+  Starting value
+</ParamField>
+
+<ParamField path="max_val" type="int" default="100">
+  Maximum value (not used)
+</ParamField>
+
+<ResponseField name="dll" type="DoublyLinkedList">
+  DoublyLinkedList containing sequential integers
+</ResponseField>
+
+## Tree Generators
+
+### random_binary_tree
+
+Generates a random binary tree.
+
+```python
+from dsa.generators import random_binary_tree
+
+tree = random_binary_tree(n)
+```
+
+<ParamField path="n" type="int" required>
+  Number of nodes in the tree
+</ParamField>
+
+<ResponseField name="tree" type="Tree">
+  Tree with randomly structured nodes
+</ResponseField>
+
+```python Example
+from dsa.generators import random_binary_tree
+
+tree = random_binary_tree(15)
+# Tree with 15 nodes in random structure
+```
+
+---
+
+### random_binary_tree_node
+
+Generates a random binary tree node structure.
+
+```python
+from dsa.generators import random_binary_tree_node
+
+node = random_binary_tree_node(n)
+```
+
+<ParamField path="n" type="int" required>
+  Number of nodes in the tree
+</ParamField>
+
+<ResponseField name="node" type="TreeNode">
+  Root TreeNode of a randomly structured binary tree
+</ResponseField>
+
+## Heap Generators
+
+### random_heap
+
+Generates a random heap.
+
+```python
+from dsa.generators import random_heap
+
+heap = random_heap(n)
+```
+
+<ParamField path="n" type="int" required>
+  Number of nodes in the heap
+</ParamField>
+
+<ResponseField name="heap" type="Heap">
+  Heap containing random integers from 0 to 100
+</ResponseField>
+
+```python Example
+from dsa.generators import random_heap
+
+heap = random_heap(20)
+# Min-heap with 20 random values
+```
+
+## Trie Generators
+
+### random_trie
+
+Generates a random trie with random words.
+
+```python
+from dsa.generators import random_trie
+
+trie = random_trie(n)
+```
+
+<ParamField path="n" type="int" required>
+  Number of words to insert into the trie
+</ParamField>
+
+<ResponseField name="trie" type="Trie">
+  Trie containing n random words (1-10 characters each)
+</ResponseField>
+
+```python Example
+from dsa.generators import random_trie
+
+trie = random_trie(50)
+# Trie with 50 random words
+```
+
+## Graph Generators
+
+### random_adjacency_matrix_graph
+
+Generates a random unweighted graph using adjacency matrix representation.
+
+```python
+from dsa.generators import random_adjacency_matrix_graph
+
+graph = random_adjacency_matrix_graph(n, density=0.1, directed=False)
+```
+
+<ParamField path="n" type="int" required>
+  Number of vertices
+</ParamField>
+
+<ParamField path="density" type="float" default="0.1">
+  Probability of edge existence between any two vertices (0.0 to 1.0)
+</ParamField>
+
+<ParamField path="directed" type="bool" default="False">
+  If True, creates directed edges
+</ParamField>
+
+<ResponseField name="graph" type="AdjacencyMatrixGraph">
+  Graph with n vertices labeled A, B, C, etc.
+</ResponseField>
+
+---
+
+### random_adjacency_matrix_weighted_graph
+
+Generates a random weighted graph using adjacency matrix representation.
+
+```python
+from dsa.generators import random_adjacency_matrix_weighted_graph
+
+graph = random_adjacency_matrix_weighted_graph(n, density=0.1, directed=False)
+```
+
+<ParamField path="n" type="int" required>
+  Number of vertices
+</ParamField>
+
+<ParamField path="density" type="float" default="0.1">
+  Probability of edge existence between vertices
+</ParamField>
+
+<ParamField path="directed" type="bool" default="False">
+  If True, creates directed edges
+</ParamField>
+
+<ResponseField name="graph" type="AdjacencyMatrixWeightedGraph">
+  Weighted graph with edge weights from 1 to 10
+</ResponseField>
+
+---
+
+### random_adjacency_list_graph
+
+Generates a random unweighted graph using adjacency list representation.
+
+```python
+from dsa.generators import random_adjacency_list_graph
+
+graph = random_adjacency_list_graph(n, density=0.1, directed=False)
+```
+
+<ParamField path="n" type="int" required>
+  Number of vertices
+</ParamField>
+
+<ParamField path="density" type="float" default="0.1">
+  Probability of edge existence between vertices
+</ParamField>
+
+<ParamField path="directed" type="bool" default="False">
+  If True, creates directed edges
+</ParamField>
+
+<ResponseField name="graph" type="AdjacencyListGraph">
+  Graph with n vertices labeled A, B, C, etc.
+</ResponseField>
+
+---
+
+### random_adjacency_list_weighted_graph
+
+Generates a random weighted graph using adjacency list representation.
+
+```python
+from dsa.generators import random_adjacency_list_weighted_graph
+
+graph = random_adjacency_list_weighted_graph(n, density=0.1, directed=False)
+```
+
+<ParamField path="n" type="int" required>
+  Number of vertices
+</ParamField>
+
+<ParamField path="density" type="float" default="0.1">
+  Probability of edge existence between vertices
+</ParamField>
+
+<ParamField path="directed" type="bool" default="False">
+  If True, creates directed edges
+</ParamField>
+
+<ResponseField name="graph" type="AdjacencyListWeightedGraph">
+  Weighted graph with edge weights from 1 to 10
+</ResponseField>
+
+<CodeGroup>
+```python Sparse Graph
+from dsa.generators import random_adjacency_list_weighted_graph
+
+# Create sparse graph with 10 vertices, 10% edge density
+graph = random_adjacency_list_weighted_graph(10, density=0.1)
+```
+
+```python Dense Graph
+from dsa.generators import random_adjacency_list_weighted_graph
+
+# Create dense graph with 10 vertices, 70% edge density
+graph = random_adjacency_list_weighted_graph(10, density=0.7)
+```
+
+```python Directed Graph
+from dsa.generators import random_adjacency_list_graph
+
+# Create directed graph
+graph = random_adjacency_list_graph(8, density=0.3, directed=True)
+```
+</CodeGroup>

@@ -1,0 +1,395 @@
+---
+title: "Sorting Utilities"
+description: "Utilities for generating test data and benchmarking sorting algorithms"
+---
+
+## Overview
+
+The `sorttools` module provides utilities for testing and benchmarking sorting algorithms. It includes functions to generate various types of arrays (random, sorted, shuffled, almost-sorted) and verify sorting correctness.
+
+<Note>
+These utilities are particularly useful for algorithm analysis, performance testing, and understanding how different sorting algorithms perform on different input patterns.
+</Note>
+
+## Array Generation Functions
+
+### rand_int_array
+
+Generates an array of random integers.
+
+```python sorttools.py:4
+def rand_int_array(n: int, maxnum: int) -> list:
+    """ 
+    Return an array of n integers of random numbers from 0 to maxnum.
+
+    Args:
+        n (int): The number of integers to generate.
+        maxnum (int): The maximum number in a range (0-maxnum inclusive).
+
+    Returns:
+        Array of n integers of random numbers from 0 to maxnum.
+    """
+```
+
+**Parameters:**
+- `n` (int): The number of integers to generate
+- `maxnum` (int): The maximum value (range is 0 to maxnum inclusive)
+
+**Returns:**
+- `list`: Array of n random integers
+
+**Example:**
+```python
+from dsa.sorttools import rand_int_array
+
+# Generate 100 random integers from 0 to 1000
+array = rand_int_array(100, 1000)
+print(array[:10])  # Show first 10 elements
+```
+
+### filled_array
+
+Generates a sorted array with consecutive integers.
+
+```python sorttools.py:20
+def filled_array(n: int) -> list:
+    """ 
+    Return an array filled with integers from 0 to n-1.
+
+    Args:
+        n (int): the number of integers to generate.
+
+    Returns:
+        Array filled with integers from 0 to n-1.
+    """
+```
+
+**Parameters:**
+- `n` (int): The number of integers to generate
+
+**Returns:**
+- `list`: Array containing [0, 1, 2, ..., n-1]
+
+**Example:**
+```python
+from dsa.sorttools import filled_array
+
+# Generate sorted array [0, 1, 2, ..., 99]
+array = filled_array(100)
+```
+
+### shuffle_array
+
+Generates a shuffled array of integers.
+
+```python sorttools.py:35
+def shuffle_array(n: int) -> list:
+    """ 
+    Return a shuffled array filled with integers from 0 to n-1.
+
+    Args:
+        n (int): The number of integers to generate.
+
+    Returns:
+        Array shuffled with integers from 0 to n-1.
+    """
+```
+
+**Parameters:**
+- `n` (int): The number of integers to generate
+
+**Returns:**
+- `list`: Shuffled array containing 0 to n-1
+
+**Example:**
+```python
+from dsa.sorttools import shuffle_array
+
+# Generate shuffled array of 0-99
+array = shuffle_array(100)
+```
+
+### generate_almost_sorted_array
+
+Generates an array that is mostly sorted with a few local swaps.
+
+```python sorttools.py:78
+def generate_almost_sorted_array(size: int, swaps: int) -> list:
+    """
+    Generate an almost sorted array of a given size with a specified number of swaps.   
+
+    Args:
+        size (int): The size of the array to generate.
+        swaps (int): The number of adjacent elements to swap to create disorder.
+
+    Returns:
+        list: An array of integers that is mostly sorted with a few local swaps.
+    """
+```
+
+**Parameters:**
+- `size` (int): The size of the array to generate
+- `swaps` (int): The number of adjacent element swaps to introduce
+
+**Returns:**
+- `list`: Array that is mostly sorted with local disorder
+
+**Example:**
+```python
+from dsa.sorttools import generate_almost_sorted_array
+
+# Generate array of 1000 elements with only 10 swaps
+array = generate_almost_sorted_array(1000, 10)
+```
+
+<Note>
+This function is particularly useful for testing adaptive sorting algorithms like insertion sort, which perform better on nearly-sorted data.
+</Note>
+
+## Verification Functions
+
+### is_sorted
+
+Verifies if an array is sorted in ascending order.
+
+```python sorttools.py:51
+def is_sorted(array: list) -> bool:
+    """ 
+    Return a boolean on whether an array is sorted in ascending order or not.
+
+    Args:
+        array: the array to verify.
+
+    Returns:
+        True if the array is sorted, False otherwise.   
+    """
+```
+
+**Parameters:**
+- `array` (list): The array to verify
+
+**Returns:**
+- `bool`: True if sorted in ascending order, False otherwise
+
+**Example:**
+```python
+from dsa.sorttools import is_sorted
+
+array1 = [1, 2, 3, 4, 5]
+array2 = [1, 3, 2, 4, 5]
+
+print(is_sorted(array1))  # True
+print(is_sorted(array2))  # False
+```
+
+### array_details
+
+Provides a summary of array contents.
+
+```python sorttools.py:66
+def array_details(array: list) -> str:
+    """
+    Return a string with details about the array.
+
+    Args:
+        array: the array to analyze.
+
+    Returns:
+        A string with the count of elements, first 10 elements, and last 10 elements.
+    """
+```
+
+**Parameters:**
+- `array` (list): The array to analyze
+
+**Returns:**
+- `str`: String containing array size, first 10 elements, and last 10 elements
+
+**Example:**
+```python
+from dsa.sorttools import array_details, shuffle_array
+
+array = shuffle_array(1000)
+print(array_details(array))
+# Output: Count: 1000 first 10: [42, 17, 99, ...] last 10: [..., 15, 8, 93]
+```
+
+## Complete Usage Example
+
+<Steps>
+  <Step title="Import the module">
+    ```python
+    from dsa.sorttools import (
+        rand_int_array,
+        shuffle_array,
+        generate_almost_sorted_array,
+        is_sorted,
+        array_details
+    )
+    import time
+    ```
+  </Step>
+
+  <Step title="Generate test data">
+    ```python
+    # Different types of test data
+    random_data = rand_int_array(10000, 10000)
+    shuffled_data = shuffle_array(10000)
+    almost_sorted = generate_almost_sorted_array(10000, 50)
+    
+    # Display details
+    print(array_details(random_data))
+    print(array_details(almost_sorted))
+    ```
+  </Step>
+
+  <Step title="Test a sorting algorithm">
+    ```python
+    # Test with different input types
+    test_cases = [
+        ("Random", random_data.copy()),
+        ("Shuffled", shuffled_data.copy()),
+        ("Almost Sorted", almost_sorted.copy())
+    ]
+    
+    for name, data in test_cases:
+        start = time.time()
+        data.sort()  # Or your sorting algorithm
+        elapsed = time.time() - start
+        
+        print(f"{name}: {elapsed:.4f}s - Sorted: {is_sorted(data)}")
+    ```
+  </Step>
+
+  <Step title="Benchmark multiple algorithms">
+    ```python
+    def benchmark_sort(sort_func, data, name):
+        """Benchmark a sorting function"""
+        test_data = data.copy()
+        
+        start = time.time()
+        sort_func(test_data)
+        elapsed = time.time() - start
+        
+        verified = is_sorted(test_data)
+        print(f"{name}: {elapsed:.4f}s - Correct: {verified}")
+        return elapsed
+    
+    # Generate test data
+    sizes = [1000, 5000, 10000]
+    
+    for size in sizes:
+        print(f"\nTesting with {size} elements:")
+        data = rand_int_array(size, size)
+        
+        # Test different sorting algorithms
+        benchmark_sort(sorted, data, "Built-in sort")
+        # benchmark_sort(bubble_sort, data, "Bubble sort")
+        # benchmark_sort(quick_sort, data, "Quick sort")
+    ```
+  </Step>
+</Steps>
+
+## Common Use Cases
+
+<CodeGroup>
+
+```python Best Case Testing
+# Test algorithm on already sorted data
+from dsa.sorttools import filled_array, is_sorted
+
+data = filled_array(10000)
+print(f"Pre-sorted: {is_sorted(data)}")
+
+# Your sorting algorithm here
+# This tests best-case performance
+```
+
+```python Worst Case Testing
+# For algorithms sensitive to input order
+from dsa.sorttools import filled_array
+
+# Reverse sorted array (worst case for some algorithms)
+data = filled_array(10000)
+data.reverse()
+
+# Your sorting algorithm here
+```
+
+```python Average Case Testing
+# Random data for typical performance
+from dsa.sorttools import rand_int_array
+
+data = rand_int_array(10000, 10000)
+
+# Your sorting algorithm here
+```
+
+```python Adaptive Algorithm Testing
+# Test how well algorithm handles nearly-sorted data
+from dsa.sorttools import generate_almost_sorted_array
+
+# Only 1% of elements are out of place
+data = generate_almost_sorted_array(10000, 100)
+
+# Good for testing insertion sort, timsort, etc.
+```
+
+</CodeGroup>
+
+## Testing Patterns
+
+### Correctness Testing
+
+```python
+from dsa.sorttools import rand_int_array, is_sorted
+
+def test_sort_correctness(sort_func, num_tests=100):
+    """Test sorting algorithm correctness"""
+    for i in range(num_tests):
+        size = (i + 1) * 100
+        data = rand_int_array(size, size * 10)
+        
+        sort_func(data)
+        
+        if not is_sorted(data):
+            print(f"FAILED at size {size}")
+            return False
+    
+    print(f"PASSED all {num_tests} tests")
+    return True
+```
+
+### Performance Comparison
+
+```python
+from dsa.sorttools import rand_int_array
+import time
+
+def compare_sorts(algorithms, sizes):
+    """Compare multiple sorting algorithms"""
+    for size in sizes:
+        print(f"\n=== Size: {size} ===")
+        data = rand_int_array(size, size)
+        
+        for name, sort_func in algorithms.items():
+            test_data = data.copy()
+            start = time.time()
+            sort_func(test_data)
+            elapsed = time.time() - start
+            print(f"{name:20s}: {elapsed:.6f}s")
+
+# Usage
+algorithms = {
+    "Built-in Sort": lambda x: x.sort(),
+    # "Bubble Sort": bubble_sort,
+    # "Quick Sort": quick_sort,
+}
+
+compare_sorts(algorithms, [1000, 5000, 10000])
+```
+
+## Related
+
+- [Test Data Generators](/utilities/generators) - Generate data structures for testing
+- [Array Data Structure](/data-structures/array) - Learn about array implementations

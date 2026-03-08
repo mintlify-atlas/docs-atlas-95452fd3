@@ -1,0 +1,462 @@
+---
+title: DoublyLinkedList
+description: API reference for the DoublyLinkedList class
+---
+
+The `DoublyLinkedList` class provides a doubly linked list implementation where each node has references to both the next and previous nodes. It inherits from `LinkedList`.
+
+## Node
+
+A doubly linked list node implementation.
+
+### Constructor
+
+<ParamField path="value" type="any" required>
+  The value of the node
+</ParamField>
+
+```python
+from dsa.doublylinkedlist import Node
+
+node = Node(10)
+print(node.value)  # Output: 10
+print(node.next)   # Output: None
+print(node.prev)   # Output: None
+```
+
+### Properties
+
+<ResponseField name="value" type="any">
+  The value stored in the node
+</ResponseField>
+
+<ResponseField name="next" type="Node | None">
+  Reference to the next node in the list
+</ResponseField>
+
+<ResponseField name="prev" type="Node | None">
+  Reference to the previous node in the list
+</ResponseField>
+
+---
+
+## DoublyLinkedList
+
+A doubly linked list implementation that inherits several methods from `LinkedList`, except for methods that modify the contents of the list.
+
+### Constructor
+
+<ParamField path="head" type="Node | None" default="None">
+  Reference to the head node
+</ParamField>
+
+<ParamField path="tail" type="Node | None" default="None">
+  Reference to the tail node
+</ParamField>
+
+<ParamField path="count" type="int" default="0">
+  The number of nodes in the linked list
+</ParamField>
+
+<Note>
+  If only the head node is specified, tail is set to the head node and count is automatically set to 1. If both head and tail nodes are specified, count should be specified as well.
+</Note>
+
+```python
+from dsa.doublylinkedlist import DoublyLinkedList, Node
+
+# Create an empty doubly linked list
+dll = DoublyLinkedList()
+
+# Create with a single node
+node = Node(10)
+dll = DoublyLinkedList(head=node)
+```
+
+### Properties
+
+<ResponseField name="head" type="Node | None">
+  Reference to the first node in the list
+</ResponseField>
+
+<ResponseField name="tail" type="Node | None">
+  Reference to the last node in the list
+</ResponseField>
+
+<ResponseField name="count" type="int">
+  The number of nodes in the linked list
+</ResponseField>
+
+### Methods
+
+#### from_list(mylist)
+
+Class method to create a doubly linked list from a list.
+
+<ParamField path="mylist" type="list" required>
+  A list or container to convert from
+</ParamField>
+
+**Returns:** Doubly linked list with the contents of the list
+
+```python
+dll = DoublyLinkedList.from_list([1, 2, 3, 4, 5])
+print(dll.to_list())  # Output: [1, 2, 3, 4, 5]
+```
+
+#### to_list()
+
+Convert the doubly linked list to a Python list.
+
+**Returns:** A list with contents of the doubly linked list
+
+```python
+dll = DoublyLinkedList.from_list([1, 2, 3])
+print(dll.to_list())  # Output: [1, 2, 3]
+```
+
+#### traverse()
+
+Print the contents of the doubly linked list (forward direction).
+
+```python
+dll = DoublyLinkedList.from_list([1, 2, 3, 4, 5])
+dll.traverse()  # Output: 1 2 3 4 5
+```
+
+#### traverse_reverse()
+
+Print the contents of the doubly linked list in reverse order.
+
+```python
+dll = DoublyLinkedList.from_list([1, 2, 3, 4, 5])
+dll.traverse_reverse()  # Output: 5 4 3 2 1
+```
+
+#### search(value)
+
+Search for a value in the doubly linked list.
+
+<ParamField path="value" type="any" required>
+  The value to search for
+</ParamField>
+
+**Returns:** The Node containing the value, or None if not found
+
+```python
+dll = DoublyLinkedList.from_list([10, 20, 30])
+node = dll.search(20)
+if node:
+    print(f"Found: {node.value}")  # Output: Found: 20
+    print(f"Previous: {node.prev.value}")  # Output: Previous: 10
+    print(f"Next: {node.next.value}")      # Output: Next: 30
+```
+
+#### is_empty()
+
+Check if the doubly linked list is empty.
+
+**Returns:** `True` if the list is empty, `False` otherwise
+
+```python
+dll = DoublyLinkedList()
+print(dll.is_empty())  # Output: True
+dll.append(1)
+print(dll.is_empty())  # Output: False
+```
+
+#### prepend(value)
+
+Place a value at the beginning of the doubly linked list.
+
+<ParamField path="value" type="any" required>
+  The value to prepend
+</ParamField>
+
+```python
+dll = DoublyLinkedList.from_list([2, 3, 4])
+dll.prepend(1)
+print(dll.to_list())  # Output: [1, 2, 3, 4]
+```
+
+#### append(value)
+
+Place a value at the end of the doubly linked list.
+
+<ParamField path="value" type="any" required>
+  The value to append
+</ParamField>
+
+```python
+dll = DoublyLinkedList.from_list([1, 2, 3])
+dll.append(4)
+print(dll.to_list())  # Output: [1, 2, 3, 4]
+```
+
+#### insert_after(after_value, value)
+
+Insert a value after a specified value.
+
+<ParamField path="after_value" type="any" required>
+  The value to insert after
+</ParamField>
+
+<ParamField path="value" type="any" required>
+  The value to insert
+</ParamField>
+
+**Returns:** None
+
+**Raises:**
+- `ValueError`: If the after_value is not found
+
+```python
+dll = DoublyLinkedList.from_list([1, 2, 4])
+dll.insert_after(2, 3)
+print(dll.to_list())  # Output: [1, 2, 3, 4]
+
+# Verify bidirectional links
+node = dll.search(3)
+print(node.prev.value)  # Output: 2
+print(node.next.value)  # Output: 4
+```
+
+#### delete(value)
+
+Delete the first occurrence of a value in the doubly linked list.
+
+<ParamField path="value" type="any" required>
+  The value to be deleted
+</ParamField>
+
+**Raises:**
+- `ValueError`: If the value is not found
+
+```python
+dll = DoublyLinkedList.from_list([1, 2, 3, 2, 4])
+dll.delete(2)  # Deletes first occurrence
+print(dll.to_list())  # Output: [1, 3, 2, 4]
+```
+
+#### delete_head()
+
+Delete the head node of the doubly linked list.
+
+**Raises:**
+- `IndexError`: If linked list is empty
+
+```python
+dll = DoublyLinkedList.from_list([1, 2, 3])
+dll.delete_head()
+print(dll.to_list())  # Output: [2, 3]
+```
+
+#### delete_tail()
+
+Delete the tail node of the doubly linked list.
+
+**Raises:**
+- `IndexError`: If linked list is empty
+
+```python
+dll = DoublyLinkedList.from_list([1, 2, 3])
+dll.delete_tail()
+print(dll.to_list())  # Output: [1, 2]
+```
+
+### Special Methods
+
+#### \_\_getitem\_\_(index)
+
+Return value at a specified index (inherited from LinkedList).
+
+<ParamField path="index" type="int" required>
+  Index of the value
+</ParamField>
+
+**Returns:** The value at the specified index
+
+**Raises:**
+- `IndexError`: If index is out of bounds
+
+```python
+dll = DoublyLinkedList.from_list([10, 20, 30, 40])
+print(dll[0])  # Output: 10
+print(dll[2])  # Output: 30
+```
+
+#### \_\_len\_\_()
+
+Return the number of elements in the doubly linked list (inherited from LinkedList).
+
+```python
+dll = DoublyLinkedList.from_list([1, 2, 3, 4, 5])
+print(len(dll))  # Output: 5
+```
+
+#### \_\_eq\_\_(other)
+
+Compare this doubly linked list to another for equality.
+
+<ParamField path="other" type="any" required>
+  The object to compare with
+</ParamField>
+
+**Returns:** `True` if both are DoublyLinkedList instances with equal contents
+
+```python
+dll1 = DoublyLinkedList.from_list([1, 2, 3])
+dll2 = DoublyLinkedList.from_list([1, 2, 3])
+dll3 = DoublyLinkedList.from_list([1, 2, 4])
+
+print(dll1 == dll2)  # Output: True
+print(dll1 == dll3)  # Output: False
+```
+
+#### \_\_repr\_\_()
+
+Return a string representation of the doubly linked list (inherited from LinkedList).
+
+```python
+dll = DoublyLinkedList.from_list([1, 2, 3])
+print(dll)  # Output: [ 1 2 3 ] Count: 3
+```
+
+### Complete Example
+
+<Accordion title="Working with DoublyLinkedList">
+```python
+from dsa.doublylinkedlist import DoublyLinkedList
+
+# Create a doubly linked list from a list
+dll = DoublyLinkedList.from_list([10, 20, 30, 40, 50])
+
+# Display the list
+print(f"Initial list: {dll.to_list()}")
+print(f"Length: {len(dll)}")
+
+# Traverse forward and backward
+print("Forward: ", end="")
+dll.traverse()  # Output: 10 20 30 40 50
+
+print("Backward: ", end="")
+dll.traverse_reverse()  # Output: 50 40 30 20 10
+
+# Access elements by index
+print(f"First element: {dll[0]}")
+print(f"Third element: {dll[2]}")
+
+# Add elements
+dll.prepend(5)
+dll.append(60)
+dll.insert_after(30, 35)
+print(f"After additions: {dll.to_list()}")
+# Output: [5, 10, 20, 30, 35, 40, 50, 60]
+
+# Verify bidirectional links
+node = dll.search(35)
+if node:
+    print(f"Node value: {node.value}")
+    print(f"Previous node: {node.prev.value}")  # Output: 30
+    print(f"Next node: {node.next.value}")      # Output: 40
+
+# Delete elements
+dll.delete(35)
+dll.delete_head()
+dll.delete_tail()
+print(f"After deletions: {dll.to_list()}")
+# Output: [10, 20, 30, 40, 50]
+
+# Compare lists
+dll2 = DoublyLinkedList.from_list([10, 20, 30, 40, 50])
+print(f"Lists equal: {dll == dll2}")  # Output: True
+
+# Check if empty
+print(f"Is empty: {dll.is_empty()}")  # Output: False
+
+# Clear the list
+while not dll.is_empty():
+    dll.delete_head()
+
+print(f"After clearing, is empty: {dll.is_empty()}")  # Output: True
+```
+</Accordion>
+
+### Advantages Over Singly Linked List
+
+<Note>
+DoublyLinkedList provides bidirectional traversal and more efficient deletion operations:
+- Can traverse backward using `traverse_reverse()`
+- Deleting a node is O(1) when you have a reference to it
+- Each node maintains links to both neighbors
+- Better for implementing deques and LRU caches
+</Note>
+
+### Use Cases
+
+<CodeGroup>
+```python Example: LRU Cache structure
+class LRUCache:
+    def __init__(self, capacity):
+        from dsa.doublylinkedlist import DoublyLinkedList
+        self.cache = {}
+        self.order = DoublyLinkedList()
+        self.capacity = capacity
+    
+    def access(self, key):
+        # Move accessed item to front
+        if key in self.cache:
+            # In real implementation, would update order
+            return self.cache[key]
+        return None
+
+cache = LRUCache(3)
+```
+
+```python Example: Browser history
+class BrowserHistory:
+    def __init__(self):
+        from dsa.doublylinkedlist import DoublyLinkedList
+        self.history = DoublyLinkedList()
+        self.current = None
+    
+    def visit(self, url):
+        self.history.append(url)
+        print(f"Visited: {url}")
+    
+    def show_history(self):
+        print("History (newest first):")
+        self.history.traverse_reverse()
+
+browser = BrowserHistory()
+browser.visit("google.com")
+browser.visit("github.com")
+browser.visit("stackoverflow.com")
+browser.show_history()
+```
+
+```python Example: Music playlist with prev/next
+class Playlist:
+    def __init__(self):
+        from dsa.doublylinkedlist import DoublyLinkedList
+        self.songs = DoublyLinkedList()
+    
+    def add_song(self, song):
+        self.songs.append(song)
+    
+    def show_forward(self):
+        print("Playlist (forward):")
+        self.songs.traverse()
+    
+    def show_reverse(self):
+        print("Playlist (reverse):")
+        self.songs.traverse_reverse()
+
+playlist = Playlist()
+playlist.add_song("Song 1")
+playlist.add_song("Song 2")
+playlist.add_song("Song 3")
+playlist.show_forward()
+playlist.show_reverse()
+```
+</CodeGroup>

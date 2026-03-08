@@ -1,0 +1,513 @@
+---
+title: 'CircularArray'
+description: 'A circular array implementation with wrap-around behavior'
+---
+
+## Overview
+
+The `CircularArray` class extends the `Array` class to provide a circular (ring) buffer implementation. When the array reaches capacity, new elements wrap around and overwrite the oldest elements. This is useful for implementing fixed-size buffers, recent history tracking, and circular queues.
+
+### Special Methods
+
+- **Index Operator**: `array[index]` - Access elements by index (logical, not physical)
+- **Assignment**: `array[index] = value` - Set values at specific indices (logical, not physical)
+
+### Key Differences from Array
+
+- **Wrap-around behavior**: When full, `append()` overwrites the oldest element instead of raising an exception
+- **Logical indexing**: Index 0 always refers to the oldest element, regardless of physical position
+- **Fixed capacity**: Like `Array`, but handles overflow gracefully
+
+### Inheritance
+
+`CircularArray` inherits from `Array` and overrides key methods to provide circular behavior:
+- Inherits: `__len__`, `__repr__`, `__eq__`, `is_empty`, `capacity`, `shift_right`, `shift_left`, `from_list`
+- Overrides: `__init__`, `__getitem__`, `__setitem__`, `append`, `insert`, `delete`, `to_list`
+- Adds: `raw_view`
+
+---
+
+## Constructor
+
+### `__init__(contents=None, capacity: int=10)`
+
+Initialize the circular array with optional contents and a fixed capacity.
+
+<ParamField path="contents" type="iterable" default="None">
+  An optional iterable to fill the array with initial values. If the length of contents exceeds the specified capacity, only the last `capacity` elements will be retained due to wrap-around.
+</ParamField>
+
+<ParamField path="capacity" type="int" default="10">
+  The fixed size of the circular array. Determines the maximum number of elements that can be stored before wrap-around occurs.
+</ParamField>
+
+<Accordion title="Implementation Details">
+  The constructor maintains an internal `_start` index that tracks the position of the oldest element. This allows the array to wrap around efficiently without shifting all elements.
+</Accordion>
+
+<CodeGroup>
+```python Example
+from dsa.array import CircularArray
+
+# Create an empty circular array with default capacity of 10
+arr = CircularArray()
+
+# Create with specific capacity
+arr = CircularArray(capacity=5)
+
+# Create with initial contents
+arr = CircularArray(contents=[1, 2, 3, 4, 5])
+
+# Create with more contents than capacity (wraps around)
+arr = CircularArray(contents=range(15), capacity=10)
+print(arr.to_list())  # [5, 6, 7, 8, 9, 10, 11, 12, 13, 14] (first 5 elements overwritten)
+```
+</CodeGroup>
+
+---
+
+## Methods (Overridden)
+
+### `append(element)`
+
+Append an element to the circular array. If appending exceeds capacity, it will wrap around and overwrite the oldest element.
+
+<ParamField path="element" type="any" required>
+  The element to append to the array.
+</ParamField>
+
+**Time Complexity:** O(1)
+
+**Space Complexity:** O(1)
+
+<Accordion title="Difference from Array">
+  Unlike `Array.append()` which raises an exception when capacity is exceeded, `CircularArray.append()` overwrites the oldest element and advances the start pointer.
+</Accordion>
+
+<CodeGroup>
+```python Example
+arr = CircularArray(capacity=3)
+arr.append(1)
+arr.append(2)
+arr.append(3)
+print(arr.to_list())  # [1, 2, 3]
+
+# Append beyond capacity - wraps around
+arr.append(4)
+print(arr.to_list())  # [2, 3, 4] (1 was overwritten)
+
+arr.append(5)
+print(arr.to_list())  # [3, 4, 5] (2 was overwritten)
+```
+
+```python Use Case: Recent History
+# Track the last 5 commands
+command_history = CircularArray(capacity=5)
+commands = ['ls', 'cd', 'pwd', 'vim', 'git status', 'git commit', 'git push']
+
+for cmd in commands:
+    command_history.append(cmd)
+
+print(command_history.to_list())  # ['cd', 'pwd', 'vim', 'git status', 'git commit', 'git push']
+# Only the last 5 commands are retained
+```
+</CodeGroup>
+
+---
+
+### `insert(index: int, element)`
+
+Insert an element at a specified index, shifting existing elements to the right.
+
+<ParamField path="index" type="int" required>
+  The logical index at which to insert the element. Must be between 0 and count (inclusive).
+</ParamField>
+
+<ParamField path="element" type="any" required>
+  The element to insert.
+</ParamField>
+
+**Raises:**
+- `IndexError`: If the index is out of bounds
+- `Exception`: If the array is full
+
+**Time Complexity:** O(n) where n is the number of elements to shift
+
+**Space Complexity:** O(1)
+
+<Accordion title="Difference from Array">
+  Unlike `Array.insert()`, this method accounts for the circular nature of the array and uses modulo arithmetic to handle the wrap-around when shifting elements.
+</Accordion>
+
+<CodeGroup>
+```python Example
+arr = CircularArray(contents=[1, 2, 4, 5], capacity=10)
+arr.insert(2, 3)  # Insert 3 at logical index 2
+print(arr.to_list())  # [1, 2, 3, 4, 5]
+
+# Insert at the beginning
+arr.insert(0, 0)
+print(arr.to_list())  # [0, 1, 2, 3, 4, 5]
+```
+
+```python Error Handling
+arr = CircularArray(contents=[1, 2, 3, 4, 5], capacity=5)
+
+try:
+    arr.insert(2, 100)  # Array is full
+except Exception as e:
+    print(e)  # "Capacity Error: Maximum capacity 5 reached."
+```
+</CodeGroup>
+
+---
+
+### `delete(index: int)`
+
+Delete an element at a specified index, shifting subsequent elements to the left.
+
+<ParamField path="index" type="int" required>
+  The logical index of the element to delete. Must be between 0 and count - 1.
+</ParamField>
+
+**Raises:**
+- `IndexError`: If the index is out of bounds
+
+**Time Complexity:** O(n) where n is the number of elements to shift
+
+**Space Complexity:** O(1)
+
+<Accordion title="Difference from Array">
+  This method accounts for the circular nature of the array and uses modulo arithmetic to handle the wrap-around when shifting elements to the left.
+</Accordion>
+
+<CodeGroup>
+```python Example
+arr = CircularArray(contents=[1, 2, 3, 4, 5])
+arr.delete(2)  # Delete element at logical index 2
+print(arr.to_list())  # [1, 2, 4, 5]
+
+# Delete the first element
+arr.delete(0)
+print(arr.to_list())  # [2, 4, 5]
+```
+</CodeGroup>
+
+---
+
+### `__getitem__(index: int)`
+
+Retrieve the element at the specified logical index. Enables the use of bracket notation `array[index]`.
+
+<ParamField path="index" type="int" required>
+  The logical index of the element to retrieve. Index 0 always refers to the oldest element. Must be between 0 and count - 1.
+</ParamField>
+
+<ResponseField name="return" type="any">
+  The element at the specified logical index.
+</ResponseField>
+
+**Raises:**
+- `IndexError`: If the index is out of bounds
+
+**Time Complexity:** O(1)
+
+**Space Complexity:** O(1)
+
+<Accordion title="Logical vs Physical Indexing">
+  The circular array maintains a `_start` pointer to track the oldest element. When you access `array[0]`, it translates to the physical index `(self._start + 0) % capacity`. This ensures that logical index 0 always refers to the oldest element, regardless of where it's physically stored.
+</Accordion>
+
+<CodeGroup>
+```python Example
+arr = CircularArray(contents=[1, 2, 3], capacity=5)
+print(arr[0])  # 1 (oldest element)
+print(arr[1])  # 2
+print(arr[2])  # 3 (newest element)
+
+# After wrap-around
+arr.append(4)
+arr.append(5)
+arr.append(6)  # Wraps around, overwrites 1
+print(arr[0])  # 2 (now the oldest element)
+print(arr[4])  # 6 (newest element)
+```
+</CodeGroup>
+
+---
+
+### `__setitem__(index: int, value)`
+
+Set a new value at the specified logical index. Enables the use of bracket notation `array[index] = value`.
+
+<ParamField path="index" type="int" required>
+  The logical index at which to set the value. Must be between 0 and count - 1.
+</ParamField>
+
+<ParamField path="value" type="any" required>
+  The new value to assign.
+</ParamField>
+
+**Raises:**
+- `IndexError`: If the index is out of bounds
+
+**Time Complexity:** O(1)
+
+**Space Complexity:** O(1)
+
+<CodeGroup>
+```python Example
+arr = CircularArray(contents=[10, 20, 30, 40, 50])
+arr[2] = 100
+print(arr.to_list())  # [10, 20, 100, 40, 50]
+
+# After wrap-around
+arr.append(60)  # Wraps, overwrites 10
+arr[0] = 200   # Modifies the oldest element (was 20)
+print(arr.to_list())  # [200, 100, 40, 50, 60]
+```
+</CodeGroup>
+
+---
+
+### `to_list() -> list`
+
+Convert the circular array's elements to a standard Python list in logical order.
+
+<ResponseField name="return" type="list">
+  A list containing the elements of the array in logical order (oldest to newest), regardless of their physical positions.
+</ResponseField>
+
+**Time Complexity:** O(n) where n is the number of elements
+
+**Space Complexity:** O(n)
+
+<Accordion title="Difference from Array">
+  Unlike `Array.to_list()` which simply slices the internal array, `CircularArray.to_list()` must iterate through the elements using modulo arithmetic to produce them in the correct logical order.
+</Accordion>
+
+<CodeGroup>
+```python Example
+arr = CircularArray(capacity=5)
+for i in range(7):
+    arr.append(i)
+
+# Physical array might be [5, 6, 2, 3, 4] with _start=2
+# But logical order is [2, 3, 4, 5, 6]
+print(arr.to_list())  # [2, 3, 4, 5, 6]
+```
+</CodeGroup>
+
+---
+
+## Additional Methods
+
+### `raw_view() -> list`
+
+Return a raw view of the internal array, showing the physical storage layout.
+
+<ResponseField name="return" type="list">
+  The internal array as-is, including the physical positions and any `None` values.
+</ResponseField>
+
+**Time Complexity:** O(1)
+
+**Space Complexity:** O(1)
+
+<Accordion title="Use Case">
+  This method is primarily useful for debugging and understanding how the circular array stores elements internally. It shows the actual physical layout rather than the logical order.
+</Accordion>
+
+<CodeGroup>
+```python Example
+arr = CircularArray(capacity=5)
+for i in range(7):
+    arr.append(i)
+
+print(arr.to_list())  # [2, 3, 4, 5, 6] (logical order)
+print(arr.raw_view()) # [5, 6, 2, 3, 4] (physical storage)
+
+# The raw view shows where elements are actually stored
+# with _start pointing to index 2 (element 2)
+```
+
+```python Debugging
+arr = CircularArray(capacity=10)
+arr.extend([1, 2, 3])
+
+print(f"Logical: {arr.to_list()}")    # [1, 2, 3]
+print(f"Physical: {arr.raw_view()}")  # [1, 2, 3, None, None, None, None, None, None, None]
+print(f"Start: {arr._start}")          # 0
+print(f"Count: {arr.count}")           # 3
+```
+</CodeGroup>
+
+---
+
+## Inherited Methods
+
+The following methods are inherited from the `Array` class and work identically:
+
+### Utility Methods
+
+- **`is_empty() -> bool`** - Check if the array is empty
+- **`capacity() -> int`** - Get the total capacity
+- **`from_list(mylist: list)`** - Create a CircularArray from a Python list (classmethod)
+
+### Helper Methods
+
+- **`shift_right(start: int)`** - Shift elements right from a start index
+- **`shift_left(start: int)`** - Shift elements left from a start index
+- **`extend(array)`** - Append multiple elements (uses overridden `append`)
+
+### Special Methods
+
+- **`__len__() -> int`** - Get the number of elements using `len(array)`
+- **`__repr__() -> str`** - String representation of the array
+- **`__eq__(other) -> bool`** - Compare arrays for equality based on logical order
+
+<Accordion title="View Full Documentation">
+  For detailed documentation of inherited methods, see the [Array](/api/array) reference page.
+</Accordion>
+
+---
+
+## Attributes
+
+### `count`
+
+<ResponseField name="count" type="int">
+  The number of elements currently stored in the array. This value is capped at the capacity.
+</ResponseField>
+
+<CodeGroup>
+```python Example
+arr = CircularArray(capacity=5)
+print(arr.count)  # 0
+
+for i in range(3):
+    arr.append(i)
+print(arr.count)  # 3
+
+for i in range(5):
+    arr.append(i)  # Wraps around
+print(arr.count)  # 5 (capped at capacity)
+```
+</CodeGroup>
+
+---
+
+### `_start`
+
+<ResponseField name="_start" type="int">
+  Internal attribute tracking the physical index of the oldest element in the circular array. This is updated automatically when wrap-around occurs.
+</ResponseField>
+
+<Accordion title="Internal Implementation Detail">
+  While `_start` is accessible, it's an internal implementation detail primarily used by the class methods. Direct modification of this attribute is not recommended.
+</Accordion>
+
+<CodeGroup>
+```python Example
+arr = CircularArray(capacity=5)
+print(arr._start)  # 0
+
+# Fill the array
+for i in range(5):
+    arr.append(i)
+print(arr._start)  # 0 (no wrap-around yet)
+
+# Trigger wrap-around
+arr.append(5)
+print(arr._start)  # 1 (oldest element now at index 1)
+print(arr.to_list())  # [1, 2, 3, 4, 5]
+```
+</CodeGroup>
+
+---
+
+## Performance Characteristics
+
+### Time Complexity Summary
+
+| Operation | Time Complexity |
+|-----------|----------------|
+| `append` | O(1) |
+| `extend` | O(m) where m is elements to add |
+| `insert` | O(n) |
+| `delete` | O(n) |
+| `__getitem__` | O(1) |
+| `__setitem__` | O(1) |
+| `is_empty` | O(1) |
+| `capacity` | O(1) |
+| `to_list` | O(n) |
+| `raw_view` | O(1) |
+
+### Space Complexity
+
+The `CircularArray` maintains O(capacity) space complexity, which is fixed at initialization. Unlike `DynamicArray`, it never grows or shrinks.
+
+---
+
+## Common Use Cases
+
+<CodeGroup>
+```python Ring Buffer
+# Implement a fixed-size ring buffer for sensor data
+sensor_buffer = CircularArray(capacity=100)
+
+def record_temperature(temp):
+    sensor_buffer.append(temp)
+
+def get_recent_temperatures():
+    return sensor_buffer.to_list()
+
+# Record 150 temperature readings
+for i in range(150):
+    record_temperature(20 + i * 0.1)
+
+# Only the last 100 are kept
+recent = get_recent_temperatures()
+print(len(recent))  # 100
+```
+
+```python Circular Queue
+# Implement a circular queue for task scheduling
+task_queue = CircularArray(capacity=10)
+
+def enqueue_task(task):
+    task_queue.append(task)
+
+def get_next_task():
+    if not task_queue.is_empty():
+        task = task_queue[0]
+        task_queue.delete(0)
+        return task
+    return None
+
+enqueue_task("Task 1")
+enqueue_task("Task 2")
+enqueue_task("Task 3")
+
+print(get_next_task())  # "Task 1"
+print(get_next_task())  # "Task 2"
+```
+
+```python Recent History
+# Track recent browser history
+browser_history = CircularArray(capacity=50)
+
+def visit_page(url):
+    browser_history.append(url)
+
+def get_history():
+    return browser_history.to_list()
+
+visit_page("https://example.com")
+visit_page("https://github.com")
+visit_page("https://stackoverflow.com")
+
+history = get_history()
+print(f"Visited {len(history)} pages")  # Visited 3 pages
+```
+</CodeGroup>

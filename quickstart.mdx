@@ -1,80 +1,381 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quickstart
+description: Get started with UCX DSA through hands-on examples
 ---
 
-## Get started in three steps
+## Overview
 
-Get your documentation site running locally and make your first customization.
-
-### Step 1: Set up your local environment
-
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
-
-## Next steps
-
-Now that you have your docs running, explore these key features:
-
-<CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
+This quickstart guide will walk you through using the most common data structures in UCX DSA. All examples use real code directly from the source implementation.
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+  Make sure you have [installed UCX DSA](/installation) before running these examples.
 </Note>
+
+## Using a Stack
+
+Stacks follow Last-In-First-Out (LIFO) ordering. The UCX DSA package provides both static and dynamic stack implementations.
+
+<Steps>
+  <Step title="Import and create a Stack">
+    ```python
+    from dsa.stack import Stack
+
+    # Create a stack with default capacity of 10
+    stack = Stack()
+
+    # Or specify a custom capacity
+    stack = Stack(capacity=20)
+    ```
+  </Step>
+
+  <Step title="Push elements onto the stack">
+    ```python
+    stack.push(10)
+    stack.push(20)
+    stack.push(30)
+
+    print(stack)
+    # Output: [10, 20, 30] Top: 2 Capacity: 10
+    ```
+  </Step>
+
+  <Step title="Access and remove elements">
+    ```python
+    # View the top element without removing it
+    top_element = stack.peek()
+    print(top_element)  # Output: 30
+
+    # Pop the top element
+    popped = stack.pop()
+    print(popped)  # Output: 30
+    print(len(stack))  # Output: 2
+
+    # Check if stack is empty
+    print(stack.is_empty())  # Output: False
+    ```
+  </Step>
+</Steps>
+
+<CodeGroup>
+  ```python Static Stack
+  from dsa.stack import Stack
+
+  # Fixed capacity - will raise exception if exceeded
+  stack = Stack(capacity=5)
+  stack.push(1)
+  stack.push(2)
+  stack.push(3)
+  ```
+
+  ```python Dynamic Stack
+  from dsa.stack import DynamicStack
+
+  # Automatically grows and shrinks as needed
+  stack = DynamicStack()
+  for i in range(100):
+      stack.push(i)
+  # Capacity automatically increased
+  ```
+
+  ```python From List
+  from dsa.stack import Stack
+
+  # Create stack from existing list
+  stack = Stack.from_list([1, 2, 3, 4, 5])
+  print(stack.to_list())  # Output: [1, 2, 3, 4, 5]
+  ```
+</CodeGroup>
+
+## Using a Queue
+
+Queues follow First-In-First-Out (FIFO) ordering. UCX DSA provides Queue, DynamicQueue, and CircularQueue implementations.
+
+<Steps>
+  <Step title="Import and create a Queue">
+    ```python
+    from dsa.queue import Queue
+
+    # Create a queue with default capacity of 10
+    queue = Queue()
+
+    # Or create with initial contents
+    queue = Queue(contents=[1, 2, 3])
+    ```
+  </Step>
+
+  <Step title="Enqueue elements">
+    ```python
+    queue = Queue()
+    queue.enqueue("first")
+    queue.enqueue("second")
+    queue.enqueue("third")
+
+    print(queue)
+    # Output: [first, second, third] Count: 3 Capacity: 10
+    ```
+  </Step>
+
+  <Step title="Dequeue and peek">
+    ```python
+    # View front element without removing
+    front = queue.peek()
+    print(front)  # Output: first
+
+    # Remove and return front element
+    removed = queue.dequeue()
+    print(removed)  # Output: first
+    print(queue.to_ordered_list())  # Output: ['second', 'third']
+    ```
+  </Step>
+</Steps>
+
+<CodeGroup>
+  ```python Queue
+  from dsa.queue import Queue
+
+  queue = Queue(capacity=10)
+  queue.enqueue("A")
+  queue.enqueue("B")
+  queue.enqueue("C")
+  print(queue.dequeue())  # Output: A
+  ```
+
+  ```python DynamicQueue
+  from dsa.queue import DynamicQueue
+
+  # Grows automatically when capacity reached
+  queue = DynamicQueue()
+  for i in range(100):
+      queue.enqueue(i)
+  ```
+
+  ```python CircularQueue
+  from dsa.queue import CircularQueue
+
+  # Wraps around when capacity reached
+  queue = CircularQueue(capacity=5)
+  for i in range(10):
+      queue.enqueue(i)
+  # Oldest elements overwritten
+  ```
+</CodeGroup>
+
+## Using an Array
+
+Arrays provide indexed access to elements. UCX DSA offers Array, DynamicArray, and CircularArray classes.
+
+<Steps>
+  <Step title="Import and create an Array">
+    ```python
+    from dsa.array import Array
+
+    # Create empty array with capacity 10
+    arr = Array()
+
+    # Create with initial contents
+    arr = Array(contents=[1, 2, 3, 4, 5])
+
+    # Create with specific capacity
+    arr = Array(capacity=20)
+    ```
+  </Step>
+
+  <Step title="Add and access elements">
+    ```python
+    arr = Array()
+    arr.append(10)
+    arr.append(20)
+    arr.append(30)
+
+    # Access by index
+    print(arr[0])  # Output: 10
+    print(arr[2])  # Output: 30
+
+    # Modify by index
+    arr[1] = 25
+    print(arr[1])  # Output: 25
+    ```
+  </Step>
+
+  <Step title="Insert and delete">
+    ```python
+    # Insert at specific index
+    arr.insert(1, 15)  # Insert 15 at index 1
+    print(arr.to_list())  # Output: [10, 15, 25, 30]
+
+    # Delete by index
+    arr.delete(2)  # Remove element at index 2
+    print(arr.to_list())  # Output: [10, 15, 30]
+
+    print(f"Count: {len(arr)}, Capacity: {arr.capacity()}")
+    ```
+  </Step>
+</Steps>
+
+<CodeGroup>
+  ```python Array
+  from dsa.array import Array
+
+  # Fixed capacity array
+  arr = Array(capacity=5)
+  arr.append(1)
+  arr.append(2)
+  arr.insert(0, 0)  # [0, 1, 2]
+  ```
+
+  ```python DynamicArray
+  from dsa.array import DynamicArray
+
+  # Automatically resizes
+  arr = DynamicArray()
+  arr.extend([1, 2, 3, 4, 5])
+  # Capacity adjusts automatically
+  ```
+
+  ```python CircularArray
+  from dsa.array import CircularArray
+
+  # Wraps around when full
+  arr = CircularArray(capacity=3)
+  arr.append(1)
+  arr.append(2)
+  arr.append(3)
+  arr.append(4)  # Overwrites oldest
+  print(arr.to_list())  # [2, 3, 4]
+  ```
+</CodeGroup>
+
+## Using a Graph
+
+Graphs can be represented using adjacency matrices or adjacency lists. UCX DSA provides a factory pattern for creating graphs.
+
+<Steps>
+  <Step title="Create a graph using the factory">
+    ```python
+    from dsa.graph import Graph
+
+    # Create an unweighted, undirected adjacency list graph
+    graph = Graph.create('adjacency_list', directed=False, weighted=False)
+
+    # Create a weighted, directed adjacency matrix graph
+    weighted_graph = Graph.create(
+        'adjacency_matrix',
+        directed=True,
+        weighted=True,
+        vertices=['A', 'B', 'C', 'D']
+    )
+    ```
+  </Step>
+
+  <Step title="Add vertices and edges">
+    ```python
+    # For unweighted graph
+    graph.add_vertex('A')
+    graph.add_vertex('B')
+    graph.add_vertex('C')
+    graph.add_edge('A', 'B')  # Undirected edge A-B
+    graph.add_edge('B', 'C')  # Undirected edge B-C
+
+    # For weighted graph
+    weighted_graph.add_edge('A', 'B', weight=5)
+    weighted_graph.add_edge('B', 'C', weight=3)
+    weighted_graph.add_edge('A', 'D', weight=7)
+    ```
+  </Step>
+
+  <Step title="Query the graph">
+    ```python
+    # Check if vertex exists
+    print(graph.has_vertex('A'))  # Output: True
+
+    # Check if edge exists
+    print(graph.has_edge('A', 'B'))  # Output: True
+
+    # Get adjacent vertices
+    print(graph.adjacents('B'))  # Output: ['A', 'C']
+
+    # Get all vertices and edges
+    print(graph.vertices())  # Output: ['A', 'B', 'C']
+    print(graph.edges())  # Output: [('A', 'B'), ('B', 'C'), ...]
+
+    # Get graph properties
+    print(graph.order())  # Number of vertices
+    print(graph.size())   # Number of edges
+    ```
+  </Step>
+</Steps>
+
+<CodeGroup>
+  ```python Adjacency List
+  from dsa.graph import Graph
+
+  # Efficient for sparse graphs
+  graph = Graph.create_adjacency_list(
+      directed=False,
+      weighted=False
+  )
+  graph.add_edge('A', 'B')
+  graph.add_edge('B', 'C')
+  print(graph['B'])  # Adjacent to B
+  ```
+
+  ```python Adjacency Matrix
+  from dsa.graph import Graph
+
+  # Good for dense graphs
+  graph = Graph.create_adjacency_matrix(
+      directed=False,
+      weighted=False,
+      vertices=['A', 'B', 'C', 'D']
+  )
+  graph.add_edge('A', 'B')
+  graph.print_graph()
+  ```
+
+  ```python Weighted Graph
+  from dsa.graph import Graph
+
+  graph = Graph.create(
+      'adjacency_list',
+      directed=True,
+      weighted=True
+  )
+  graph.add_edge('A', 'B', weight=10)
+  graph.add_edge('B', 'C', weight=5)
+  print(graph.get_weight('A', 'B'))  # 10
+  ```
+
+  ```python From Dictionary
+  from dsa.graph import Graph
+
+  # Create from dict representation
+  data = {
+      'A': ['B', 'C'],
+      'B': ['C', 'D'],
+      'C': ['D'],
+      'D': []
+  }
+  graph = Graph.from_dict(
+      data,
+      graph_type='adjacency_list',
+      directed=True
+  )
+  ```
+</CodeGroup>
+
+## Next Steps
+
+Now that you've seen the basics, explore more data structures and algorithms:
+
+<CardGroup cols={2}>
+  <Card title="API Reference" icon="code" href="https://ucxinstructor.github.io/dsa_package/index.html">
+    Complete documentation for all classes and methods
+  </Card>
+  <Card title="GitHub Repository" icon="github" href="https://github.com/ucxinstructor/dsa_package">
+    View source code and revision history
+  </Card>
+</CardGroup>
+
+<Tip>
+  All data structures support common Python operations like `len()`, equality testing with `==`, and the `in` operator where applicable.
+</Tip>

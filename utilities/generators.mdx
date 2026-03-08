@@ -1,0 +1,558 @@
+---
+title: "Test Data Generators"
+description: "Generate random data structures for testing and development"
+---
+
+## Overview
+
+The `generators` module provides functions to create random instances of various data structures. These generators are invaluable for testing, benchmarking, and developing algorithms.
+
+<Note>
+All generators support customizable size and value ranges, making them flexible for different testing scenarios.
+</Note>
+
+## Linear Data Structures
+
+### Arrays
+
+#### random_array
+
+Generates a random fixed-size array.
+
+```python generators.py:18
+def random_array(size: int, min_val: int=0, max_val=100) -> Array:
+    """
+    Generates a random array of integers.
+    arguments:
+        size -- number of elements in the array
+        min_val -- minimum value of the elements
+        max_val -- maximum value of the elements
+    returns: 
+        Array   
+    """
+```
+
+**Parameters:**
+- `size` (int): Number of elements
+- `min_val` (int): Minimum value (default: 0)
+- `max_val` (int): Maximum value (default: 100)
+
+**Returns:**
+- `Array`: Fixed-size array with random integers
+
+#### random_dynamicarray
+
+Generates a random dynamic array.
+
+```python generators.py:33
+def random_dynamicarray(size: int, min_val: int=0, max_val=100) -> DynamicArray:
+    """
+    Generates a random dynamic array of integers.
+    arguments:
+        size -- number of elements in the array
+        min_val -- minimum value of the elements
+        max_val -- maximum value of the elements
+    returns: 
+        DynamicArray
+    """
+```
+
+### Stacks
+
+#### random_stack
+
+Generates a random fixed-capacity stack.
+
+```python generators.py:48
+def random_stack(size: int, min_val: int=0, max_val=100) -> Stack:
+    """
+    Generates a random stack of integers.
+    arguments:
+        size -- number of elements in the stack
+        min_val -- minimum value of the elements
+        max_val -- maximum value of the elements
+    returns: 
+        Stack
+    """
+```
+
+#### linear_stack
+
+Generates a stack with sequential values.
+
+```python generators.py:63
+def linear_stack(size: int, min_val: int=0, max_val=100) -> Stack:
+    """
+    Generates a linear stack of integers.
+    arguments:
+        size -- number of elements in the stack
+        min_val -- minimum value of the elements
+        max_val -- maximum value of the elements
+    returns: 
+        Stack
+    """
+```
+
+**Example:**
+```python
+from dsa.generators import random_stack, linear_stack
+
+# Random values
+stack1 = random_stack(10, 0, 100)
+
+# Sequential values: 0, 1, 2, ..., 9
+stack2 = linear_stack(10, 0, 100)
+```
+
+### Queues
+
+#### random_queue
+
+Generates a random fixed-capacity queue.
+
+```python generators.py:108
+def random_queue(size: int, min_val: int=0, max_val=100) -> Queue:
+    """
+    Generates a random queue of integers.
+    arguments:
+        size -- number of elements in the queue
+        min_val -- minimum value of the elements
+        max_val -- maximum value of the elements
+    returns: 
+        Queue
+    """
+```
+
+#### linear_queue
+
+Generates a queue with sequential values.
+
+```python generators.py:124
+def linear_queue(size: int, min_val: int=0, max_val=100) -> Queue:
+    """
+    Generates a linear queue of integers.
+    arguments:
+        size -- number of elements in the queue
+        min_val -- minimum value of the elements
+        max_val -- maximum value of the elements
+    returns: 
+        Queue
+    """
+```
+
+### Deques
+
+#### random_deque
+
+Generates a random deque with elements added from both ends.
+
+```python generators.py:169
+def random_deque(size: int, min_val: int=0, max_val=100) -> Deque:
+    """
+    Generates a random deque of integers.
+    arguments:
+        size -- number of elements in the deque
+        min_val -- minimum value of the elements
+        max_val -- maximum value of the elements
+    returns: 
+        Deque
+    """
+```
+
+**Example:**
+```python
+from dsa.generators import random_deque
+
+# Generates deque with random insertions from left and right
+deque = random_deque(20, 0, 100)
+```
+
+### Linked Lists
+
+#### random_linked_list
+
+Generates a random singly linked list.
+
+```python generators.py:187
+def random_linked_list(size: int, min_val: int=0, max_val=100) -> LinkedList:
+    """
+    Generates a random linked list of integers.
+    arguments:
+        size -- number of elements in the linked list
+        min_val -- minimum value of the elements
+        max_val -- maximum value of the elements
+    returns: 
+        LinkedList
+    """
+```
+
+#### linear_linked_list
+
+Generates a singly linked list with sequential values.
+
+```python generators.py:202
+def linear_linked_list(size: int, min_val: int=0, max_val=100) -> LinkedList:
+    """
+    Generates a linear linked list of integers.
+    arguments:
+        size -- number of elements in the linked list
+        min_val -- minimum value of the elements
+        max_val -- maximum value of the elements
+    returns: 
+        LinkedList
+    """
+```
+
+#### random_doubly_linked_list
+
+Generates a random doubly linked list.
+
+```python generators.py:218
+def random_doubly_linked_list(size: int, min_val: int=0, max_val=100) -> DoublyLinkedList:
+    """
+    Generates a random doubly linked list of integers.
+    arguments:
+        size -- number of nodes in the list
+        min_val -- minimum value of the nodes
+        max_val -- maximum value of the nodes
+    returns: 
+        DoublyLinkedList
+    """
+```
+
+## Tree Structures
+
+### random_binary_tree
+
+Generates a random binary tree.
+
+```python generators.py:248
+def random_binary_tree(n: int) -> 'Tree':
+    """Generates a random binary tree.
+    arguments:
+        n -- number of nodes in the tree
+    returns: 
+        Tree
+    """
+```
+
+**Parameters:**
+- `n` (int): Number of nodes in the tree
+
+**Returns:**
+- `Tree`: Random binary tree with n nodes
+
+**Example:**
+```python
+from dsa.generators import random_binary_tree
+from dsa.draw import TreeDraw
+
+# Generate and visualize a random tree
+tree = random_binary_tree(15)
+td = TreeDraw(tree)
+td.draw()
+```
+
+### random_heap
+
+Generates a random min-heap.
+
+```python generators.py:280
+def random_heap(n: int) -> Heap:
+    """Generates a random heap.
+    arguments:
+        n -- number of nodes in the heap
+    returns: 
+        Heap
+    """
+```
+
+**Parameters:**
+- `n` (int): Number of elements in the heap
+
+**Returns:**
+- `Heap`: Random min-heap with n elements
+
+**Example:**
+```python
+from dsa.generators import random_heap
+from dsa.draw import HeapDraw
+
+# Generate and visualize a random heap
+heap = random_heap(20)
+hd = HeapDraw(heap)
+hd.draw()
+```
+
+### random_trie
+
+Generates a random trie with random words.
+
+```python generators.py:293
+def random_trie(n: int) -> Trie:
+    """Generates a random trie.
+    
+    arguments:
+        n -- number of words in the trie
+    returns: 
+        Trie
+    """
+```
+
+**Parameters:**
+- `n` (int): Number of words to insert
+
+**Returns:**
+- `Trie`: Random trie with n words
+
+**Example:**
+```python
+from dsa.generators import random_trie
+from dsa.draw import TrieDraw
+
+# Generate trie with 10 random words
+trie = random_trie(10)
+td = TrieDraw(trie)
+td.draw()
+```
+
+<Note>
+The trie generator creates random words of length 1-10 using lowercase letters.
+</Note>
+
+## Graph Structures
+
+### Adjacency Matrix Graphs
+
+#### random_adjacency_matrix_graph
+
+Generates a random unweighted graph using adjacency matrix representation.
+
+```python generators.py:312
+def random_adjacency_matrix_graph(n, density=0.1, directed=False) -> AdjacencyMatrixGraph:
+```
+
+**Parameters:**
+- `n` (int): Number of vertices
+- `density` (float): Edge density (0.0 to 1.0, default: 0.1)
+- `directed` (bool): Whether the graph is directed (default: False)
+
+**Returns:**
+- `AdjacencyMatrixGraph`: Random graph with n vertices
+
+#### random_adjacency_matrix_weighted_graph
+
+Generates a random weighted graph using adjacency matrix representation.
+
+```python generators.py:322
+def random_adjacency_matrix_weighted_graph(n, density=0.1, directed=False) -> AdjacencyMatrixWeightedGraph:
+```
+
+**Parameters:**
+- `n` (int): Number of vertices
+- `density` (float): Edge density (default: 0.1)
+- `directed` (bool): Whether the graph is directed (default: False)
+
+**Returns:**
+- `AdjacencyMatrixWeightedGraph`: Random weighted graph with edge weights from 1-10
+
+### Adjacency List Graphs
+
+#### random_adjacency_list_graph
+
+Generates a random unweighted graph using adjacency list representation.
+
+```python generators.py:333
+def random_adjacency_list_graph(n, density=0.1, directed=False) -> AdjacencyListGraph:
+```
+
+#### random_adjacency_list_weighted_graph
+
+Generates a random weighted graph using adjacency list representation.
+
+```python generators.py:343
+def random_adjacency_list_weighted_graph(n, density=0.1, directed=False) -> AdjacencyListWeightedGraph:
+```
+
+**Parameters:**
+- `n` (int): Number of vertices
+- `density` (float): Edge density (default: 0.1)
+- `directed` (bool): Whether the graph is directed (default: False)
+
+**Returns:**
+- `AdjacencyListWeightedGraph`: Random weighted graph with edge weights from 1-10
+
+**Example:**
+```python
+from dsa.generators import random_adjacency_list_weighted_graph
+from dsa.draw import GraphDraw
+
+# Generate a random weighted graph with 10 vertices
+# 30% density (dense graph)
+graph = random_adjacency_list_weighted_graph(10, density=0.3, directed=False)
+
+# Visualize the graph
+gd = GraphDraw(graph)
+gd.draw()
+```
+
+<Note>
+Vertex labels are automatically generated as 'A', 'B', 'C', etc. The density parameter controls how many edges are created (0.1 = 10% of possible edges).
+</Note>
+
+## Complete Usage Examples
+
+<Steps>
+  <Step title="Testing a stack implementation">
+    ```python
+    from dsa.generators import random_stack, linear_stack
+    
+    # Test with random data
+    stack = random_stack(100, 0, 1000)
+    
+    # Test operations
+    assert len(stack) == 100
+    top = stack.pop()
+    assert len(stack) == 99
+    
+    # Test with predictable data
+    stack2 = linear_stack(10, 0, 10)
+    values = []
+    while not stack2.is_empty():
+        values.append(stack2.pop())
+    print(values)  # [9, 8, 7, ..., 0]
+    ```
+  </Step>
+
+  <Step title="Benchmarking tree operations">
+    ```python
+    from dsa.generators import random_binary_tree
+    import time
+    
+    sizes = [10, 50, 100, 500, 1000]
+    
+    for size in sizes:
+        tree = random_binary_tree(size)
+        
+        start = time.time()
+        # Perform tree operations
+        height = tree.height()
+        node_count = tree.count()
+        elapsed = time.time() - start
+        
+        print(f"Size: {size}, Height: {height}, Time: {elapsed:.4f}s")
+    ```
+  </Step>
+
+  <Step title="Testing graph algorithms">
+    ```python
+    from dsa.generators import random_adjacency_list_weighted_graph
+    from dsa.dijkstra import find_path
+    from dsa.prim import prims_mst, mst_weight
+    
+    # Generate a random weighted graph
+    graph = random_adjacency_list_weighted_graph(20, density=0.2)
+    
+    # Test Dijkstra's algorithm
+    vertices = list(graph.vertices())
+    path = find_path(graph, vertices[0], vertices[-1])
+    print(f"Shortest path: {path}")
+    
+    # Test Prim's algorithm
+    mst = prims_mst(graph, vertices[0])
+    weight = mst_weight(mst)
+    print(f"MST weight: {weight}")
+    ```
+  </Step>
+
+  <Step title="Creating test suites">
+    ```python
+    from dsa.generators import (
+        random_array,
+        random_linked_list,
+        random_binary_tree,
+        random_heap
+    )
+    
+    def test_data_structure(ds_type, size):
+        """Generic test function"""
+        generators = {
+            'array': lambda: random_array(size),
+            'linked_list': lambda: random_linked_list(size),
+            'tree': lambda: random_binary_tree(size),
+            'heap': lambda: random_heap(size)
+        }
+        
+        ds = generators[ds_type]()
+        # Perform tests...
+        return ds
+    
+    # Run tests
+    for ds_type in ['array', 'linked_list', 'tree', 'heap']:
+        for size in [10, 100, 1000]:
+            test_data_structure(ds_type, size)
+    ```
+  </Step>
+</Steps>
+
+## Generator Patterns
+
+<CodeGroup>
+
+```python Quick Testing
+# Fast generation for unit tests
+from dsa.generators import random_array
+
+def test_algorithm():
+    # Small test cases
+    for _ in range(100):
+        data = random_array(10, 0, 100)
+        # Test your algorithm
+```
+
+```python Stress Testing
+# Large data for performance testing
+from dsa.generators import random_linked_list
+
+def stress_test():
+    # Large test cases
+    sizes = [1000, 5000, 10000, 50000]
+    for size in sizes:
+        data = random_linked_list(size, 0, 10000)
+        # Benchmark operations
+```
+
+```python Reproducible Tests
+# Set seed for reproducible results
+import random
+from dsa.generators import random_binary_tree
+
+random.seed(42)  # Reproducible results
+tree1 = random_binary_tree(100)
+
+random.seed(42)  # Same tree
+tree2 = random_binary_tree(100)
+```
+
+```python Comparative Testing
+# Compare different implementations
+from dsa.generators import (
+    random_adjacency_list_graph,
+    random_adjacency_matrix_graph
+)
+
+# Same structure, different representations
+random.seed(42)
+list_graph = random_adjacency_list_graph(10, 0.3)
+
+random.seed(42)
+matrix_graph = random_adjacency_matrix_graph(10, 0.3)
+```
+
+</CodeGroup>
+
+## Related
+
+- [Sorting Utilities](/algorithms/sorting) - Generate arrays for sorting tests
+- [Visualization Tools](/utilities/visualization) - Visualize generated data structures
+- [All Data Structures](/data-structures/overview) - Learn about the data structures you can generate

@@ -1,0 +1,673 @@
+---
+title: 'Linked Lists'
+description: 'Singly and doubly linked list implementations'
+icon: 'link'
+---
+
+## Overview
+
+Linked lists are linear data structures where elements are stored in nodes that contain references to other nodes. The UCX DSA package provides two linked list implementations:
+
+- **LinkedList**: Singly linked list with forward-only traversal
+- **DoublyLinkedList**: Doubly linked list with bidirectional traversal
+
+## Node Classes
+
+Both implementations use Node classes to store data and references.
+
+### Singly Linked List Node
+
+```python
+from dsa.singlylinkedlist import Node
+
+node = Node(10)
+node.value  # 10
+node.next   # None (reference to next node)
+```
+
+### Doubly Linked List Node
+
+```python
+from dsa.doublylinkedlist import Node
+
+node = Node(20)
+node.value  # 20
+node.next   # None (reference to next node)
+node.prev   # None (reference to previous node)
+```
+
+## LinkedList (Singly Linked)
+
+A singly linked list where each node points to the next node. Traversal is forward-only.
+
+### Creating a LinkedList
+
+<CodeGroup>
+
+```python Empty List
+from dsa.singlylinkedlist import LinkedList
+
+# Create empty linked list
+ll = LinkedList()
+print(ll.is_empty())  # True
+print(len(ll))        # 0
+```
+
+```python With Head Node
+from dsa.singlylinkedlist import LinkedList, Node
+
+# Create with a head node
+head = Node(10)
+ll = LinkedList(head=head)
+print(len(ll))  # 1
+```
+
+```python From List
+from dsa.singlylinkedlist import LinkedList
+
+# Create from Python list
+ll = LinkedList.from_list([1, 2, 3, 4, 5])
+print(ll)  # [ 1 2 3 4 5 ] Count: 5
+```
+
+</CodeGroup>
+
+### Key Methods
+
+#### append(value)
+
+Add an element to the end of the list.
+
+```python
+ll = LinkedList()
+ll.append(10)
+ll.append(20)
+ll.append(30)
+print(ll.to_list())  # [10, 20, 30]
+```
+
+<Note>
+**Time Complexity**: O(1) - maintains tail reference
+</Note>
+
+#### prepend(value)
+
+Add an element to the beginning of the list.
+
+```python
+ll = LinkedList.from_list([2, 3, 4])
+ll.prepend(1)
+print(ll.to_list())  # [1, 2, 3, 4]
+```
+
+<Note>
+**Time Complexity**: O(1)
+</Note>
+
+#### insert_after(after_value, value)
+
+Insert a value after a specified value.
+
+```python
+ll = LinkedList.from_list([1, 2, 4, 5])
+ll.insert_after(2, 3)  # Insert 3 after 2
+print(ll.to_list())    # [1, 2, 3, 4, 5]
+
+# Raises ValueError if value not found
+try:
+    ll.insert_after(10, 99)
+except ValueError as e:
+    print(e)  # Value not found
+```
+
+<Note>
+**Time Complexity**: O(n) - must search for the value
+</Note>
+
+#### delete(value)
+
+Delete the first occurrence of a value.
+
+```python
+ll = LinkedList.from_list([1, 2, 3, 2, 4])
+ll.delete(2)  # Deletes first occurrence
+print(ll.to_list())  # [1, 3, 2, 4]
+
+# Raises ValueError if value not found
+try:
+    ll.delete(99)
+except ValueError as e:
+    print(e)  # Value not found
+```
+
+<Note>
+**Time Complexity**: O(n) - must search for the value
+</Note>
+
+#### delete_head()
+
+Delete the first element.
+
+```python
+ll = LinkedList.from_list([1, 2, 3])
+ll.delete_head()
+print(ll.to_list())  # [2, 3]
+
+# Raises IndexError if list is empty
+empty = LinkedList()
+try:
+    empty.delete_head()
+except IndexError as e:
+    print(e)  # LinkedList is Empty
+```
+
+<Note>
+**Time Complexity**: O(1)
+</Note>
+
+#### delete_tail()
+
+Delete the last element.
+
+```python
+ll = LinkedList.from_list([1, 2, 3])
+ll.delete_tail()
+print(ll.to_list())  # [1, 2]
+```
+
+<Note>
+**Time Complexity**: O(n) - must traverse to second-to-last node
+</Note>
+
+#### search(value)
+
+Search for a value and return its node.
+
+```python
+ll = LinkedList.from_list([10, 20, 30, 40])
+
+node = ll.search(30)
+if node:
+    print(node.value)  # 30
+
+node = ll.search(99)
+print(node)  # None (not found)
+```
+
+<Note>
+**Time Complexity**: O(n)
+</Note>
+
+#### traverse()
+
+Print all elements in the list.
+
+```python
+ll = LinkedList.from_list([1, 2, 3, 4, 5])
+ll.traverse()  # 1 2 3 4 5
+```
+
+### Index Access
+
+Access elements by index using bracket notation:
+
+```python
+ll = LinkedList.from_list([10, 20, 30, 40])
+
+print(ll[0])   # 10
+print(ll[2])   # 30
+print(ll[-1])  # Raises IndexError (negative indices not supported)
+
+# Raises IndexError for out of bounds
+try:
+    value = ll[10]
+except IndexError as e:
+    print(e)  # Index Out of Bounds
+```
+
+<Note>
+**Time Complexity**: O(n) - must traverse from head
+</Note>
+
+### Utility Methods
+
+```python
+ll = LinkedList.from_list([1, 2, 3, 4, 5])
+
+# Check if empty
+print(ll.is_empty())  # False
+
+# Get length
+print(len(ll))  # 5
+
+# Convert to Python list
+print(ll.to_list())  # [1, 2, 3, 4, 5]
+
+# String representation
+print(ll)  # [ 1 2 3 4 5 ] Count: 5
+```
+
+## DoublyLinkedList
+
+A doubly linked list where each node has references to both the next and previous nodes. Supports bidirectional traversal.
+
+### Creating a DoublyLinkedList
+
+<CodeGroup>
+
+```python Empty List
+from dsa.doublylinkedlist import DoublyLinkedList
+
+# Create empty doubly linked list
+dll = DoublyLinkedList()
+print(dll.is_empty())  # True
+```
+
+```python With Head Node
+from dsa.doublylinkedlist import DoublyLinkedList, Node
+
+# Create with a head node
+head = Node(10)
+dll = DoublyLinkedList(head=head)
+print(len(dll))  # 1
+```
+
+```python From List
+from dsa.doublylinkedlist import DoublyLinkedList
+
+# Create from Python list
+dll = DoublyLinkedList.from_list([1, 2, 3, 4, 5])
+print(dll)  # [ 1 2 3 4 5 ] Count: 5
+```
+
+</CodeGroup>
+
+### Key Methods
+
+DoublyLinkedList inherits most methods from LinkedList but overrides some for bidirectional linking.
+
+#### append(value)
+
+Add an element to the end with bidirectional links.
+
+```python
+dll = DoublyLinkedList()
+dll.append(10)
+dll.append(20)
+dll.append(30)
+
+# Verify bidirectional links
+print(dll.tail.value)        # 30
+print(dll.tail.prev.value)   # 20
+```
+
+<Note>
+**Time Complexity**: O(1)
+</Note>
+
+#### prepend(value)
+
+Add an element to the beginning with bidirectional links.
+
+```python
+dll = DoublyLinkedList.from_list([2, 3, 4])
+dll.prepend(1)
+
+# Verify bidirectional links
+print(dll.head.value)        # 1
+print(dll.head.next.prev.value)  # 1
+```
+
+<Note>
+**Time Complexity**: O(1)
+</Note>
+
+#### insert_after(after_value, value)
+
+Insert with proper bidirectional linking.
+
+```python
+dll = DoublyLinkedList.from_list([1, 2, 4, 5])
+dll.insert_after(2, 3)
+
+# Verify bidirectional links
+current = dll.head
+while current.value != 3:
+    current = current.next
+print(current.prev.value)  # 2
+print(current.next.value)  # 4
+```
+
+<Note>
+**Time Complexity**: O(n)
+</Note>
+
+#### delete(value)
+
+Delete with proper bidirectional link updates.
+
+```python
+dll = DoublyLinkedList.from_list([1, 2, 3, 4, 5])
+dll.delete(3)
+print(dll.to_list())  # [1, 2, 4, 5]
+
+# Verify links are maintained
+current = dll.head.next  # node with value 2
+print(current.next.value)  # 4 (was 3's next)
+```
+
+<Note>
+**Time Complexity**: O(n)
+</Note>
+
+#### delete_head()
+
+Delete the first element, updating prev reference.
+
+```python
+dll = DoublyLinkedList.from_list([1, 2, 3])
+dll.delete_head()
+print(dll.to_list())      # [2, 3]
+print(dll.head.prev)      # None
+```
+
+<Note>
+**Time Complexity**: O(1)
+</Note>
+
+#### delete_tail()
+
+Delete the last element using tail reference.
+
+```python
+dll = DoublyLinkedList.from_list([1, 2, 3])
+dll.delete_tail()
+print(dll.to_list())   # [1, 2]
+print(dll.tail.value)  # 2
+print(dll.tail.next)   # None
+```
+
+<Note>
+**Time Complexity**: O(1) - uses tail reference (faster than singly linked)
+</Note>
+
+#### traverse_reverse()
+
+Print elements in reverse order.
+
+```python
+dll = DoublyLinkedList.from_list([1, 2, 3, 4, 5])
+dll.traverse_reverse()  # 5 4 3 2 1
+```
+
+<Note>
+**Time Complexity**: O(n)
+</Note>
+
+### Inherited Methods
+
+DoublyLinkedList inherits these methods from LinkedList:
+
+```python
+dll = DoublyLinkedList.from_list([10, 20, 30])
+
+# Search (inherited)
+node = dll.search(20)
+
+# Traverse forward (inherited)
+dll.traverse()  # 10 20 30
+
+# Index access (inherited)
+print(dll[1])  # 20
+
+# Utility methods (inherited)
+print(dll.is_empty())    # False
+print(len(dll))          # 3
+print(dll.to_list())     # [10, 20, 30]
+```
+
+## Use Cases
+
+<Tabs>
+  <Tab title="Music Playlist (Doubly)">
+    Navigate forward and backward through songs:
+    
+    ```python
+    from dsa.doublylinkedlist import DoublyLinkedList
+    
+    class MusicPlayer:
+        def __init__(self, songs):
+            self.playlist = DoublyLinkedList.from_list(songs)
+            self.current = self.playlist.head
+        
+        def play_next(self):
+            if self.current and self.current.next:
+                self.current = self.current.next
+                return self.current.value
+            return None
+        
+        def play_previous(self):
+            if self.current and self.current.prev:
+                self.current = self.current.prev
+                return self.current.value
+            return None
+        
+        def current_song(self):
+            return self.current.value if self.current else None
+    
+    player = MusicPlayer(["Song A", "Song B", "Song C", "Song D"])
+    print(player.current_song())  # "Song A"
+    print(player.play_next())     # "Song B"
+    print(player.play_next())     # "Song C"
+    print(player.play_previous()) # "Song B"
+    ```
+  </Tab>
+  
+  <Tab title="Browser History (Doubly)">
+    Navigate browser history:
+    
+    ```python
+    from dsa.doublylinkedlist import DoublyLinkedList, Node
+    
+    class BrowserHistory:
+        def __init__(self, homepage):
+            self.history = DoublyLinkedList(head=Node(homepage))
+            self.current = self.history.head
+        
+        def visit(self, url):
+            # Remove forward history
+            self.current.next = None
+            self.history.tail = self.current
+            
+            # Add new page
+            self.history.append(url)
+            self.current = self.history.tail
+        
+        def back(self):
+            if self.current.prev:
+                self.current = self.current.prev
+                return self.current.value
+            return self.current.value
+        
+        def forward(self):
+            if self.current.next:
+                self.current = self.current.next
+                return self.current.value
+            return self.current.value
+    
+    browser = BrowserHistory("homepage.com")
+    browser.visit("page1.com")
+    browser.visit("page2.com")
+    print(browser.back())      # "page1.com"
+    print(browser.forward())   # "page2.com"
+    ```
+  </Tab>
+  
+  <Tab title="LRU Cache (Doubly)">
+    Implement Least Recently Used cache:
+    
+    ```python
+    from dsa.doublylinkedlist import DoublyLinkedList, Node
+    
+    class LRUCache:
+        def __init__(self, capacity):
+            self.capacity = capacity
+            self.cache = {}  # key -> node
+            self.dll = DoublyLinkedList()
+        
+        def get(self, key):
+            if key in self.cache:
+                # Move to front (most recently used)
+                node = self.cache[key]
+                self.dll.delete(node.value)
+                self.dll.prepend(node.value)
+                return node.value
+            return None
+        
+        def put(self, key, value):
+            if key in self.cache:
+                self.dll.delete(self.cache[key].value)
+            elif len(self.dll) >= self.capacity:
+                # Remove least recently used (tail)
+                lru = self.dll.tail.value
+                del self.cache[lru]
+                self.dll.delete_tail()
+            
+            # Add to front (most recently used)
+            self.dll.prepend(value)
+            self.cache[key] = self.dll.head
+    ```
+  </Tab>
+  
+  <Tab title="Polynomial (Singly)">
+    Represent polynomial using linked list:
+    
+    ```python
+    from dsa.singlylinkedlist import LinkedList
+    
+    class Term:
+        def __init__(self, coef, exp):
+            self.coef = coef  # coefficient
+            self.exp = exp    # exponent
+        
+        def __str__(self):
+            return f"{self.coef}x^{self.exp}"
+    
+    class Polynomial:
+        def __init__(self):
+            self.terms = LinkedList()
+        
+        def add_term(self, coef, exp):
+            self.terms.append(Term(coef, exp))
+        
+        def evaluate(self, x):
+            result = 0
+            current = self.terms.head
+            while current:
+                term = current.value
+                result += term.coef * (x ** term.exp)
+                current = current.next
+            return result
+    
+    # Represent: 3x^2 + 2x + 1
+    poly = Polynomial()
+    poly.add_term(3, 2)
+    poly.add_term(2, 1)
+    poly.add_term(1, 0)
+    
+    print(poly.evaluate(2))  # 3(4) + 2(2) + 1 = 17
+    ```
+  </Tab>
+</Tabs>
+
+## Comparison: LinkedList vs DoublyLinkedList
+
+| Feature | LinkedList (Singly) | DoublyLinkedList |
+|---------|---------------------|------------------|
+| Node size | Smaller (1 reference) | Larger (2 references) |
+| Memory usage | Less | More |
+| Traversal | Forward only | Bidirectional |
+| delete_tail() | O(n) | O(1) |
+| Reverse traversal | Not possible | O(n) |
+| Implementation | Simpler | More complex |
+| Use case | One-direction access | Bidirectional navigation |
+
+<Tip>
+**When to use LinkedList**: Use when you only need forward traversal and want to minimize memory usage.
+
+**When to use DoublyLinkedList**: Use when you need bidirectional navigation or efficient deletion from the tail.
+</Tip>
+
+## Linked List vs Array
+
+| Operation | Array | Linked List |
+|-----------|-------|-------------|
+| Access by index | O(1) | O(n) |
+| Insert at beginning | O(n) | O(1) |
+| Insert at end | O(1) | O(1) |
+| Insert in middle | O(n) | O(1)* |
+| Delete from beginning | O(n) | O(1) |
+| Delete from end | O(1) | O(n) singly, O(1) doubly |
+| Search | O(n) | O(n) |
+| Memory overhead | Low | High (references) |
+| Cache locality | Good | Poor |
+
+*After finding the position
+
+<Tip>
+**Use Arrays when**: You need frequent index-based access and the size is relatively stable.
+
+**Use Linked Lists when**: You have frequent insertions/deletions at the beginning or you don't know the size in advance.
+</Tip>
+
+## Equality Comparison
+
+Both linked list types support equality comparison:
+
+```python
+from dsa.singlylinkedlist import LinkedList
+from dsa.doublylinkedlist import DoublyLinkedList
+
+ll1 = LinkedList.from_list([1, 2, 3])
+ll2 = LinkedList.from_list([1, 2, 3])
+ll3 = LinkedList.from_list([1, 2, 4])
+
+print(ll1 == ll2)  # True (same contents)
+print(ll1 == ll3)  # False (different contents)
+
+# Cannot compare singly with doubly
+dll = DoublyLinkedList.from_list([1, 2, 3])
+print(ll1 == dll)  # False (different types)
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Check for Empty" icon="triangle-exclamation">
+    Always check if the list is empty before accessing:
+    ```python
+    if not ll.is_empty():
+        ll.delete_head()
+    ```
+  </Card>
+  
+  <Card title="Use Appropriate Type" icon="scale-balanced">
+    - Forward-only: LinkedList
+    - Bidirectional: DoublyLinkedList
+    - Frequent tail operations: DoublyLinkedList
+  </Card>
+  
+  <Card title="Handle Exceptions" icon="shield-halved">
+    Wrap operations in try-except:
+    ```python
+    try:
+        ll.delete(value)
+    except ValueError:
+        # Handle not found
+    ```
+  </Card>
+  
+  <Card title="Maintain References" icon="link">
+    Keep track of head and tail for O(1) operations
+  </Card>
+</CardGroup>

@@ -1,0 +1,514 @@
+---
+title: Deque & DynamicDeque
+description: API reference for Deque and DynamicDeque classes
+---
+
+The `Deque` and `DynamicDeque` classes provide double-ended queue implementations that support appending and popping elements from both ends.
+
+## Deque
+
+A static deque (double-ended queue) implementation with fixed capacity.
+
+### Constructor
+
+<ParamField path="capacity" type="int" default="10">
+  The initial size of the deque
+</ParamField>
+
+```python
+from dsa.deque import Deque
+
+# Create a deque with default capacity
+deque = Deque()
+
+# Create a deque with custom capacity
+deque = Deque(capacity=20)
+```
+
+### Properties
+
+<ResponseField name="count" type="int">
+  The number of elements currently in the deque
+</ResponseField>
+
+### Methods
+
+#### push_front(element)
+
+Push an element at the front of the deque (synonym for `append_left`).
+
+<ParamField path="element" type="any" required>
+  The element to append
+</ParamField>
+
+**Raises:**
+- `Exception`: If the deque is full
+
+```python
+deque = Deque()
+deque.push_front(1)
+deque.push_front(2)
+print(deque.to_list())  # Output: [2, 1]
+```
+
+#### push_back(element)
+
+Push an element at the back of the deque (synonym for `append_right`).
+
+<ParamField path="element" type="any" required>
+  The element to append
+</ParamField>
+
+**Raises:**
+- `Exception`: If the deque is full
+
+```python
+deque = Deque()
+deque.push_back(1)
+deque.push_back(2)
+print(deque.to_list())  # Output: [1, 2]
+```
+
+#### pop_front()
+
+Remove and return the element from the front (synonym for `pop_left`).
+
+**Returns:** The leftmost element of the deque
+
+**Raises:**
+- `Exception`: If the deque is empty
+
+```python
+deque = Deque.from_list([1, 2, 3])
+print(deque.pop_front())  # Output: 1
+```
+
+#### pop_back()
+
+Remove and return the element from the back (synonym for `pop_right`).
+
+**Returns:** The rightmost element of the deque
+
+**Raises:**
+- `Exception`: If the deque is empty
+
+```python
+deque = Deque.from_list([1, 2, 3])
+print(deque.pop_back())  # Output: 3
+```
+
+#### front()
+
+Get the element at the front without removing it (synonym for `peek_left`).
+
+**Returns:** The leftmost element
+
+**Raises:**
+- `Exception`: If the deque is empty
+
+```python
+deque = Deque.from_list([1, 2, 3])
+print(deque.front())  # Output: 1
+```
+
+#### back()
+
+Get the element at the back without removing it (synonym for `peek_right`).
+
+**Returns:** The rightmost element
+
+**Raises:**
+- `Exception`: If the deque is empty
+
+```python
+deque = Deque.from_list([1, 2, 3])
+print(deque.back())  # Output: 3
+```
+
+#### append_left(element)
+
+Append an element to the left of the deque.
+
+<ParamField path="element" type="any" required>
+  The element to append
+</ParamField>
+
+**Raises:**
+- `Exception`: If the deque is full
+
+```python
+deque = Deque()
+deque.append_left(1)
+deque.append_left(2)
+print(deque.to_list())  # Output: [2, 1]
+```
+
+#### append_right(element)
+
+Append an element to the right of the deque.
+
+<ParamField path="element" type="any" required>
+  The element to append
+</ParamField>
+
+**Raises:**
+- `Exception`: If the deque is full
+
+```python
+deque = Deque()
+deque.append_right(1)
+deque.append_right(2)
+print(deque.to_list())  # Output: [1, 2]
+```
+
+#### pop_left()
+
+Remove and return the element from the left of the deque.
+
+**Returns:** The leftmost element of the deque
+
+**Raises:**
+- `Exception`: If the deque is empty
+
+```python
+deque = Deque.from_list([1, 2, 3])
+print(deque.pop_left())  # Output: 1
+print(deque.to_list())  # Output: [2, 3]
+```
+
+#### pop_right()
+
+Remove and return the element from the right of the deque.
+
+**Returns:** The rightmost element of the deque
+
+**Raises:**
+- `Exception`: If the deque is empty
+
+```python
+deque = Deque.from_list([1, 2, 3])
+print(deque.pop_right())  # Output: 3
+print(deque.to_list())  # Output: [1, 2]
+```
+
+#### peek_left()
+
+Get the element at the left without removing it.
+
+**Returns:** The leftmost element
+
+**Raises:**
+- `Exception`: If the deque is empty
+
+```python
+deque = Deque.from_list([1, 2, 3])
+print(deque.peek_left())  # Output: 1
+print(deque.peek_left())  # Output: 1 (still there)
+```
+
+#### peek_right()
+
+Get the element at the right without removing it.
+
+**Returns:** The rightmost element
+
+**Raises:**
+- `Exception`: If the deque is empty
+
+```python
+deque = Deque.from_list([1, 2, 3])
+print(deque.peek_right())  # Output: 3
+print(deque.peek_right())  # Output: 3 (still there)
+```
+
+#### is_empty()
+
+Check if the deque is empty.
+
+**Returns:** `True` if the deque is empty, `False` otherwise
+
+```python
+deque = Deque()
+print(deque.is_empty())  # Output: True
+deque.append_right(1)
+print(deque.is_empty())  # Output: False
+```
+
+#### capacity()
+
+Get the maximum capacity of the deque.
+
+**Returns:** The capacity of the deque
+
+```python
+deque = Deque(capacity=15)
+print(deque.capacity())  # Output: 15
+```
+
+#### from_list(alist)
+
+Class method to create a deque from a list.
+
+<ParamField path="alist" type="list" required>
+  The list to initialize the deque with
+</ParamField>
+
+**Returns:** A deque instance with elements from the list
+
+**Raises:**
+- `Exception`: If list exceeds the deque's capacity
+
+```python
+deque = Deque.from_list([1, 2, 3, 4, 5])
+print(deque.front())  # Output: 1
+print(deque.back())   # Output: 5
+```
+
+#### to_list()
+
+Convert the deque's contents into a list.
+
+**Returns:** A list containing the elements in the deque
+
+```python
+deque = Deque()
+deque.append_right(1)
+deque.append_right(2)
+deque.append_left(0)
+print(deque.to_list())  # Output: [0, 1, 2]
+```
+
+### Special Methods
+
+#### \_\_len\_\_()
+
+Get the number of elements in the deque.
+
+```python
+deque = Deque.from_list([1, 2, 3])
+print(len(deque))  # Output: 3
+```
+
+#### \_\_eq\_\_(other)
+
+Compare two deques for value-based equality.
+
+**Returns:** `True` if both deques have equal contents, `False` otherwise
+
+```python
+deque1 = Deque.from_list([1, 2, 3])
+deque2 = Deque.from_list([1, 2, 3])
+deque3 = Deque.from_list([1, 2, 4])
+
+print(deque1 == deque2)  # Output: True
+print(deque1 == deque3)  # Output: False
+```
+
+#### \_\_repr\_\_()
+
+String representation of the deque for debugging.
+
+```python
+deque = Deque.from_list([1, 2, 3])
+print(deque)  # Output: [1, 2, 3] Count: 3 Capacity: 10
+```
+
+---
+
+## DynamicDeque
+
+A dynamic deque implementation that adjusts its capacity automatically. Inherits from `Deque`.
+
+### Constructor
+
+<ParamField path="capacity" type="int" default="10">
+  The initial size of the deque
+</ParamField>
+
+```python
+from dsa.deque import DynamicDeque
+
+# Create a dynamic deque
+deque = DynamicDeque()
+```
+
+### Methods
+
+DynamicDeque inherits all methods from Deque with automatic capacity management:
+
+#### append_left(element)
+
+Append an element to the left, adjusting capacity if needed.
+
+<ParamField path="element" type="any" required>
+  The element to append
+</ParamField>
+
+```python
+deque = DynamicDeque(capacity=2)
+deque.append_left(1)
+deque.append_left(2)
+deque.append_left(3)  # Automatically grows capacity
+print(deque.capacity())  # Output: 4
+```
+
+#### append_right(element)
+
+Append an element to the right, adjusting capacity if needed.
+
+<ParamField path="element" type="any" required>
+  The element to append
+</ParamField>
+
+```python
+deque = DynamicDeque(capacity=2)
+deque.append_right(1)
+deque.append_right(2)
+deque.append_right(3)  # Automatically grows capacity
+print(deque.capacity())  # Output: 4
+```
+
+#### pop_left()
+
+Remove and return the element from the left, adjusting capacity if needed.
+
+**Returns:** The leftmost element
+
+```python
+deque = DynamicDeque.from_list([1, 2, 3])
+print(deque.pop_left())  # Output: 1
+```
+
+#### pop_right()
+
+Remove and return the element from the right, adjusting capacity if needed.
+
+**Returns:** The rightmost element
+
+```python
+deque = DynamicDeque.from_list([1, 2, 3])
+print(deque.pop_right())  # Output: 3
+```
+
+#### grow()
+
+Helper method to double the capacity of the deque.
+
+```python
+deque = DynamicDeque(capacity=10)
+print(deque.capacity())  # Output: 10
+deque.grow()
+print(deque.capacity())  # Output: 20
+```
+
+#### shrink()
+
+Helper method to halve the capacity of the deque. Minimum capacity is 10.
+
+```python
+deque = DynamicDeque(capacity=20)
+deque.shrink()
+print(deque.capacity())  # Output: 10
+```
+
+#### check_capacity()
+
+Adjust capacity based on current count:
+- If count ≥ capacity, grow the deque
+- If count ≤ 1/4 of capacity, shrink the deque
+
+```python
+deque = DynamicDeque(capacity=10)
+for i in range(10):
+    deque.append_right(i)
+deque.check_capacity()  # Will grow if needed
+```
+
+### Complete Example
+
+<Accordion title="Working with DynamicDeque">
+```python
+from dsa.deque import Deque, DynamicDeque
+
+# Create a dynamic deque
+deque = DynamicDeque(capacity=2)
+
+# Add elements from both ends - capacity grows automatically
+for i in range(5):
+    deque.append_right(i)
+    print(f"Appended right {i}, Capacity: {deque.capacity()}, Count: {len(deque)}")
+
+for i in range(10, 15):
+    deque.append_left(i)
+    print(f"Appended left {i}, Capacity: {deque.capacity()}, Count: {len(deque)}")
+
+print(f"\nDeque contents: {deque.to_list()}")
+
+# Remove elements from both ends
+print(f"\nFront: {deque.front()}")  # Peek without removing
+print(f"Back: {deque.back()}")
+
+print(f"\nPop front: {deque.pop_front()}")
+print(f"Pop back: {deque.pop_back()}")
+
+# Process elements
+while not deque.is_empty():
+    if len(deque) % 2 == 0:
+        element = deque.pop_left()
+        print(f"Popped left: {element}")
+    else:
+        element = deque.pop_right()
+        print(f"Popped right: {element}")
+    print(f"  Capacity: {deque.capacity()}, Count: {len(deque)}")
+
+# Compare deques
+deque1 = DynamicDeque.from_list([1, 2, 3])
+deque2 = Deque.from_list([1, 2, 3])
+print(f"\nAre equal: {deque1 == deque2}")  # Output: True
+```
+</Accordion>
+
+### Use Cases
+
+<CodeGroup>
+```python Example: Palindrome checker
+def is_palindrome(text):
+    from dsa.deque import Deque
+    
+    deque = Deque.from_list(list(text.lower()))
+    
+    while len(deque) > 1:
+        if deque.pop_front() != deque.pop_back():
+            return False
+    
+    return True
+
+print(is_palindrome("racecar"))  # Output: True
+print(is_palindrome("hello"))    # Output: False
+```
+
+```python Example: Sliding window
+from dsa.deque import DynamicDeque
+
+def sliding_window_max(nums, k):
+    deque = DynamicDeque()
+    result = []
+    
+    for i, num in enumerate(nums):
+        # Remove elements outside window
+        if len(deque) > 0 and i - deque.front() >= k:
+            deque.pop_front()
+        
+        deque.append_right(i)
+        
+        if i >= k - 1:
+            max_val = max(nums[j] for j in deque.to_list())
+            result.append(max_val)
+    
+    return result
+
+nums = [1, 3, -1, -3, 5, 3, 6, 7]
+print(sliding_window_max(nums, 3))
+# Output: [3, 3, 5, 5, 6, 7]
+```
+</CodeGroup>

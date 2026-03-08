@@ -1,0 +1,256 @@
+---
+title: 'Tree'
+description: 'Binary Search Tree implementation with TreeNode class'
+icon: 'sitemap'
+---
+
+## Overview
+
+The UCX DSA package provides a complete binary search tree (BST) implementation through the `Tree` and `TreeNode` classes. A binary search tree is a hierarchical data structure where each node has at most two children, and for every node, all values in the left subtree are smaller and all values in the right subtree are larger.
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Sorted Data" icon="arrow-down-1-9">
+    Maintain data in sorted order with efficient insertion and deletion
+  </Card>
+  <Card title="Fast Search" icon="magnifying-glass">
+    Search for values in O(log n) time on balanced trees
+  </Card>
+  <Card title="Range Queries" icon="arrows-left-right">
+    Find all values within a specific range efficiently
+  </Card>
+  <Card title="Priority Systems" icon="ranking-star">
+    Implement priority-based systems with ordered access
+  </Card>
+</CardGroup>
+
+## TreeNode Class
+
+The `TreeNode` class represents a single node in a binary tree.
+
+### Constructor
+
+```python
+from dsa.tree import TreeNode
+
+# Create a node with a value
+node = TreeNode(10)
+
+# Create a node with children
+left_child = TreeNode(5)
+right_child = TreeNode(15)
+parent = TreeNode(10, left=left_child, right=right_child)
+```
+
+### Key Methods
+
+<Accordion title="copy()">
+  Returns a deep copy of the node and all its descendants.
+  
+  ```python
+  original = TreeNode(10, TreeNode(5), TreeNode(15))
+  duplicate = original.copy()
+  ```
+</Accordion>
+
+<Accordion title="print(level=0)">
+  Prints the tree structure in a readable format.
+  
+  ```python
+  root = TreeNode(10, TreeNode(5), TreeNode(15))
+  root.print()
+  # Output:
+  #    15
+  # 10
+  #    5
+  ```
+</Accordion>
+
+## Tree Class (Binary Search Tree)
+
+The `Tree` class implements a binary search tree with standard BST operations. It can also be used as a plain binary tree if you manually set nodes without using insert/search/delete operations.
+
+### Creating a Tree
+
+```python
+from dsa.tree import Tree, TreeNode
+
+# Create an empty tree
+tree = Tree()
+
+# Create a tree with an existing root
+root = TreeNode(50)
+tree = Tree(root)
+```
+
+## Core Operations
+
+<Steps>
+  <Step title="Insert Values">
+    Add values to the BST while maintaining the BST property.
+    
+    ```python
+    tree = Tree()
+    tree.insert(50)
+    tree.insert(30)
+    tree.insert(70)
+    tree.insert(20)
+    tree.insert(40)
+    ```
+    
+    <Note>
+      The `insert()` method uses recursion by default. For iterative insertion, use `insert_iterative()`.
+    </Note>
+  </Step>
+  
+  <Step title="Search for Values">
+    Find a node with a specific value.
+    
+    ```python
+    try:
+        node = tree.search(30)
+        print(f"Found node: {node.value}")  # Output: Found node: 30
+    except ValueError:
+        print("Value not found")
+    ```
+    
+    <Warning>
+      The `search()` method raises a `ValueError` if the value is not found.
+    </Warning>
+  </Step>
+  
+  <Step title="Delete Values">
+    Remove a node from the BST.
+    
+    ```python
+    tree.delete(30)
+    # The tree automatically restructures to maintain BST properties
+    ```
+    
+    The deletion handles three cases:
+    - Node with no children (leaf)
+    - Node with one child
+    - Node with two children (replaces with in-order successor)
+  </Step>
+</Steps>
+
+## Helper Methods
+
+### Finding Successor and Predecessor
+
+<CodeGroup>
+```python Successor
+# Find the minimum value in the right subtree
+node = tree.successor_node(tree.root.right)
+print(node.value)  # Smallest value in right subtree
+```
+
+```python Predecessor
+# Find the maximum value in the left subtree
+node = tree.predecessor_node(tree.root.left)
+print(node.value)  # Largest value in left subtree
+```
+</CodeGroup>
+
+### Printing and Length
+
+```python
+# Print the tree structure
+tree.print()
+
+# Get the number of nodes
+count = len(tree)
+print(f"Tree has {count} nodes")
+```
+
+## Complete Example
+
+```python
+from dsa.tree import Tree
+
+# Create and populate a BST
+tree = Tree()
+values = [50, 30, 70, 20, 40, 60, 80]
+
+for value in values:
+    tree.insert(value)
+
+print(f"Tree size: {len(tree)}")  # Output: Tree size: 7
+
+# Search for a value
+try:
+    node = tree.search(40)
+    print(f"Found: {node.value}")  # Output: Found: 40
+except ValueError as e:
+    print(e)
+
+# Delete a value
+tree.delete(30)
+print(f"After deletion: {len(tree)}")  # Output: After deletion: 6
+
+# Print the tree structure
+tree.print()
+```
+
+## Visualization
+
+You can visualize trees using the `TreeDraw` class from the draw module:
+
+```python
+from dsa.tree import Tree
+from dsa.draw import TreeDraw
+
+# Create and populate a tree
+tree = Tree()
+for value in [50, 30, 70, 20, 40, 60, 80]:
+    tree.insert(value)
+
+# Visualize the tree
+td = TreeDraw(tree)
+td.draw()  # Display the tree
+
+# Or save to a file
+td.save("my_tree.png")
+```
+
+<Note>
+  The visualization uses NetworkX and Matplotlib to create a hierarchical graph representation of the tree structure.
+</Note>
+
+## Comparison Operations
+
+```python
+# TreeNode comparison
+node1 = TreeNode(5)
+node2 = TreeNode(10)
+print(node1 < node2)  # Output: True
+
+# Tree equality
+tree1 = Tree()
+tree2 = Tree()
+for val in [50, 30, 70]:
+    tree1.insert(val)
+    tree2.insert(val)
+
+print(tree1 == tree2)  # Output: True (same structure and values)
+```
+
+## Time Complexity
+
+| Operation | Average Case | Worst Case |
+|-----------|-------------|------------|
+| Insert    | O(log n)    | O(n)       |
+| Search    | O(log n)    | O(n)       |
+| Delete    | O(log n)    | O(n)       |
+| Copy      | O(n)        | O(n)       |
+
+<Warning>
+  Worst case occurs when the tree becomes unbalanced (e.g., inserting sorted data). Consider using a self-balancing tree for guaranteed O(log n) operations.
+</Warning>
+
+## API Reference
+
+For detailed API documentation, see:
+- [TreeNode API Reference](/api-reference/dsa/tree-node)
+- [Tree API Reference](/api-reference/dsa/tree)

@@ -1,0 +1,396 @@
+---
+title: "HashTable"
+description: "A hash table implementation with collision handling using chaining"
+icon: "hashtag"
+---
+
+## Overview
+
+The `HashTable` class provides a dictionary-like data structure that uses a hash function to map keys to values. It handles collisions using chaining (storing multiple key-value pairs in the same bucket using lists).
+
+<Note>
+  The HashTable uses a polynomial rolling hash function with a multiplier of 31 and supports dynamic key-value storage with O(1) average-case lookup time.
+</Note>
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Collision Handling" icon="link">
+    Uses chaining to handle hash collisions by storing multiple entries in linked lists
+  </Card>
+  <Card title="Dynamic Storage" icon="database">
+    Supports insertion, deletion, and updates of key-value pairs
+  </Card>
+  <Card title="Python Integration" icon="python">
+    Implements Python magic methods for intuitive dictionary-like operations
+  </Card>
+  <Card title="Flexible Keys" icon="key">
+    Accepts any hashable key type (strings, numbers, etc.)
+  </Card>
+</CardGroup>
+
+## Class Reference
+
+### Constructor
+
+```python
+from dsa.hashtable import HashTable
+
+# Create a hashtable with default capacity of 20
+ht = HashTable()
+
+# Create a hashtable with custom capacity
+ht = HashTable(capacity=50)
+```
+
+**Parameters:**
+- `capacity` (int, optional): The initial capacity of the hashtable. Defaults to 20.
+
+### Hash Function
+
+The hashtable uses a polynomial rolling hash function:
+
+```python
+def hash_function(self, key) -> int:
+    mult = 31
+    hash_val = 0
+    for character in str(key):
+        hash_val *= mult
+        hash_val += ord(character)
+        hash_val %= (2**32)
+    return hash_val % self.capacity
+```
+
+This function:
+- Converts keys to strings for consistent hashing
+- Uses a multiplier of 31 for distribution
+- Modulates by 2^32 to prevent overflow
+- Returns an index within the hashtable's capacity
+
+## Core Methods
+
+### set(key, value)
+
+Insert or update a key-value pair in the hashtable.
+
+```python
+ht = HashTable()
+
+# Insert new key-value pairs
+ht.set("name", "Alice")
+ht.set("age", 25)
+ht.set("city", "New York")
+
+# Update existing value
+ht.set("age", 26)  # Updates age from 25 to 26
+```
+
+**Parameters:**
+- `key`: The key to insert or update
+- `value`: The value to associate with the key
+
+**Time Complexity:** O(1) average case, O(n) worst case
+
+### get(key)
+
+Retrieve the value associated with a key.
+
+```python
+ht = HashTable()
+ht.set("name", "Alice")
+ht.set("age", 25)
+
+# Get existing values
+name = ht.get("name")  # Returns "Alice"
+age = ht.get("age")    # Returns 25
+
+# Get non-existent key
+result = ht.get("email")  # Returns None
+```
+
+**Parameters:**
+- `key`: The key to look up
+
+**Returns:** The value associated with the key, or `None` if not found
+
+**Time Complexity:** O(1) average case, O(n) worst case
+
+### key_exists(key)
+
+Check if a key exists in the hashtable.
+
+```python
+ht = HashTable()
+ht.set("name", "Alice")
+
+if ht.key_exists("name"):
+    print("Name exists")  # This will print
+
+if not ht.key_exists("email"):
+    print("Email not found")  # This will print
+```
+
+**Parameters:**
+- `key`: The key to check
+
+**Returns:** `True` if key exists, `False` otherwise
+
+**Time Complexity:** O(1) average case, O(n) worst case
+
+### remove(key)
+
+Remove a key-value pair from the hashtable.
+
+```python
+ht = HashTable()
+ht.set("name", "Alice")
+ht.set("age", 25)
+
+# Remove a key
+ht.remove("age")
+print(len(ht))  # Now 1
+
+# Attempting to remove non-existent key raises KeyError
+try:
+    ht.remove("email")
+except KeyError as e:
+    print(f"Key not found: {e}")
+```
+
+**Parameters:**
+- `key`: The key to remove
+
+**Raises:** `KeyError` if the key is not found
+
+**Time Complexity:** O(1) average case, O(n) worst case
+
+### pop(key, default=None)
+
+Remove a key and return its value, or return a default if not found.
+
+```python
+ht = HashTable()
+ht.set("name", "Alice")
+ht.set("age", 25)
+
+# Pop existing key
+age = ht.pop("age")  # Returns 25 and removes the key
+
+# Pop non-existent key with default
+email = ht.pop("email", "not@found.com")  # Returns "not@found.com"
+```
+
+**Parameters:**
+- `key`: The key to remove
+- `default`: Value to return if key is not found (defaults to `None`)
+
+**Returns:** The value associated with the key, or the default value
+
+## Python Magic Methods
+
+The HashTable implements several magic methods for intuitive Python integration:
+
+<Tabs>
+  <Tab title="Indexing">
+    ```python
+    ht = HashTable()
+    
+    # Set values using indexing
+    ht["name"] = "Alice"
+    ht["age"] = 25
+    
+    # Get values using indexing
+    name = ht["name"]  # "Alice"
+    age = ht["age"]    # 25
+    
+    # Delete using indexing
+    del ht["age"]
+    ```
+  </Tab>
+  
+  <Tab title="Membership">
+    ```python
+    ht = HashTable()
+    ht["name"] = "Alice"
+    ht["age"] = 25
+    
+    # Check membership with 'in' operator
+    if "name" in ht:
+        print("Name exists")
+    
+    if "email" not in ht:
+        print("Email not found")
+    ```
+  </Tab>
+  
+  <Tab title="Length">
+    ```python
+    ht = HashTable()
+    ht["name"] = "Alice"
+    ht["age"] = 25
+    ht["city"] = "New York"
+    
+    # Get number of items
+    count = len(ht)  # Returns 3
+    ```
+  </Tab>
+  
+  <Tab title="Iteration">
+    ```python
+    ht = HashTable()
+    ht["name"] = "Alice"
+    ht["age"] = 25
+    ht["city"] = "New York"
+    
+    # Iterate over keys
+    for key in ht:
+        print(f"{key}: {ht[key]}")
+    ```
+  </Tab>
+  
+  <Tab title="Equality">
+    ```python
+    ht1 = HashTable()
+    ht1["name"] = "Alice"
+    ht1["age"] = 25
+    
+    ht2 = HashTable()
+    ht2["age"] = 25
+    ht2["name"] = "Alice"
+    
+    # Compare hashtables
+    if ht1 == ht2:
+        print("Hashtables are equal")  # This will print
+    ```
+  </Tab>
+</Tabs>
+
+## Utility Methods
+
+### show_buckets()
+
+Display the internal structure of the hashtable, showing all buckets and their contents.
+
+```python
+ht = HashTable(capacity=10)
+ht["apple"] = 5
+ht["banana"] = 3
+ht["cherry"] = 8
+
+print(ht.show_buckets())
+# Output shows each bucket index and its contents
+# Bucket 0: []
+# Bucket 1: []
+# Bucket 2: [['apple', 5]]
+# ...
+```
+
+**Returns:** A string displaying all buckets and their chain contents
+
+### enumerate()
+
+Get an enumeration of all key-value pairs.
+
+```python
+ht = HashTable()
+ht["name"] = "Alice"
+ht["age"] = 25
+
+for index, (key, value) in ht.enumerate():
+    print(f"{index}: {key} = {value}")
+```
+
+**Returns:** An enumeration iterator of key-value pairs
+
+### \_\_repr\_\_()
+
+Get a string representation of the hashtable.
+
+```python
+ht = HashTable()
+ht["name"] = "Alice"
+ht["age"] = 25
+ht["city"] = "New York"
+
+print(ht)  # Output: {name:Alice, age:25, city:New York}
+```
+
+## Collision Handling Example
+
+```python
+from dsa.hashtable import HashTable
+
+# Create a small hashtable to demonstrate collision handling
+ht = HashTable(capacity=5)
+
+# Add multiple items that may hash to the same bucket
+ht["cat"] = 1
+ht["act"] = 2  # Anagram - might collide
+ht["tac"] = 3  # Anagram - might collide
+ht["dog"] = 4
+ht["god"] = 5  # Anagram - might collide
+
+print(f"Total items: {len(ht)}")
+print(ht.show_buckets())  # Shows how items are distributed across buckets
+
+# All items are still accessible despite collisions
+for key in ht:
+    print(f"{key}: {ht[key]}")
+```
+
+## Performance Characteristics
+
+<CardGroup cols={2}>
+  <Card title="Average Case" icon="gauge-high">
+    - **Insertion:** O(1)
+    - **Lookup:** O(1)
+    - **Deletion:** O(1)
+  </Card>
+  <Card title="Worst Case" icon="triangle-exclamation">
+    - **All operations:** O(n)
+    - Occurs when all keys hash to the same bucket
+  </Card>
+</CardGroup>
+
+<Note>
+  The worst-case scenario occurs when all keys collide and hash to the same bucket, resulting in linear search through the chain. Choose an appropriate initial capacity to minimize collisions.
+</Note>
+
+## Complete Example
+
+```python
+from dsa.hashtable import HashTable
+
+# Create a hashtable for a simple contact manager
+contacts = HashTable(capacity=20)
+
+# Add contacts
+contacts["Alice"] = {"phone": "555-0001", "email": "alice@example.com"}
+contacts["Bob"] = {"phone": "555-0002", "email": "bob@example.com"}
+contacts["Charlie"] = {"phone": "555-0003", "email": "charlie@example.com"}
+
+print(f"Total contacts: {len(contacts)}")
+
+# Look up a contact
+if "Alice" in contacts:
+    alice = contacts["Alice"]
+    print(f"Alice's phone: {alice['phone']}")
+
+# Update a contact
+contacts["Bob"] = {"phone": "555-0099", "email": "bob.new@example.com"}
+
+# Remove a contact
+removed = contacts.pop("Charlie", None)
+if removed:
+    print(f"Removed Charlie: {removed}")
+
+# Iterate over all contacts
+print("\nAll contacts:")
+for name in contacts:
+    info = contacts[name]
+    print(f"{name}: {info['phone']} ({info['email']})")
+```
+
+## Related Classes
+
+- [HashSet](/data-structures/hashset) - A set implementation built on top of HashTable

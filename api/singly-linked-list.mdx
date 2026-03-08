@@ -1,0 +1,429 @@
+---
+title: SinglyLinkedList
+description: API reference for the SinglyLinkedList class
+---
+
+The `LinkedList` class (also known as SinglyLinkedList) provides a singly linked list implementation where each node points to the next node.
+
+## Node
+
+A singly linked list node implementation.
+
+### Constructor
+
+<ParamField path="value" type="any" required>
+  The value of the node
+</ParamField>
+
+```python
+from dsa.singlylinkedlist import Node
+
+node = Node(10)
+print(node.value)  # Output: 10
+print(node.next)   # Output: None
+```
+
+### Properties
+
+<ResponseField name="value" type="any">
+  The value stored in the node
+</ResponseField>
+
+<ResponseField name="next" type="Node | None">
+  Reference to the next node in the list
+</ResponseField>
+
+---
+
+## LinkedList
+
+A singly linked list implementation.
+
+### Constructor
+
+<ParamField path="head" type="Node | None" default="None">
+  Reference to the head node
+</ParamField>
+
+<ParamField path="tail" type="Node | None" default="None">
+  Reference to the tail node
+</ParamField>
+
+<ParamField path="count" type="int" default="0">
+  The number of nodes in the linked list
+</ParamField>
+
+<Note>
+  If only the head node is specified, tail is set to the head node and count is automatically set to 1. If both head and tail nodes are specified, count should be specified as well.
+</Note>
+
+```python
+from dsa.singlylinkedlist import LinkedList, Node
+
+# Create an empty linked list
+ll = LinkedList()
+
+# Create with a single node
+node = Node(10)
+ll = LinkedList(head=node)
+
+# Create with head and tail
+head = Node(1)
+tail = Node(3)
+head.next = Node(2)
+head.next.next = tail
+ll = LinkedList(head=head, tail=tail, count=3)
+```
+
+### Properties
+
+<ResponseField name="head" type="Node | None">
+  Reference to the first node in the list
+</ResponseField>
+
+<ResponseField name="tail" type="Node | None">
+  Reference to the last node in the list
+</ResponseField>
+
+<ResponseField name="count" type="int">
+  The number of nodes in the linked list
+</ResponseField>
+
+### Methods
+
+#### from_list(mylist)
+
+Class method to create a linked list from a list.
+
+<ParamField path="mylist" type="list" default="None">
+  A list or container to convert from
+</ParamField>
+
+**Returns:** A linked list containing the items from mylist
+
+```python
+ll = LinkedList.from_list([1, 2, 3, 4, 5])
+print(ll.to_list())  # Output: [1, 2, 3, 4, 5]
+```
+
+#### to_list()
+
+Convert the linked list to a Python list.
+
+**Returns:** List with contents of linked list
+
+```python
+ll = LinkedList.from_list([1, 2, 3])
+print(ll.to_list())  # Output: [1, 2, 3]
+```
+
+#### traverse()
+
+Print the contents of the linked list.
+
+```python
+ll = LinkedList.from_list([1, 2, 3, 4, 5])
+ll.traverse()  # Output: 1 2 3 4 5
+```
+
+#### search(value)
+
+Search for a value in the linked list.
+
+<ParamField path="value" type="any" required>
+  The value to search for
+</ParamField>
+
+**Returns:** The Node containing the value, or None if not found
+
+```python
+ll = LinkedList.from_list([10, 20, 30])
+node = ll.search(20)
+if node:
+    print(f"Found: {node.value}")  # Output: Found: 20
+else:
+    print("Not found")
+
+node = ll.search(99)
+print(node)  # Output: None
+```
+
+#### is_empty()
+
+Check if the linked list is empty.
+
+**Returns:** `True` if the list is empty, `False` otherwise
+
+```python
+ll = LinkedList()
+print(ll.is_empty())  # Output: True
+ll.append(1)
+print(ll.is_empty())  # Output: False
+```
+
+#### prepend(value)
+
+Place a value at the beginning of the linked list.
+
+<ParamField path="value" type="any" required>
+  The value to prepend
+</ParamField>
+
+**Returns:** None
+
+```python
+ll = LinkedList.from_list([2, 3, 4])
+ll.prepend(1)
+print(ll.to_list())  # Output: [1, 2, 3, 4]
+```
+
+#### append(value)
+
+Place a value at the end of the linked list.
+
+<ParamField path="value" type="any" required>
+  The value to append
+</ParamField>
+
+**Returns:** None
+
+```python
+ll = LinkedList.from_list([1, 2, 3])
+ll.append(4)
+print(ll.to_list())  # Output: [1, 2, 3, 4]
+```
+
+#### insert_after(after_value, value)
+
+Insert a value after a specified value.
+
+<ParamField path="after_value" type="any" required>
+  The value to insert after
+</ParamField>
+
+<ParamField path="value" type="any" required>
+  The value to insert
+</ParamField>
+
+**Returns:** None
+
+**Raises:**
+- `ValueError`: If the after_value is not found
+
+```python
+ll = LinkedList.from_list([1, 2, 4])
+ll.insert_after(2, 3)
+print(ll.to_list())  # Output: [1, 2, 3, 4]
+
+# ll.insert_after(10, 5)  # Raises ValueError: "Value not found"
+```
+
+#### delete(value)
+
+Delete the first occurrence of a value in the linked list.
+
+<ParamField path="value" type="any" required>
+  The value to be deleted
+</ParamField>
+
+**Returns:** None
+
+**Raises:**
+- `ValueError`: If the value is not found
+
+```python
+ll = LinkedList.from_list([1, 2, 3, 2, 4])
+ll.delete(2)  # Deletes first occurrence
+print(ll.to_list())  # Output: [1, 3, 2, 4]
+
+# ll.delete(10)  # Raises ValueError: "Value not found"
+```
+
+#### delete_head()
+
+Delete the head node in the linked list.
+
+**Returns:** None
+
+**Raises:**
+- `IndexError`: If linked list is empty
+
+```python
+ll = LinkedList.from_list([1, 2, 3])
+ll.delete_head()
+print(ll.to_list())  # Output: [2, 3]
+
+# empty_ll = LinkedList()
+# empty_ll.delete_head()  # Raises IndexError: "LinkedList is Empty"
+```
+
+#### delete_tail()
+
+Delete the last node in the linked list.
+
+**Returns:** None
+
+**Raises:**
+- `IndexError`: If linked list is empty
+
+```python
+ll = LinkedList.from_list([1, 2, 3])
+ll.delete_tail()
+print(ll.to_list())  # Output: [1, 2]
+```
+
+### Special Methods
+
+#### \_\_getitem\_\_(index)
+
+Return value at a specified index.
+
+<ParamField path="index" type="int" required>
+  Index of the value
+</ParamField>
+
+**Returns:** The value at the specified index
+
+**Raises:**
+- `IndexError`: If index is out of bounds
+
+```python
+ll = LinkedList.from_list([10, 20, 30, 40])
+print(ll[0])  # Output: 10
+print(ll[2])  # Output: 30
+# print(ll[10])  # Raises IndexError: "Index Out of Bounds"
+```
+
+#### \_\_len\_\_()
+
+Return the number of elements in the linked list.
+
+```python
+ll = LinkedList.from_list([1, 2, 3, 4, 5])
+print(len(ll))  # Output: 5
+```
+
+#### \_\_eq\_\_(other)
+
+Compare two LinkedList objects for value-based equality.
+
+**Returns:** `True` if both are LinkedList instances with equal contents
+
+```python
+ll1 = LinkedList.from_list([1, 2, 3])
+ll2 = LinkedList.from_list([1, 2, 3])
+ll3 = LinkedList.from_list([1, 2, 4])
+
+print(ll1 == ll2)  # Output: True
+print(ll1 == ll3)  # Output: False
+```
+
+#### \_\_repr\_\_()
+
+Return a string representation of the linked list.
+
+```python
+ll = LinkedList.from_list([1, 2, 3])
+print(ll)  # Output: [ 1 2 3 ] Count: 3
+```
+
+### Complete Example
+
+<Accordion title="Working with SinglyLinkedList">
+```python
+from dsa.singlylinkedlist import LinkedList
+
+# Create a linked list from a list
+ll = LinkedList.from_list([10, 20, 30, 40, 50])
+
+# Display the list
+print(f"Initial list: {ll.to_list()}")
+print(f"Length: {len(ll)}")
+
+# Access elements by index
+print(f"First element: {ll[0]}")
+print(f"Third element: {ll[2]}")
+
+# Add elements
+ll.prepend(5)
+ll.append(60)
+ll.insert_after(30, 35)
+print(f"After additions: {ll.to_list()}")
+# Output: [5, 10, 20, 30, 35, 40, 50, 60]
+
+# Search for a value
+node = ll.search(35)
+if node:
+    print(f"Found {node.value} at {node}")
+
+# Delete elements
+ll.delete(35)
+ll.delete_head()
+ll.delete_tail()
+print(f"After deletions: {ll.to_list()}")
+# Output: [10, 20, 30, 40, 50]
+
+# Traverse and print
+print("Traversal: ", end="")
+ll.traverse()  # Output: 10 20 30 40 50
+
+# Check if empty
+print(f"Is empty: {ll.is_empty()}")
+
+# Compare lists
+ll2 = LinkedList.from_list([10, 20, 30, 40, 50])
+print(f"Lists equal: {ll == ll2}")  # Output: True
+
+# Clear the list
+while not ll.is_empty():
+    ll.delete_head()
+
+print(f"After clearing, is empty: {ll.is_empty()}")  # Output: True
+```
+</Accordion>
+
+### Use Cases
+
+<CodeGroup>
+```python Example: Reverse a linked list
+def reverse_list(ll):
+    values = ll.to_list()
+    values.reverse()
+    return LinkedList.from_list(values)
+
+ll = LinkedList.from_list([1, 2, 3, 4, 5])
+reversed_ll = reverse_list(ll)
+print(reversed_ll.to_list())  # Output: [5, 4, 3, 2, 1]
+```
+
+```python Example: Find middle element
+def find_middle(ll):
+    if ll.is_empty():
+        return None
+    
+    length = len(ll)
+    middle_index = length // 2
+    return ll[middle_index]
+
+ll = LinkedList.from_list([1, 2, 3, 4, 5])
+print(find_middle(ll))  # Output: 3
+```
+
+```python Example: Remove duplicates
+def remove_duplicates(ll):
+    seen = set()
+    values = []
+    
+    for i in range(len(ll)):
+        value = ll[i]
+        if value not in seen:
+            seen.add(value)
+            values.append(value)
+    
+    return LinkedList.from_list(values)
+
+ll = LinkedList.from_list([1, 2, 2, 3, 3, 3, 4, 5, 5])
+unique_ll = remove_duplicates(ll)
+print(unique_ll.to_list())  # Output: [1, 2, 3, 4, 5]
+```
+</CodeGroup>

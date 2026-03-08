@@ -1,0 +1,341 @@
+---
+title: "Huffman Encoding"
+description: "Compress and decompress text using Huffman coding algorithm"
+---
+
+## Overview
+
+Huffman encoding is a lossless data compression algorithm that assigns variable-length codes to characters based on their frequency. More frequent characters get shorter codes, resulting in efficient compression.
+
+<Note>
+The implementation uses a priority queue (min-heap) and binary tree to build optimal prefix codes.
+</Note>
+
+## Core Functions
+
+### Character Frequency Analysis
+
+#### character_frequency
+
+Analyzes character frequencies in a string.
+
+```python huffman.py:5
+def character_frequency(s: str) -> dict:
+    """ 
+    Takes a string a returns a dictionary of character frequencies.
+
+    Args:
+        s (str): The string to analyze.
+
+    Returns:
+        Dictionary containing character frequency.
+    """
+```
+
+**Parameters:**
+- `s` (str): The string to analyze
+
+**Returns:**
+- `dict`: Dictionary mapping each character to its frequency count
+
+#### build_frequency_table
+
+Creates a priority queue of characters based on their frequencies.
+
+```python huffman.py:23
+def build_frequency_table(s: str) -> PriorityQueue:
+    """ 
+    Accepts a string to encode and returns a heap of the characters.
+
+    Args:
+        s (str): The string to encode.
+
+    Returns:
+        A priority queue of the characters based on frequencies.
+    """
+```
+
+**Parameters:**
+- `s` (str): The string to encode
+
+**Returns:**
+- `PriorityQueue`: Priority queue with TreeNodes containing characters, prioritized by frequency
+
+### Huffman Tree Construction
+
+#### build_huffman_tree
+
+Builds a Huffman tree from a priority queue of characters.
+
+```python huffman.py:42
+def build_huffman_tree(pq: PriorityQueue) -> Tree:
+    """ 
+    Accepts a priority queue and returns a Huffman Tree.
+
+    Args:
+        pq (PriorityQueue): A PriorityQueue containing TreeNodes of characters based on frequencies. 
+
+    Returns:
+        A Huffman Tree.
+    """
+```
+
+**Parameters:**
+- `pq` (PriorityQueue): Priority queue containing TreeNodes with characters
+
+**Returns:**
+- `Tree`: The Huffman tree used for encoding/decoding
+
+#### build_huffman_dictionary
+
+Generates encoding dictionary from a Huffman tree.
+
+```python huffman.py:60
+def build_huffman_dictionary(node: TreeNode, bit_string: str="") -> dict:
+    """
+    Given a TreeNode, build a Huffman Dictionary.
+
+    Args:
+        node (TreeNode): The Huffman Node.
+        bit_string (str): The bit string.
+
+    Returns:
+        A Huffman Dictionary.
+    """
+```
+
+**Parameters:**
+- `node` (TreeNode): Root node of the Huffman tree
+- `bit_string` (str): Current bit string (used for recursion)
+
+**Returns:**
+- `dict`: Dictionary mapping characters to their binary codes
+
+### Encoding and Decoding
+
+#### huffman_encode
+
+Encodes a string using a Huffman dictionary.
+
+```python huffman.py:80
+def huffman_encode(st: str, hd: dict) -> str:               
+    """
+    Encode the string using the Huffman Dictionary.
+
+    Args:
+        st (str): The string to encode.
+        hd (dict): The Huffman Dictionary.
+
+    Returns:
+        The encoded string.
+    """
+```
+
+**Parameters:**
+- `st` (str): The string to encode
+- `hd` (dict): The Huffman dictionary (character to bit string mapping)
+
+**Returns:**
+- `str`: The encoded bit string
+
+#### huffman_decode
+
+Decodes an encoded string using a Huffman tree.
+
+```python huffman.py:96
+def huffman_decode(encoded_data: str, tree: Tree) -> str:
+    """
+    Decode the encoded data using the Huffman Tree.
+    
+    Args:
+        encoded_data (str): The encoded data.
+        tree (Tree): The Huffman Tree.
+
+    Returns:
+        The decoded data.
+    """
+```
+
+**Parameters:**
+- `encoded_data` (str): The encoded bit string
+- `tree` (Tree): The Huffman tree used for decoding
+
+**Returns:**
+- `str`: The decoded original string
+
+### Byte Conversion Utilities
+
+#### bitstring_to_bytes
+
+Converts a bit string to bytes for file storage.
+
+```python huffman.py:120
+def bitstring_to_bytes(s: str) -> bytes:
+    """
+    Convert a bitstring to bytes.
+
+    Args:
+        s (str): The bitstring.
+
+    Returns:
+        Bitstring converted to bytes.
+    """
+```
+
+#### bytes_to_bitstring
+
+Converts bytes back to a bit string.
+
+```python huffman.py:132
+def bytes_to_bitstring(ba: bytes, bitlength: int=8) -> str:
+    """
+    Convert bytes to bitstring.
+
+    Args:
+        ba (bytes): The bytes to convert.
+        bitlength (int): The bit length.
+    
+    Returns:
+        The bytes converted to bitstring.
+    """
+```
+
+## Complete Usage Example
+
+<Steps>
+  <Step title="Import required modules">
+    ```python
+    from dsa.huffman import (
+        build_frequency_table,
+        build_huffman_tree,
+        build_huffman_dictionary,
+        huffman_encode,
+        huffman_decode,
+        bitstring_to_bytes,
+        bytes_to_bitstring
+    )
+    ```
+  </Step>
+
+  <Step title="Build the Huffman tree and dictionary">
+    ```python
+    # Original string to compress
+    text = "this is an example for huffman encoding"
+    
+    # Build frequency table (priority queue)
+    pq = build_frequency_table(text)
+    
+    # Build Huffman tree
+    huffman_tree = build_huffman_tree(pq)
+    
+    # Generate encoding dictionary
+    huffman_dict = build_huffman_dictionary(huffman_tree.root)
+    
+    print("Huffman codes:")
+    for char, code in huffman_dict.items():
+        print(f"'{char}': {code}")
+    ```
+  </Step>
+
+  <Step title="Encode the text">
+    ```python
+    # Encode the text
+    encoded = huffman_encode(text, huffman_dict)
+    
+    print(f"Original length: {len(text) * 8} bits")
+    print(f"Encoded length: {len(encoded)} bits")
+    print(f"Compression ratio: {len(encoded) / (len(text) * 8):.2%}")
+    print(f"Encoded: {encoded[:50]}...")  # First 50 bits
+    ```
+  </Step>
+
+  <Step title="Decode the text">
+    ```python
+    # Decode back to original text
+    decoded = huffman_decode(encoded, huffman_tree)
+    
+    print(f"Decoded: {decoded}")
+    print(f"Match original: {decoded == text}")
+    ```
+  </Step>
+
+  <Step title="Convert to bytes for storage">
+    ```python
+    # Convert to bytes for file storage
+    encoded_bytes = bitstring_to_bytes(encoded)
+    
+    # Convert back to bitstring
+    bitlength = len(encoded) % 8 or 8
+    restored_bitstring = bytes_to_bitstring(encoded_bytes, bitlength)
+    
+    print(f"Bytes size: {len(encoded_bytes)} bytes")
+    ```
+  </Step>
+</Steps>
+
+## Algorithm Details
+
+<CodeGroup>
+
+```python Building the Tree
+# The tree is built by repeatedly merging the two nodes with lowest frequency
+while len(pq) > 1:
+    priority1, node1 = pq.pop_pair()
+    priority2, node2 = pq.pop_pair()
+    node = TreeNode(node1.value + node2.value, node1, node2)
+    pq.push(priority1 + priority2, node)
+```
+
+```python Building the Dictionary
+# Recursively traverse the tree, building codes
+# Left child adds '0', right child adds '1'
+def build_huffman_dictionary(node: TreeNode, bit_string: str="") -> dict:
+    d = {}
+    if node.left is None and node.right is None:
+        return {node.value: bit_string}
+
+    d.update(build_huffman_dictionary(node.left, bit_string + '0'))
+    d.update(build_huffman_dictionary(node.right, bit_string + '1'))
+    return d
+```
+
+```python Decoding
+# Traverse the tree based on bits: 0=left, 1=right
+node = tree.root
+s = ""
+for bit in encoded_data:
+    if int(bit) == 0:
+        node = node.left
+    else:
+        node = node.right
+
+    if node.left is None and node.right is None: 
+        s += node.value
+        node = tree.root
+```
+
+</CodeGroup>
+
+## Time Complexity
+
+- **Building frequency table**: O(n) where n is the length of the input string
+- **Building Huffman tree**: O(k log k) where k is the number of unique characters
+- **Building dictionary**: O(k) where k is the number of unique characters
+- **Encoding**: O(n) where n is the length of the input string
+- **Decoding**: O(m) where m is the length of the encoded bit string
+
+## Key Properties
+
+- **Prefix-free codes**: No code is a prefix of another, enabling unambiguous decoding
+- **Optimal compression**: Huffman codes are provably optimal for character-based compression
+- **Variable-length codes**: More frequent characters get shorter codes
+- **Lossless**: Original data can be perfectly reconstructed
+
+<Note>
+The Huffman tree must be stored or transmitted along with the encoded data to enable decoding.
+</Note>
+
+## Related
+
+- [Priority Queue/Heap](/data-structures/heap) - Used for building the Huffman tree
+- [Binary Tree](/data-structures/tree) - The Huffman tree structure

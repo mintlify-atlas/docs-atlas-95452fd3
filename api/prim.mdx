@@ -1,0 +1,162 @@
+---
+title: Prim's Algorithm
+description: API reference for Prim's minimum spanning tree algorithm
+---
+
+This module implements Prim's algorithm for finding the minimum spanning tree (MST) of a weighted graph.
+
+## Functions
+
+### prims_mst
+
+Computes the minimum spanning tree of a weighted graph using Prim's algorithm.
+
+```python
+from dsa.prim import prims_mst
+
+mst = prims_mst(graph, start, mst_graph=None)
+```
+
+<ParamField path="graph" type="AdjacencyListWeightedGraph | AdjacencyMatrixWeightedGraph" required>
+  The weighted graph to find the MST from. Can be either an AdjacencyListWeightedGraph or AdjacencyMatrixWeightedGraph
+</ParamField>
+
+<ParamField path="start" type="str" required>
+  The starting vertex label for building the MST
+</ParamField>
+
+<ParamField path="mst_graph" type="AdjacencyListWeightedGraph" default="None">
+  An empty graph object to output the MST into. If None, a new AdjacencyListWeightedGraph is created
+</ParamField>
+
+<ResponseField name="mst" type="AdjacencyListWeightedGraph">
+  The minimum spanning tree of the input graph
+</ResponseField>
+
+<CodeGroup>
+```python Basic Usage
+from dsa.graph import AdjacencyListWeightedGraph
+from dsa.prim import prims_mst
+
+# Create a weighted graph
+graph = AdjacencyListWeightedGraph()
+graph.add_edge("A", "B", 4)
+graph.add_edge("A", "C", 2)
+graph.add_edge("B", "C", 1)
+graph.add_edge("B", "D", 5)
+graph.add_edge("C", "D", 8)
+graph.add_edge("C", "E", 10)
+graph.add_edge("D", "E", 2)
+
+# Find minimum spanning tree
+mst = prims_mst(graph, "A")
+print(list(mst.edges()))  # MST edges with weights
+```
+
+```python Different Starting Vertex
+from dsa.graph import AdjacencyListWeightedGraph
+from dsa.prim import prims_mst
+
+graph = AdjacencyListWeightedGraph()
+graph.add_edge("A", "B", 3)
+graph.add_edge("B", "C", 4)
+graph.add_edge("C", "D", 5)
+graph.add_edge("D", "A", 6)
+
+# MST is the same regardless of starting vertex
+mst1 = prims_mst(graph, "A")
+mst2 = prims_mst(graph, "C")
+# Both produce the same MST (edges may be in different order)
+```
+
+```python With Custom MST Graph
+from dsa.graph import AdjacencyListWeightedGraph
+from dsa.prim import prims_mst
+
+graph = AdjacencyListWeightedGraph()
+graph.add_edge("A", "B", 1)
+graph.add_edge("B", "C", 2)
+
+# Provide custom graph object for MST output
+custom_mst = AdjacencyListWeightedGraph()
+mst = prims_mst(graph, "A", mst_graph=custom_mst)
+# custom_mst now contains the MST
+```
+</CodeGroup>
+
+---
+
+### mst_weight
+
+Calculates the total weight of all edges in a graph (typically used for MST graphs).
+
+```python
+from dsa.prim import mst_weight
+
+total = mst_weight(graph)
+```
+
+<ParamField path="graph" type="Graph" required>
+  The graph to calculate the total edge weight of (must have an `edges()` method)
+</ParamField>
+
+<ResponseField name="total" type="int">
+  The total weight of all edges in the graph
+</ResponseField>
+
+<CodeGroup>
+```python Calculate MST Weight
+from dsa.graph import AdjacencyListWeightedGraph
+from dsa.prim import prims_mst, mst_weight
+
+# Create a weighted graph
+graph = AdjacencyListWeightedGraph()
+graph.add_edge("A", "B", 4)
+graph.add_edge("A", "C", 2)
+graph.add_edge("B", "C", 1)
+graph.add_edge("B", "D", 5)
+graph.add_edge("C", "D", 8)
+
+# Find MST and calculate its total weight
+mst = prims_mst(graph, "A")
+total_weight = mst_weight(mst)
+print(f"MST total weight: {total_weight}")
+```
+
+```python Compare Original vs MST Weight
+from dsa.graph import AdjacencyListWeightedGraph
+from dsa.prim import prims_mst, mst_weight
+
+graph = AdjacencyListWeightedGraph()
+graph.add_edge("A", "B", 10)
+graph.add_edge("B", "C", 20)
+graph.add_edge("C", "A", 30)
+
+original_weight = mst_weight(graph)
+mst = prims_mst(graph, "A")
+mst_total = mst_weight(mst)
+
+print(f"Original graph weight: {original_weight}")
+print(f"MST weight: {mst_total}")
+print(f"Reduction: {original_weight - mst_total}")
+```
+</CodeGroup>
+
+<Accordion title="Algorithm Details">
+  **How Prim's Algorithm Works:**
+  
+  1. Start with a single vertex and mark it as visited
+  2. Add all edges from the visited vertex to the priority queue
+  3. Pop the edge with minimum weight from the priority queue
+  4. If the destination vertex hasn't been visited:
+     - Add the edge to the MST
+     - Mark the destination as visited
+     - Add all edges from the new vertex to the priority queue
+  5. Repeat steps 3-4 until all vertices are visited
+  
+  **Time Complexity:** O((V + E) log V) where V is vertices and E is edges
+  
+  **Space Complexity:** O(V) for the visited set and priority queue
+  
+  **Note:** The resulting MST is unique if all edge weights are distinct. If there are edges with equal weights, multiple valid MSTs may exist.
+</Accordion>

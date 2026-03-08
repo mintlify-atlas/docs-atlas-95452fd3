@@ -1,0 +1,603 @@
+---
+title: 'Heap'
+description: 'API reference for the max heap class'
+---
+
+## Heap
+
+A max heap implementation where the largest element is always at the root.
+
+### Constructor
+
+```python
+Heap()
+```
+
+Create an empty max heap.
+
+**Example:**
+
+```python
+from ucx_dsa import Heap
+
+heap = Heap()
+```
+
+---
+
+### Class Methods
+
+#### from_list(mylist)
+
+Create a heap from a list of elements.
+
+```python
+Heap.from_list(mylist)
+```
+
+<ParamField path="mylist" type="list" required>
+  The list of elements to be inserted into the heap.
+</ParamField>
+
+<ResponseField name="return" type="Heap">
+  An instance of the heap with all elements from the list inserted.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Heap
+
+heap = Heap.from_list([3, 1, 4, 1, 5, 9, 2, 6])
+print(heap.peek())  # Output: 9
+```
+
+**Time Complexity:** O(n log n) where n is the number of elements
+
+---
+
+### Methods
+
+#### raw_view()
+
+Return the heap in its internal array representation.
+
+```python
+heap.raw_view()
+```
+
+<ResponseField name="return" type="list">
+  The list representation of the heap.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Heap
+
+heap = Heap.from_list([3, 1, 4])
+print(heap.raw_view())  # Output: [4, 1, 3]
+```
+
+**Time Complexity:** O(1)
+
+---
+
+#### root()
+
+Get the root value (maximum value in a max heap).
+
+```python
+heap.root()
+```
+
+<ResponseField name="return" type="any">
+  The root node's value, or None if the heap is empty.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Heap
+
+heap = Heap.from_list([3, 1, 4, 1, 5])
+print(heap.root())  # Output: 5
+```
+
+**Time Complexity:** O(1)
+
+---
+
+#### peek()
+
+Get the max value of the max heap (same as root()).
+
+```python
+heap.peek()
+```
+
+<ResponseField name="return" type="any">
+  The maximum value in the heap.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Heap
+
+heap = Heap.from_list([10, 20, 30])
+print(heap.peek())  # Output: 30
+```
+
+**Time Complexity:** O(1)
+
+---
+
+#### last()
+
+Get the last node of the max heap.
+
+```python
+heap.last()
+```
+
+<ResponseField name="return" type="any">
+  The last node's value, or None if the heap is empty.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Heap
+
+heap = Heap.from_list([5, 3, 7])
+print(heap.last())  # Returns the last element in the internal array
+```
+
+**Time Complexity:** O(1)
+
+---
+
+#### left_index(index)
+
+Get the index of the left child node.
+
+```python
+heap.left_index(index)
+```
+
+<ParamField path="index" type="int" required>
+  The index of the parent node.
+</ParamField>
+
+<ResponseField name="return" type="int">
+  The index of the left child.
+</ResponseField>
+
+**Time Complexity:** O(1)
+
+---
+
+#### right_index(index)
+
+Get the index of the right child node.
+
+```python
+heap.right_index(index)
+```
+
+<ParamField path="index" type="int" required>
+  The index of the parent node.
+</ParamField>
+
+<ResponseField name="return" type="int">
+  The index of the right child.
+</ResponseField>
+
+**Time Complexity:** O(1)
+
+---
+
+#### parent_index(index)
+
+Get the index of the parent node.
+
+```python
+heap.parent_index(index)
+```
+
+<ParamField path="index" type="int" required>
+  The index of the child node.
+</ParamField>
+
+<ResponseField name="return" type="int">
+  The index of the parent node.
+</ResponseField>
+
+**Time Complexity:** O(1)
+
+---
+
+#### has_left(index)
+
+Check if the current node has a left child.
+
+```python
+heap.has_left(index)
+```
+
+<ParamField path="index" type="int" required>
+  The index of the node.
+</ParamField>
+
+<ResponseField name="return" type="bool">
+  True if the node has a left child, False otherwise.
+</ResponseField>
+
+**Time Complexity:** O(1)
+
+---
+
+#### has_right(index)
+
+Check if the current node has a right child.
+
+```python
+heap.has_right(index)
+```
+
+<ParamField path="index" type="int" required>
+  The index of the node.
+</ParamField>
+
+<ResponseField name="return" type="bool">
+  True if the node has a right child, False otherwise.
+</ResponseField>
+
+**Time Complexity:** O(1)
+
+---
+
+#### has_parent(index)
+
+Check if a node has a parent node.
+
+```python
+heap.has_parent(index)
+```
+
+<ParamField path="index" type="int" required>
+  The index of the node.
+</ParamField>
+
+<ResponseField name="return" type="bool">
+  True if the node has a parent, False otherwise.
+</ResponseField>
+
+**Time Complexity:** O(1)
+
+---
+
+#### insert(value)
+
+Insert a value into the heap.
+
+```python
+heap.insert(value)
+```
+
+<ParamField path="value" type="any" required>
+  The value to insert.
+</ParamField>
+
+**Example:**
+
+```python
+from ucx_dsa import Heap
+
+heap = Heap()
+heap.insert(10)
+heap.insert(20)
+heap.insert(15)
+
+print(heap.peek())  # Output: 20
+```
+
+**Time Complexity:** O(log n)
+
+---
+
+#### heapify_up(index)
+
+Perform heapify up operation starting at a given index. This maintains the max heap property by moving an element up the tree.
+
+```python
+heap.heapify_up(index)
+```
+
+<ParamField path="index" type="int" required>
+  The starting index.
+</ParamField>
+
+**Time Complexity:** O(log n)
+
+---
+
+#### pop()
+
+Return the value of the root node (max value) and remove it from the heap.
+
+```python
+heap.pop()
+```
+
+<ResponseField name="return" type="any">
+  The maximum value from the heap.
+</ResponseField>
+
+**Raises:**
+- `Exception`: If the heap is empty
+
+**Example:**
+
+```python
+from ucx_dsa import Heap
+
+heap = Heap.from_list([5, 3, 7, 1])
+max_val = heap.pop()
+print(max_val)  # Output: 7
+print(heap.peek())  # Output: 5
+```
+
+**Time Complexity:** O(log n)
+
+---
+
+#### heapify_down(index)
+
+Perform heapify down operation starting at a given index. This maintains the max heap property by moving an element down the tree.
+
+```python
+heap.heapify_down(index)
+```
+
+<ParamField path="index" type="int" required>
+  The starting index.
+</ParamField>
+
+**Time Complexity:** O(log n)
+
+---
+
+#### enumerate()
+
+Return the enumeration of the heap.
+
+```python
+heap.enumerate()
+```
+
+<ResponseField name="return" type="enumerate">
+  Enumeration of the heap's internal array.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Heap
+
+heap = Heap.from_list([3, 1, 4])
+for index, value in heap.enumerate():
+    print(f"Index {index}: {value}")
+```
+
+**Time Complexity:** O(1) to create, O(n) to iterate
+
+---
+
+#### count()
+
+Return the number of items in the heap.
+
+```python
+heap.count()
+```
+
+<ResponseField name="return" type="int">
+  The number of items in the heap.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Heap
+
+heap = Heap.from_list([1, 2, 3, 4])
+print(heap.count())  # Output: 4
+```
+
+**Time Complexity:** O(1)
+
+---
+
+#### is_empty()
+
+Check if the heap has any items.
+
+```python
+heap.is_empty()
+```
+
+<ResponseField name="return" type="bool">
+  True if the heap has no items, False otherwise.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Heap
+
+heap = Heap()
+print(heap.is_empty())  # Output: True
+
+heap.insert(5)
+print(heap.is_empty())  # Output: False
+```
+
+**Time Complexity:** O(1)
+
+---
+
+#### print()
+
+Print the contents of the heap in level-order.
+
+```python
+heap.print()
+```
+
+**Example:**
+
+```python
+from ucx_dsa import Heap
+
+heap = Heap.from_list([1, 2, 3, 4, 5])
+heap.print()
+# Output:
+# 5
+# 4 3
+# 1 2
+```
+
+---
+
+#### to_sorted_list()
+
+Return a sorted list from the heap (descending order for max heap).
+
+```python
+heap.to_sorted_list()
+```
+
+<ResponseField name="return" type="list">
+  A sorted list in descending order.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Heap
+
+heap = Heap.from_list([3, 1, 4, 1, 5, 9, 2])
+print(heap.to_sorted_list())  # Output: [9, 5, 4, 3, 2, 1, 1]
+```
+
+**Time Complexity:** O(n log n)
+
+---
+
+#### extract_max()
+
+Return the value of the root node (max value) and remove it from the heap. Alias for pop().
+
+```python
+heap.extract_max()
+```
+
+<ResponseField name="return" type="any">
+  The maximum value from the heap.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Heap
+
+heap = Heap.from_list([10, 20, 30])
+max_val = heap.extract_max()
+print(max_val)  # Output: 30
+```
+
+**Time Complexity:** O(log n)
+
+---
+
+### Special Methods
+
+#### \_\_repr\_\_()
+
+Return string representation of the heap in order of priority.
+
+```python
+str(heap)
+repr(heap)
+```
+
+<ResponseField name="return" type="str">
+  String showing elements in descending order of priority.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Heap
+
+heap = Heap.from_list([3, 1, 4])
+print(heap)  # Output: [4 3 1]
+```
+
+---
+
+#### \_\_len\_\_()
+
+Get the number of items in the heap.
+
+```python
+len(heap)
+```
+
+<ResponseField name="return" type="int">
+  Number of items in the heap.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Heap
+
+heap = Heap.from_list([1, 2, 3])
+print(len(heap))  # Output: 3
+```
+
+**Time Complexity:** O(1)
+
+---
+
+#### \_\_eq\_\_(other)
+
+Compare two Heap objects for value-based equality.
+
+```python
+heap1 == heap2
+```
+
+<ParamField path="other" type="Heap" required>
+  The other heap to compare against.
+</ParamField>
+
+<ResponseField name="return" type="bool">
+  True if both are Heap instances and their internal arrays are equal.
+</ResponseField>
+
+**Example:**
+
+```python
+from ucx_dsa import Heap
+
+heap1 = Heap.from_list([1, 2, 3])
+heap2 = Heap.from_list([1, 2, 3])
+
+print(heap1 == heap2)  # Output: True
+```
+
+**Time Complexity:** O(n)

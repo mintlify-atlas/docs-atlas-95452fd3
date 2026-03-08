@@ -1,0 +1,332 @@
+---
+title: Huffman Coding
+description: API reference for Huffman compression and decompression functions
+---
+
+This module implements Huffman coding for text compression and decompression.
+
+## Functions
+
+### character_frequency
+
+Analyzes a string and returns character frequency counts.
+
+```python
+from dsa.huffman import character_frequency
+
+freq = character_frequency(s)
+```
+
+<ParamField path="s" type="str" required>
+  The string to analyze
+</ParamField>
+
+<ResponseField name="freq" type="dict">
+  Dictionary mapping each character to its frequency count
+</ResponseField>
+
+```python Example
+from dsa.huffman import character_frequency
+
+text = "hello world"
+freq = character_frequency(text)
+print(freq)  # {'h': 1, 'e': 1, 'l': 3, 'o': 2, ' ': 1, 'w': 1, 'r': 1, 'd': 1}
+```
+
+---
+
+### build_frequency_table
+
+Builds a priority queue of characters based on their frequencies.
+
+```python
+from dsa.huffman import build_frequency_table
+
+pq = build_frequency_table(s)
+```
+
+<ParamField path="s" type="str" required>
+  The string to encode
+</ParamField>
+
+<ResponseField name="pq" type="PriorityQueue">
+  Priority queue containing TreeNodes of characters, prioritized by frequency
+</ResponseField>
+
+```python Example
+from dsa.huffman import build_frequency_table
+
+text = "hello"
+pq = build_frequency_table(text)
+# Priority queue with characters sorted by frequency
+```
+
+---
+
+### build_huffman_tree
+
+Constructs a Huffman tree from a priority queue of character frequencies.
+
+```python
+from dsa.huffman import build_huffman_tree
+
+tree = build_huffman_tree(pq)
+```
+
+<ParamField path="pq" type="PriorityQueue" required>
+  Priority queue containing TreeNodes of characters based on frequencies
+</ParamField>
+
+<ResponseField name="tree" type="Tree">
+  The constructed Huffman tree
+</ResponseField>
+
+```python Example
+from dsa.huffman import build_frequency_table, build_huffman_tree
+
+text = "hello world"
+pq = build_frequency_table(text)
+huffman_tree = build_huffman_tree(pq)
+```
+
+---
+
+### build_huffman_dictionary
+
+Generates a Huffman encoding dictionary from a tree node.
+
+```python
+from dsa.huffman import build_huffman_dictionary
+
+huff_dict = build_huffman_dictionary(node, bit_string="")
+```
+
+<ParamField path="node" type="TreeNode" required>
+  The root node of the Huffman tree
+</ParamField>
+
+<ParamField path="bit_string" type="str" default='""'>
+  The current bit string path (used internally during recursion)
+</ParamField>
+
+<ResponseField name="huff_dict" type="dict">
+  Dictionary mapping each character to its binary encoding
+</ResponseField>
+
+```python Example
+from dsa.huffman import build_frequency_table, build_huffman_tree, build_huffman_dictionary
+
+text = "hello"
+pq = build_frequency_table(text)
+tree = build_huffman_tree(pq)
+huff_dict = build_huffman_dictionary(tree.root)
+print(huff_dict)  # {'h': '00', 'e': '01', 'l': '1', 'o': '10', ...}
+```
+
+---
+
+### huffman_encode
+
+Encodes a string using a Huffman dictionary.
+
+```python
+from dsa.huffman import huffman_encode
+
+encoded = huffman_encode(st, hd)
+```
+
+<ParamField path="st" type="str" required>
+  The string to encode
+</ParamField>
+
+<ParamField path="hd" type="dict" required>
+  The Huffman dictionary mapping characters to bit strings
+</ParamField>
+
+<ResponseField name="encoded" type="str">
+  The encoded string as a binary bit string
+</ResponseField>
+
+<CodeGroup>
+```python Basic Encoding
+from dsa.huffman import (
+    build_frequency_table,
+    build_huffman_tree,
+    build_huffman_dictionary,
+    huffman_encode
+)
+
+text = "hello"
+pq = build_frequency_table(text)
+tree = build_huffman_tree(pq)
+huff_dict = build_huffman_dictionary(tree.root)
+
+encoded = huffman_encode(text, huff_dict)
+print(encoded)  # Binary string like "0001111010"
+```
+
+```python Complete Compression
+from dsa.huffman import (
+    build_frequency_table,
+    build_huffman_tree,
+    build_huffman_dictionary,
+    huffman_encode
+)
+
+original = "this is a test message"
+
+# Build Huffman encoding
+pq = build_frequency_table(original)
+tree = build_huffman_tree(pq)
+huff_dict = build_huffman_dictionary(tree.root)
+
+# Encode the message
+encoded = huffman_encode(original, huff_dict)
+
+print(f"Original length: {len(original) * 8} bits")
+print(f"Encoded length: {len(encoded)} bits")
+print(f"Compression ratio: {len(encoded) / (len(original) * 8):.2%}")
+```
+</CodeGroup>
+
+---
+
+### huffman_decode
+
+Decodes encoded data using a Huffman tree.
+
+```python
+from dsa.huffman import huffman_decode
+
+decoded = huffman_decode(encoded_data, tree)
+```
+
+<ParamField path="encoded_data" type="str" required>
+  The binary bit string to decode
+</ParamField>
+
+<ParamField path="tree" type="Tree" required>
+  The Huffman tree used for decoding
+</ParamField>
+
+<ResponseField name="decoded" type="str">
+  The decoded original string
+</ResponseField>
+
+```python Example
+from dsa.huffman import (
+    build_frequency_table,
+    build_huffman_tree,
+    build_huffman_dictionary,
+    huffman_encode,
+    huffman_decode
+)
+
+original = "hello world"
+
+# Encode
+pq = build_frequency_table(original)
+tree = build_huffman_tree(pq)
+huff_dict = build_huffman_dictionary(tree.root)
+encoded = huffman_encode(original, huff_dict)
+
+# Decode
+decoded = huffman_decode(encoded, tree)
+print(decoded == original)  # True
+```
+
+---
+
+### bitstring_to_bytes
+
+Converts a binary bit string to bytes.
+
+```python
+from dsa.huffman import bitstring_to_bytes
+
+byte_data = bitstring_to_bytes(s)
+```
+
+<ParamField path="s" type="str" required>
+  The binary bit string to convert
+</ParamField>
+
+<ResponseField name="byte_data" type="bytes">
+  The bit string converted to bytes
+</ResponseField>
+
+```python Example
+from dsa.huffman import bitstring_to_bytes
+
+bit_string = "0110100001100101011011000110110001101111"
+byte_data = bitstring_to_bytes(bit_string)
+print(byte_data)  # b'hello'
+```
+
+---
+
+### bytes_to_bitstring
+
+Converts bytes back to a binary bit string.
+
+```python
+from dsa.huffman import bytes_to_bitstring
+
+bit_string = bytes_to_bitstring(ba, bitlength=8)
+```
+
+<ParamField path="ba" type="bytes" required>
+  The bytes to convert
+</ParamField>
+
+<ParamField path="bitlength" type="int" default="8">
+  The bit length for the last byte (handles padding)
+</ParamField>
+
+<ResponseField name="bit_string" type="str">
+  The bytes converted to a binary bit string
+</ResponseField>
+
+```python Example
+from dsa.huffman import bytes_to_bitstring
+
+byte_data = b'hello'
+bit_string = bytes_to_bitstring(byte_data)
+print(bit_string)  # Binary representation
+```
+
+<Accordion title="Complete Compression Example">
+```python
+from dsa.huffman import (
+    build_frequency_table,
+    build_huffman_tree,
+    build_huffman_dictionary,
+    huffman_encode,
+    huffman_decode,
+    bitstring_to_bytes,
+    bytes_to_bitstring
+)
+
+# Original text
+original = "hello world! this is a huffman encoding example."
+
+# Compression
+pq = build_frequency_table(original)
+tree = build_huffman_tree(pq)
+huff_dict = build_huffman_dictionary(tree.root)
+encoded = huffman_encode(original, huff_dict)
+
+# Convert to bytes for storage
+compressed_bytes = bitstring_to_bytes(encoded)
+
+print(f"Original size: {len(original)} characters ({len(original) * 8} bits)")
+print(f"Compressed size: {len(compressed_bytes)} bytes ({len(encoded)} bits)")
+print(f"Compression ratio: {len(encoded) / (len(original) * 8) * 100:.1f}%")
+
+# Decompression
+retrieved_bitstring = bytes_to_bitstring(compressed_bytes, len(encoded) % 8 or 8)
+decoded = huffman_decode(encoded, tree)
+
+print(f"Decompression successful: {decoded == original}")
+```
+</Accordion>

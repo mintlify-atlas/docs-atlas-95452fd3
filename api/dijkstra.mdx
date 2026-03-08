@@ -1,0 +1,180 @@
+---
+title: Dijkstra's Algorithm
+description: API reference for Dijkstra's shortest path algorithm
+---
+
+This module implements Dijkstra's algorithm for finding shortest paths in weighted graphs.
+
+## Functions
+
+### shortest_path
+
+Computes weight and predecessor tables using Dijkstra's algorithm.
+
+```python
+from dsa.dijkstra import shortest_path
+
+weight_table, predecessor = shortest_path(graph, start, end, debug=False)
+```
+
+<ParamField path="graph" type="Graph" required>
+  The graph to search (must have `adjacent_items()` method for weighted edges)
+</ParamField>
+
+<ParamField path="start" type="str" required>
+  The starting vertex label
+</ParamField>
+
+<ParamField path="end" type="str" required>
+  The ending vertex label
+</ParamField>
+
+<ParamField path="debug" type="bool" default="False">
+  If True, displays the weight table as it is being built during the algorithm execution
+</ParamField>
+
+<ResponseField name="weight_table" type="dict">
+  Dictionary mapping vertices to their shortest distance from the start vertex
+</ResponseField>
+
+<ResponseField name="predecessor" type="dict">
+  Dictionary mapping each vertex to its predecessor in the shortest path from start
+</ResponseField>
+
+**Raises:**
+- `KeyError`: If start or end vertex is not in the graph
+
+<CodeGroup>
+```python Basic Usage
+from dsa.graph import AdjacencyListWeightedGraph
+from dsa.dijkstra import shortest_path
+
+# Create a weighted graph
+graph = AdjacencyListWeightedGraph()
+graph.add_edge("A", "B", 4)
+graph.add_edge("A", "C", 2)
+graph.add_edge("B", "C", 1)
+graph.add_edge("B", "D", 5)
+graph.add_edge("C", "D", 8)
+
+# Get weight and predecessor tables
+weights, predecessors = shortest_path(graph, "A", "D")
+print(weights)  # {'A': 0, 'C': 2, 'B': 3, 'D': 8}
+print(predecessors)  # {'A': 'A', 'C': 'A', 'B': 'C', 'D': 'B'}
+```
+
+```python With Debug
+from dsa.graph import AdjacencyListWeightedGraph
+from dsa.dijkstra import shortest_path
+
+graph = AdjacencyListWeightedGraph()
+graph.add_edge("A", "B", 4)
+graph.add_edge("A", "C", 2)
+
+# Enable debug mode to see algorithm progress
+weights, predecessors = shortest_path(graph, "A", "C", debug=True)
+```
+
+```python Error Handling
+from dsa.graph import AdjacencyListWeightedGraph
+from dsa.dijkstra import shortest_path
+
+graph = AdjacencyListWeightedGraph()
+graph.add_edge("A", "B", 1)
+
+try:
+    weights, predecessors = shortest_path(graph, "A", "Z")
+except KeyError as e:
+    print(f"Error: {e}")  # Error: End vertex Z not in graph.
+```
+</CodeGroup>
+
+---
+
+### find_path
+
+Finds the shortest path between two vertices using Dijkstra's algorithm.
+
+```python
+from dsa.dijkstra import find_path
+
+path = find_path(graph, start, end, debug=False)
+```
+
+<ParamField path="graph" type="Graph" required>
+  The graph to search (must have `adjacent_items()` method for weighted edges)
+</ParamField>
+
+<ParamField path="start" type="str" required>
+  The starting vertex label
+</ParamField>
+
+<ParamField path="end" type="str" required>
+  The ending vertex label
+</ParamField>
+
+<ParamField path="debug" type="bool" default="False">
+  If True, displays the weight table, predecessor table, and shortest path weight
+</ParamField>
+
+<ResponseField name="path" type="list">
+  List of vertices forming the shortest path from start to end
+</ResponseField>
+
+**Raises:**
+- `KeyError`: If start or end vertex is not in the graph, or if there is no path from start to end
+
+<CodeGroup>
+```python Basic Usage
+from dsa.graph import AdjacencyListWeightedGraph
+from dsa.dijkstra import find_path
+
+# Create a weighted graph
+graph = AdjacencyListWeightedGraph()
+graph.add_edge("A", "B", 4)
+graph.add_edge("A", "C", 2)
+graph.add_edge("B", "C", 1)
+graph.add_edge("B", "D", 5)
+graph.add_edge("C", "D", 8)
+
+# Find shortest path
+path = find_path(graph, "A", "D")
+print(path)  # ['A', 'C', 'B', 'D']
+```
+
+```python With Debug
+from dsa.graph import AdjacencyListWeightedGraph
+from dsa.dijkstra import find_path
+
+graph = AdjacencyListWeightedGraph()
+graph.add_edge("A", "B", 4)
+graph.add_edge("A", "C", 2)
+graph.add_edge("C", "D", 3)
+
+# Enable debug mode
+path = find_path(graph, "A", "D", debug=True)
+# Prints: predecessor table, weight table, and shortest path weight
+```
+
+```python No Path Error
+from dsa.graph import AdjacencyListWeightedGraph
+from dsa.dijkstra import find_path
+
+graph = AdjacencyListWeightedGraph()
+graph.add_edge("A", "B", 1)
+graph.add_edge("C", "D", 1)
+
+try:
+    path = find_path(graph, "A", "D")
+except KeyError as e:
+    print(f"Error: {e}")  # Error: No path from A to D.
+```
+</CodeGroup>
+
+<Accordion title="Algorithm Complexity">
+  **Time Complexity:** O((V + E) log V) where V is the number of vertices and E is the number of edges
+  
+  **Space Complexity:** O(V) for storing the weight table, predecessor table, and priority queue
+  
+  The algorithm uses a min-heap priority queue to efficiently select the next vertex with minimum distance.
+</Accordion>

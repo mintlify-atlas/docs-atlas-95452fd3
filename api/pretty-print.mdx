@@ -1,0 +1,272 @@
+---
+title: Pretty Print
+description: API reference for visual representation functions for data structures
+---
+
+This module provides functions for clearer visual representation of heaps and trees in the console.
+
+## Functions
+
+### heap_print
+
+Prints a heap from root to leaves in a hierarchical format.
+
+```python
+from dsa.pretty_print import heap_print
+
+heap_print(heap)
+```
+
+<ParamField path="heap" type="Heap" required>
+  The heap object to print (must have `count()` and `enumerate()` methods)
+</ParamField>
+
+<CodeGroup>
+```python Print Min Heap
+from dsa.heap import MinHeap
+from dsa.pretty_print import heap_print
+
+heap = MinHeap()
+for val in [10, 20, 15, 30, 40]:
+    heap.insert(val)
+
+heap_print(heap)
+# Output shows heap structure level by level
+```
+
+```python Print Max Heap
+from dsa.heap import Heap
+from dsa.pretty_print import heap_print
+
+heap = Heap()
+for val in [5, 3, 8, 1, 9, 2, 7]:
+    heap.insert(val)
+
+heap_print(heap)
+```
+</CodeGroup>
+
+---
+
+### tree_print
+
+Prints a tree from root to leaves in a hierarchical format.
+
+```python
+from dsa.pretty_print import tree_print
+
+tree_print(tree)
+```
+
+<ParamField path="tree" type="Tree" required>
+  The tree object to print (must have a `root` attribute)
+</ParamField>
+
+<Note>
+  This function converts the tree into a complete tree array representation before printing, filling empty nodes with empty strings to maintain the structure.
+</Note>
+
+<CodeGroup>
+```python Print Binary Tree
+from dsa.tree import Tree, TreeNode
+from dsa.pretty_print import tree_print
+
+# Create a binary tree
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+root.left.left = TreeNode(4)
+root.left.right = TreeNode(5)
+
+tree = Tree(root)
+tree_print(tree)
+```
+
+```python Print Binary Search Tree
+from dsa.tree import Tree, TreeNode
+from dsa.pretty_print import tree_print
+
+root = TreeNode(50)
+root.left = TreeNode(30)
+root.right = TreeNode(70)
+root.left.left = TreeNode(20)
+root.left.right = TreeNode(40)
+root.right.left = TreeNode(60)
+root.right.right = TreeNode(80)
+
+tree = Tree(root)
+tree_print(tree)
+```
+</CodeGroup>
+
+---
+
+## Helper Functions
+
+### tree_to_array
+
+Converts a node-based tree into an array representation with index-value pairs.
+
+```python
+from dsa.pretty_print import tree_to_array
+
+array = tree_to_array(node, index=0, tree_array=None)
+```
+
+<ParamField path="node" type="TreeNode" required>
+  The starting node
+</ParamField>
+
+<ParamField path="index" type="int" default="0">
+  The starting index (used internally during recursion)
+</ParamField>
+
+<ParamField path="tree_array" type="list" default="None">
+  The destination array (used internally during recursion)
+</ParamField>
+
+<ResponseField name="array" type="list">
+  List of (index, value) tuples representing the tree in array form
+</ResponseField>
+
+```python Example
+from dsa.tree import TreeNode
+from dsa.pretty_print import tree_to_array
+
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+
+array = tree_to_array(root)
+print(array)  # [(0, 1), (1, 2), (2, 3)]
+```
+
+---
+
+### get_tree_height
+
+Calculates the height of a tree.
+
+```python
+from dsa.pretty_print import get_tree_height
+
+height = get_tree_height(node)
+```
+
+<ParamField path="node" type="TreeNode" required>
+  The starting node (root)
+</ParamField>
+
+<ResponseField name="height" type="int">
+  The height of the tree (number of levels)
+</ResponseField>
+
+```python Example
+from dsa.tree import TreeNode
+from dsa.pretty_print import get_tree_height
+
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+root.left.left = TreeNode(4)
+
+height = get_tree_height(root)
+print(height)  # 3
+```
+
+---
+
+### fill_complete_tree
+
+Forces a binary tree to be a complete tree by filling empty nodes.
+
+```python
+from dsa.pretty_print import fill_complete_tree
+
+complete_tree = fill_complete_tree(tree)
+```
+
+<ParamField path="tree" type="Tree" required>
+  The tree to fill (must have a `root` attribute)
+</ParamField>
+
+<ResponseField name="complete_tree" type="list">
+  Array representation of the complete tree with empty strings for missing nodes
+</ResponseField>
+
+```python Example
+from dsa.tree import Tree, TreeNode
+from dsa.pretty_print import fill_complete_tree
+
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+root.left.left = TreeNode(4)
+# Note: root.left.right is missing
+
+tree = Tree(root)
+complete = fill_complete_tree(tree)
+print(complete)  # [1, 2, 3, 4, '', '', '']
+```
+
+<Accordion title="Understanding the Output Format">
+  **Hierarchical Level Display:**
+  
+  The `heap_print` and `tree_print` functions display data structures level by level, making it easy to visualize the tree structure:
+  
+  ```
+  Level 0:      10
+  Level 1:    5   15
+  Level 2:  2  7 12 20
+  ```
+  
+  **Spacing:**
+  - Each level has appropriate spacing to align with parent nodes
+  - Nodes are centered within their column width
+  - Column width is calculated based on tree height for proper alignment
+  
+  **Empty Nodes:**
+  - In `tree_print`, missing nodes are shown as empty spaces
+  - This helps visualize incomplete trees
+  
+  **Use Cases:**
+  - Debugging heap operations
+  - Visualizing tree structure during development
+  - Educational purposes for understanding tree/heap layout
+  - Quick console-based visualization without GUI dependencies
+</Accordion>
+
+<CodeGroup>
+```python Compare Heap Before and After
+from dsa.heap import MinHeap
+from dsa.pretty_print import heap_print
+
+heap = MinHeap()
+for val in [50, 30, 20, 15, 10, 8, 16]:
+    heap.insert(val)
+
+print("Before inserting 5:")
+heap_print(heap)
+
+heap.insert(5)
+print("\nAfter inserting 5:")
+heap_print(heap)
+```
+
+```python Visualize Tree Traversal
+from dsa.tree import Tree, TreeNode
+from dsa.pretty_print import tree_print
+
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+root.left.left = TreeNode(4)
+root.left.right = TreeNode(5)
+root.right.left = TreeNode(6)
+root.right.right = TreeNode(7)
+
+tree = Tree(root)
+print("Tree structure:")
+tree_print(tree)
+```
+</CodeGroup>

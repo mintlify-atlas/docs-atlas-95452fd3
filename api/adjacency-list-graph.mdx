@@ -1,0 +1,618 @@
+---
+title: 'AdjacencyListGraph'
+description: 'An unweighted adjacency list graph implementation'
+---
+
+## Overview
+
+The `AdjacencyListGraph` class represents an unweighted graph using an adjacency list. It stores each vertex and its list of adjacent vertices in a dictionary, making it space-efficient for sparse graphs.
+
+## Constructor
+
+```python
+AdjacencyListGraph(directed=False, vertices=None)
+```
+
+<ParamField path="directed" type="bool" default="False">
+  Whether the graph is directed
+</ParamField>
+
+<ParamField path="vertices" type="list[str]" default="None">
+  List of vertex labels to initialize the graph with
+</ParamField>
+
+```python
+from dsa.graph import AdjacencyListGraph
+
+# Create empty graph
+g = AdjacencyListGraph()
+
+# Create directed graph
+g = AdjacencyListGraph(directed=True)
+
+# Create with initial vertices
+g = AdjacencyListGraph(vertices=['A', 'B', 'C', 'D'])
+```
+
+## Attributes
+
+<ResponseField name="is_directed" type="bool">
+  Whether the graph is directed
+</ResponseField>
+
+<ResponseField name="is_weighted" type="bool">
+  Whether the graph is weighted (always False)
+</ResponseField>
+
+## Methods
+
+### add_vertex
+
+Add a vertex to the graph.
+
+```python
+add_vertex(label: str)
+```
+
+<ParamField path="label" type="str" required>
+  The vertex label to add
+</ParamField>
+
+**Raises:** `ValueError` if the vertex already exists
+
+```python
+g = AdjacencyListGraph()
+g.add_vertex('A')
+g.add_vertex('B')
+g.add_vertex('C')
+```
+
+### delete_vertex
+
+Delete a vertex from the graph and remove all edges connected to it.
+
+```python
+delete_vertex(label: str)
+```
+
+<ParamField path="label" type="str" required>
+  The vertex label to delete
+</ParamField>
+
+```python
+g = AdjacencyListGraph(vertices=['A', 'B', 'C'])
+g.add_edge('A', 'B')
+g.delete_vertex('B')
+print(g.vertices())  # ['A', 'C']
+```
+
+### add_edge
+
+Add an edge between two vertices.
+
+```python
+add_edge(start_label: str, end_label: str, directed=None)
+```
+
+<ParamField path="start_label" type="str" required>
+  Starting vertex label
+</ParamField>
+
+<ParamField path="end_label" type="str" required>
+  Ending vertex label
+</ParamField>
+
+<ParamField path="directed" type="bool" default="None">
+  Override the graph's default directed behavior. If None, uses `self.is_directed`
+</ParamField>
+
+```python
+g = AdjacencyListGraph()
+
+# Add undirected edge (creates A→B and B→A)
+g.add_edge('A', 'B')
+
+# Add directed edge (creates B→C only)
+g.add_edge('B', 'C', directed=True)
+
+# Vertices are auto-created if they don't exist
+g.add_edge('D', 'E')
+```
+
+### add_directed_edge
+
+Add a directed edge from start to end.
+
+```python
+add_directed_edge(start_label: str, end_label: str)
+```
+
+<ParamField path="start_label" type="str" required>
+  Starting vertex label
+</ParamField>
+
+<ParamField path="end_label" type="str" required>
+  Ending vertex label
+</ParamField>
+
+```python
+g = AdjacencyListGraph()
+g.add_directed_edge('A', 'B')  # Only adds A→B
+```
+
+### delete_edge
+
+Delete an edge between two vertices.
+
+```python
+delete_edge(start_label: str, end_label: str, directed=None)
+```
+
+<ParamField path="start_label" type="str" required>
+  Starting vertex label
+</ParamField>
+
+<ParamField path="end_label" type="str" required>
+  Ending vertex label
+</ParamField>
+
+<ParamField path="directed" type="bool" default="None">
+  Override the graph's default directed behavior. If None, uses `self.is_directed`
+</ParamField>
+
+**Raises:** `KeyError` if either vertex or the edge does not exist
+
+```python
+g = AdjacencyListGraph()
+g.add_edge('A', 'B')
+g.delete_edge('A', 'B')
+```
+
+### has_vertex
+
+Check if a vertex exists in the graph.
+
+```python
+has_vertex(label: str) -> bool
+```
+
+<ParamField path="label" type="str" required>
+  The vertex label to check
+</ParamField>
+
+<ResponseField name="return" type="bool">
+  True if the vertex exists, False otherwise
+</ResponseField>
+
+```python
+g = AdjacencyListGraph(vertices=['A', 'B'])
+print(g.has_vertex('A'))  # True
+print(g.has_vertex('C'))  # False
+```
+
+### has_edge
+
+Check if an edge exists between two vertices.
+
+```python
+has_edge(start_label: str, end_label: str) -> bool
+```
+
+<ParamField path="start_label" type="str" required>
+  Starting vertex label
+</ParamField>
+
+<ParamField path="end_label" type="str" required>
+  Ending vertex label
+</ParamField>
+
+<ResponseField name="return" type="bool">
+  True if an edge exists from start to end, False otherwise
+</ResponseField>
+
+**Raises:** `KeyError` if either vertex does not exist
+
+```python
+g = AdjacencyListGraph()
+g.add_edge('A', 'B')
+print(g.has_edge('A', 'B'))  # True
+print(g.has_edge('B', 'C'))  # Raises KeyError
+```
+
+### vertices
+
+Get a list of all vertex labels.
+
+```python
+vertices() -> list
+```
+
+<ResponseField name="return" type="list[str]">
+  List of all vertex labels in the graph
+</ResponseField>
+
+```python
+g = AdjacencyListGraph(vertices=['A', 'B', 'C'])
+print(g.vertices())  # ['A', 'B', 'C']
+```
+
+### edges
+
+Get a list of all edges in the graph.
+
+```python
+edges() -> list
+```
+
+<ResponseField name="return" type="list[tuple]">
+  List of edges, each represented as a tuple `(start, end)`
+</ResponseField>
+
+```python
+g = AdjacencyListGraph()
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+print(g.edges())  # [('A', 'B'), ('B', 'A'), ('B', 'C'), ('C', 'B')]
+```
+
+### undirected_edges
+
+Get a list of edges without duplicates for undirected graphs.
+
+```python
+undirected_edges() -> list
+```
+
+<ResponseField name="return" type="list[tuple]">
+  List of unique edges, each represented as a tuple `(start, end)`
+</ResponseField>
+
+```python
+g = AdjacencyListGraph()
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+print(g.undirected_edges())  # [('A', 'B'), ('B', 'C')]
+```
+
+### adjacents
+
+Get a list of adjacent vertices for a given vertex.
+
+```python
+adjacents(vertex: str) -> list
+```
+
+<ParamField path="vertex" type="str" required>
+  The vertex label
+</ParamField>
+
+<ResponseField name="return" type="list[str]">
+  List of adjacent vertex labels
+</ResponseField>
+
+```python
+g = AdjacencyListGraph()
+g.add_edge('A', 'B')
+g.add_edge('A', 'C')
+print(g.adjacents('A'))  # ['B', 'C']
+```
+
+### order
+
+Get the number of vertices in the graph.
+
+```python
+order() -> int
+```
+
+<ResponseField name="return" type="int">
+  The number of vertices
+</ResponseField>
+
+```python
+g = AdjacencyListGraph(vertices=['A', 'B', 'C'])
+print(g.order())  # 3
+```
+
+### size
+
+Get the number of edges in the graph.
+
+```python
+size() -> int
+```
+
+<ResponseField name="return" type="int">
+  The number of edges
+</ResponseField>
+
+```python
+g = AdjacencyListGraph()
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+print(g.size())  # 2 (undirected, so A-B and B-C counted once each)
+```
+
+### to_dict
+
+Convert the graph to a dictionary representation.
+
+```python
+to_dict() -> dict
+```
+
+<ResponseField name="return" type="dict">
+  Dictionary where keys are vertices and values are lists of adjacent vertices
+</ResponseField>
+
+```python
+g = AdjacencyListGraph()
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+print(g.to_dict())
+# {'A': ['B'], 'B': ['A', 'C'], 'C': ['B']}
+```
+
+## Class Methods
+
+### from_dict
+
+Create a graph from a dictionary representation.
+
+```python
+@classmethod
+from_dict(data: dict, directed: bool = False) -> AdjacencyListGraph
+```
+
+<ParamField path="data" type="dict" required>
+  Dictionary where keys are vertices and values are lists of adjacent vertices
+</ParamField>
+
+<ParamField path="directed" type="bool" default="False">
+  Whether the graph is directed
+</ParamField>
+
+<ResponseField name="return" type="AdjacencyListGraph">
+  A new graph instance
+</ResponseField>
+
+```python
+data = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A'],
+    'D': ['B']
+}
+g = AdjacencyListGraph.from_dict(data)
+```
+
+## Special Methods
+
+### \_\_getitem\_\_
+
+Get adjacent vertices using bracket notation.
+
+```python
+g = AdjacencyListGraph()
+g.add_edge('A', 'B')
+g.add_edge('A', 'C')
+print(g['A'])  # ['B', 'C']
+```
+
+### \_\_contains\_\_
+
+Check if a vertex exists using the `in` operator.
+
+```python
+g = AdjacencyListGraph(vertices=['A', 'B'])
+print('A' in g)  # True
+print('C' in g)  # False
+```
+
+### \_\_len\_\_
+
+Get the number of vertices.
+
+```python
+g = AdjacencyListGraph(vertices=['A', 'B', 'C'])
+print(len(g))  # 3
+```
+
+## Complete Examples
+
+<CodeGroup>
+
+```python Social Network
+from dsa.graph import AdjacencyListGraph
+
+# Create social network (sparse graph)
+g = AdjacencyListGraph()
+
+# Add friendships
+g.add_edge('Alice', 'Bob')
+g.add_edge('Alice', 'Charlie')
+g.add_edge('Bob', 'David')
+g.add_edge('Charlie', 'Eve')
+g.add_edge('David', 'Eve')
+
+print(f"Users: {g.vertices()}")
+print(f"Friendships: {g.undirected_edges()}")
+
+# Find friends
+alice_friends = g.adjacents('Alice')
+print(f"Alice's friends: {alice_friends}")
+
+# Find mutual friends
+def find_mutual_friends(graph, user1, user2):
+    friends1 = set(graph.adjacents(user1))
+    friends2 = set(graph.adjacents(user2))
+    return list(friends1.intersection(friends2))
+
+mutual = find_mutual_friends(g, 'Bob', 'Charlie')
+print(f"Mutual friends of Bob and Charlie: {mutual}")
+```
+
+```python Directed Graph - Task Dependencies
+from dsa.graph import AdjacencyListGraph
+
+# Create task dependency graph
+g = AdjacencyListGraph(directed=True)
+
+# Add dependencies (A must complete before B)
+g.add_edge('Setup', 'Install')
+g.add_edge('Install', 'Configure')
+g.add_edge('Install', 'Test')
+g.add_edge('Configure', 'Deploy')
+g.add_edge('Test', 'Deploy')
+g.add_edge('Deploy', 'Monitor')
+
+print(f"Tasks: {g.vertices()}")
+print(f"Dependencies: {g.edges()}")
+
+# Topological sort (simplified)
+def topological_sort(graph):
+    in_degree = {v: 0 for v in graph.vertices()}
+    for v in graph.vertices():
+        for neighbor in graph.adjacents(v):
+            in_degree[neighbor] += 1
+    
+    queue = [v for v in graph.vertices() if in_degree[v] == 0]
+    result = []
+    
+    while queue:
+        vertex = queue.pop(0)
+        result.append(vertex)
+        
+        for neighbor in graph.adjacents(vertex):
+            in_degree[neighbor] -= 1
+            if in_degree[neighbor] == 0:
+                queue.append(neighbor)
+    
+    return result
+
+order = topological_sort(g)
+print(f"Task execution order: {order}")
+```
+
+```python Graph Algorithms
+from dsa.graph import AdjacencyListGraph
+from collections import deque
+
+# Create graph
+g = AdjacencyListGraph()
+g.add_edge('A', 'B')
+g.add_edge('A', 'C')
+g.add_edge('B', 'D')
+g.add_edge('C', 'D')
+g.add_edge('D', 'E')
+g.add_edge('C', 'F')
+
+# BFS - shortest path in unweighted graph
+def bfs_shortest_path(graph, start, end):
+    if start == end:
+        return [start]
+    
+    visited = {start}
+    queue = deque([(start, [start])])
+    
+    while queue:
+        vertex, path = queue.popleft()
+        
+        for neighbor in graph.adjacents(vertex):
+            if neighbor not in visited:
+                new_path = path + [neighbor]
+                if neighbor == end:
+                    return new_path
+                visited.add(neighbor)
+                queue.append((neighbor, new_path))
+    
+    return None
+
+path = bfs_shortest_path(g, 'A', 'E')
+print(f"Shortest path A to E: {' -> '.join(path)}")
+
+# Find all paths
+def find_all_paths(graph, start, end, path=[]):
+    path = path + [start]
+    if start == end:
+        return [path]
+    
+    paths = []
+    for neighbor in graph.adjacents(start):
+        if neighbor not in path:
+            new_paths = find_all_paths(graph, neighbor, end, path)
+            paths.extend(new_paths)
+    
+    return paths
+
+all_paths = find_all_paths(g, 'A', 'E')
+print(f"All paths A to E:")
+for p in all_paths:
+    print(f"  {' -> '.join(p)}")
+```
+
+```python Connected Components
+from dsa.graph import AdjacencyListGraph
+
+# Create disconnected graph
+g = AdjacencyListGraph()
+
+# Component 1
+g.add_edge('A', 'B')
+g.add_edge('B', 'C')
+
+# Component 2
+g.add_edge('D', 'E')
+g.add_edge('E', 'F')
+
+# Component 3 (isolated)
+g.add_vertex('G')
+
+# Find connected components
+def find_components(graph):
+    visited = set()
+    components = []
+    
+    def dfs(vertex, component):
+        visited.add(vertex)
+        component.append(vertex)
+        for neighbor in graph.adjacents(vertex):
+            if neighbor not in visited:
+                dfs(neighbor, component)
+    
+    for vertex in graph.vertices():
+        if vertex not in visited:
+            component = []
+            dfs(vertex, component)
+            components.append(component)
+    
+    return components
+
+components = find_components(g)
+print(f"Number of components: {len(components)}")
+for i, comp in enumerate(components, 1):
+    print(f"Component {i}: {comp}")
+```
+
+</CodeGroup>
+
+## Performance
+
+- **Space Complexity:** O(V + E) where V = vertices, E = edges
+- **Add Vertex:** O(1)
+- **Delete Vertex:** O(V + E) - must remove vertex from all adjacency lists
+- **Add Edge:** O(1) average case
+- **Delete Edge:** O(degree(V)) - must search adjacency list
+- **Has Edge:** O(degree(V))
+- **Get Adjacents:** O(1)
+- **Get All Edges:** O(V + E)
+
+## Notes
+
+- Best for sparse graphs where E is much less than V²
+- More space-efficient than adjacency matrix for sparse graphs
+- Faster vertex addition than adjacency matrix
+- Slower edge lookup than adjacency matrix
+- Vertex labels must be strings
+- Adjacency lists are implemented using Python dictionaries and lists
+- For undirected graphs, edges are stored in both directions

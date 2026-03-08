@@ -1,0 +1,318 @@
+---
+title: Queue & DynamicQueue
+description: API reference for Queue and DynamicQueue classes
+---
+
+The `Queue` and `DynamicQueue` classes provide FIFO (First In, First Out) queue implementations with fixed and dynamic capacity respectively.
+
+## Queue
+
+A static queue implementation with fixed capacity.
+
+### Constructor
+
+<ParamField path="contents" type="list" default="None">
+  Optional list with contents to enqueue during initialization
+</ParamField>
+
+<ParamField path="capacity" type="int" default="10">
+  The initial size of the queue
+</ParamField>
+
+```python
+from dsa.queue import Queue
+
+# Create a queue with default capacity
+queue = Queue()
+
+# Create a queue with custom capacity
+queue = Queue(capacity=20)
+
+# Create a queue with initial contents
+queue = Queue(contents=[1, 2, 3])
+```
+
+### Properties
+
+<ResponseField name="count" type="int">
+  The number of elements currently in the queue
+</ResponseField>
+
+### Methods
+
+#### enqueue(element)
+
+Add an element to the back of the queue.
+
+<ParamField path="element" type="any" required>
+  The element to enqueue
+</ParamField>
+
+**Returns:** None
+
+**Raises:**
+- `Exception`: When trying to enqueue more elements than the capacity
+
+```python
+queue = Queue(capacity=3)
+queue.enqueue(1)
+queue.enqueue(2)
+queue.enqueue(3)
+# queue.enqueue(4)  # Raises Exception: "Capacity Reached"
+```
+
+#### dequeue()
+
+Remove and return the front element from the queue.
+
+**Returns:** The front element in the queue
+
+**Raises:**
+- `Exception`: When there are no elements to dequeue
+
+```python
+queue = Queue()
+queue.enqueue(1)
+queue.enqueue(2)
+print(queue.dequeue())  # Output: 1
+print(queue.dequeue())  # Output: 2
+# queue.dequeue()  # Raises Exception: "Empty Queue"
+```
+
+#### peek()
+
+Return the front element without removing it.
+
+**Returns:** The element in front of the queue
+
+**Raises:**
+- `Exception`: When the queue is empty
+
+```python
+queue = Queue()
+queue.enqueue(10)
+print(queue.peek())  # Output: 10
+print(queue.peek())  # Output: 10 (element still in queue)
+```
+
+#### is_empty()
+
+Check if the queue is empty.
+
+**Returns:** `True` if the queue is empty, `False` otherwise
+
+```python
+queue = Queue()
+print(queue.is_empty())  # Output: True
+queue.enqueue(1)
+print(queue.is_empty())  # Output: False
+```
+
+#### capacity()
+
+Return the total capacity of the queue.
+
+**Returns:** The capacity of the queue
+
+```python
+queue = Queue(capacity=15)
+print(queue.capacity())  # Output: 15
+```
+
+#### from_list(alist)
+
+Class method to create a queue from a list.
+
+<ParamField path="alist" type="list" required>
+  The list with contents to enqueue
+</ParamField>
+
+**Returns:** A new Queue instance
+
+**Raises:**
+- `Exception`: When the list has more elements than the default capacity
+
+```python
+queue = Queue.from_list([1, 2, 3, 4, 5])
+print(queue.peek())  # Output: 1
+```
+
+#### to_ordered_list()
+
+Convert the queue contents to a Python list in order.
+
+**Returns:** A list containing the queue elements in order
+
+```python
+queue = Queue()
+queue.enqueue(1)
+queue.enqueue(2)
+queue.enqueue(3)
+print(queue.to_ordered_list())  # Output: [1, 2, 3]
+```
+
+#### raw_view()
+
+Return the queue in its internal array representation.
+
+**Returns:** The array representation of the queue
+
+```python
+queue = Queue(capacity=5)
+queue.enqueue(1)
+queue.enqueue(2)
+print(queue.raw_view())  # Output: [1, 2, None, None, None]
+```
+
+### Special Methods
+
+#### \_\_len\_\_()
+
+Return the count of items in the queue.
+
+```python
+queue = Queue()
+queue.enqueue(1)
+queue.enqueue(2)
+print(len(queue))  # Output: 2
+```
+
+#### \_\_eq\_\_(other)
+
+Compare two queues for value-based equality.
+
+**Returns:** `True` if both queues have equal contents, `False` otherwise
+
+```python
+queue1 = Queue.from_list([1, 2, 3])
+queue2 = Queue.from_list([1, 2, 3])
+queue3 = Queue.from_list([1, 2, 4])
+
+print(queue1 == queue2)  # Output: True
+print(queue1 == queue3)  # Output: False
+```
+
+#### \_\_repr\_\_()
+
+Return a string representation with queue details.
+
+```python
+queue = Queue()
+queue.enqueue(1)
+queue.enqueue(2)
+print(queue)  # Output: [1, 2] Count: 2 Capacity: 10
+```
+
+---
+
+## DynamicQueue
+
+A dynamic queue implementation that automatically grows capacity. Inherits from `Queue`.
+
+<Note>
+  Shrinking is not implemented in DynamicQueue - the capacity only grows.
+</Note>
+
+### Constructor
+
+<ParamField path="contents" type="list" default="None">
+  Optional list with contents to enqueue during initialization
+</ParamField>
+
+<ParamField path="capacity" type="int" default="10">
+  The initial size of the queue
+</ParamField>
+
+```python
+from dsa.queue import DynamicQueue
+
+# Create a dynamic queue
+queue = DynamicQueue()
+
+# Create with initial contents
+queue = DynamicQueue(contents=[1, 2, 3], capacity=5)
+```
+
+### Methods
+
+DynamicQueue inherits all methods from Queue with the following differences:
+
+#### enqueue(element)
+
+Add an element to the queue. Automatically increases capacity if count is greater than capacity.
+
+<ParamField path="element" type="any" required>
+  The element to enqueue
+</ParamField>
+
+**Returns:** None
+
+```python
+queue = DynamicQueue(capacity=2)
+queue.enqueue(1)
+queue.enqueue(2)
+queue.enqueue(3)  # Automatically grows capacity
+queue.enqueue(4)
+print(queue.capacity())  # Output: 4 (doubled from 2)
+```
+
+#### grow()
+
+Double the capacity of the current array.
+
+**Returns:** None
+
+```python
+queue = DynamicQueue(capacity=10)
+print(queue.capacity())  # Output: 10
+queue.grow()
+print(queue.capacity())  # Output: 20
+```
+
+#### check_capacity()
+
+Check if count ≥ capacity, and grow the array if needed.
+
+**Returns:** None
+
+```python
+queue = DynamicQueue(capacity=10)
+for i in range(10):
+    queue.enqueue(i)
+queue.check_capacity()  # Will grow if needed
+```
+
+### Complete Example
+
+<Accordion title="Working with DynamicQueue">
+```python
+from dsa.queue import Queue, DynamicQueue
+
+# Create a dynamic queue
+queue = DynamicQueue(capacity=2)
+
+# Enqueue elements - capacity grows automatically
+for i in range(10):
+    queue.enqueue(i)
+    print(f"Enqueued {i}, Capacity: {queue.capacity()}, Count: {len(queue)}")
+
+# Dequeue elements
+while not queue.is_empty():
+    element = queue.dequeue()
+    print(f"Dequeued {element}, Remaining: {len(queue)}")
+
+# Compare queues
+queue1 = DynamicQueue()
+queue2 = Queue()
+for i in [1, 2, 3]:
+    queue1.enqueue(i)
+    queue2.enqueue(i)
+
+print(queue1 == queue2)  # Output: True
+
+# Process items in order
+queue3 = DynamicQueue.from_list([10, 20, 30, 40])
+print(queue3.peek())  # Output: 10 (first in)
+print(queue3.to_ordered_list())  # Output: [10, 20, 30, 40]
+```
+</Accordion>

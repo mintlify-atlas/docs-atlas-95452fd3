@@ -1,0 +1,324 @@
+---
+title: Stack & DynamicStack
+description: API reference for Stack and DynamicStack classes
+---
+
+The `Stack` and `DynamicStack` classes provide LIFO (Last In, First Out) stack implementations with fixed and dynamic capacity respectively.
+
+## Stack
+
+A static stack implementation with fixed capacity.
+
+### Constructor
+
+<ParamField path="capacity" type="int" default="10">
+  The initial size of the stack
+</ParamField>
+
+```python
+from dsa.stack import Stack
+
+# Create a stack with default capacity (10)
+stack = Stack()
+
+# Create a stack with custom capacity
+stack = Stack(capacity=20)
+```
+
+### Properties
+
+<ResponseField name="count" type="int">
+  The number of elements currently in the stack
+</ResponseField>
+
+### Methods
+
+#### push(element)
+
+Push an element onto the stack.
+
+<ParamField path="element" type="any" required>
+  The element to push onto the stack
+</ParamField>
+
+**Raises:**
+- `Exception`: When the capacity is reached
+
+```python
+stack = Stack(capacity=3)
+stack.push(1)
+stack.push(2)
+stack.push(3)
+# stack.push(4)  # Raises Exception: "Capacity Reached"
+```
+
+#### pop()
+
+Remove and return the top element from the stack.
+
+**Returns:** The top element in the stack
+
+**Raises:**
+- `Exception`: When the stack is empty
+
+```python
+stack = Stack()
+stack.push(1)
+stack.push(2)
+print(stack.pop())  # Output: 2
+print(stack.pop())  # Output: 1
+# stack.pop()  # Raises Exception: "Empty Stack"
+```
+
+#### peek()
+
+Return the top element without removing it.
+
+**Returns:** The top element in the stack
+
+**Raises:**
+- `Exception`: When the stack is empty
+
+```python
+stack = Stack()
+stack.push(10)
+print(stack.peek())  # Output: 10
+print(stack.peek())  # Output: 10 (element still in stack)
+```
+
+#### is_empty()
+
+Check if the stack is empty.
+
+**Returns:** `True` if the stack is empty, `False` otherwise
+
+```python
+stack = Stack()
+print(stack.is_empty())  # Output: True
+stack.push(1)
+print(stack.is_empty())  # Output: False
+```
+
+#### top()
+
+Return the index of the top element.
+
+**Returns:** The top index of the stack
+
+```python
+stack = Stack()
+stack.push(1)
+stack.push(2)
+print(stack.top())  # Output: 1
+```
+
+#### capacity()
+
+Return the total capacity of the stack.
+
+**Returns:** The capacity of the stack
+
+```python
+stack = Stack(capacity=15)
+print(stack.capacity())  # Output: 15
+```
+
+#### from_list(alist)
+
+Class method to create a stack from a list.
+
+<ParamField path="alist" type="list" required>
+  The list with contents to set as the stack
+</ParamField>
+
+**Returns:** A new Stack instance
+
+**Raises:**
+- `Exception`: When the list has more elements than the default capacity
+
+```python
+stack = Stack.from_list([1, 2, 3, 4, 5])
+print(stack.peek())  # Output: 5
+```
+
+#### to_list()
+
+Convert the stack contents to a list.
+
+**Returns:** A list containing the stack elements
+
+```python
+stack = Stack()
+stack.push(1)
+stack.push(2)
+stack.push(3)
+print(stack.to_list())  # Output: [1, 2, 3]
+```
+
+### Special Methods
+
+#### \_\_len\_\_()
+
+Return the number of elements in the stack.
+
+```python
+stack = Stack()
+stack.push(1)
+stack.push(2)
+print(len(stack))  # Output: 2
+```
+
+#### \_\_eq\_\_(other)
+
+Compare two stacks for value-based equality.
+
+**Returns:** `True` if both stacks have equal contents, `False` otherwise
+
+```python
+stack1 = Stack.from_list([1, 2, 3])
+stack2 = Stack.from_list([1, 2, 3])
+stack3 = Stack.from_list([1, 2, 4])
+
+print(stack1 == stack2)  # Output: True
+print(stack1 == stack3)  # Output: False
+```
+
+#### \_\_repr\_\_()
+
+Return a string representation of the stack.
+
+```python
+stack = Stack()
+stack.push(1)
+stack.push(2)
+print(stack)  # Output: [1, 2] Top: 1 Capacity: 10
+```
+
+---
+
+## DynamicStack
+
+A dynamic stack implementation that automatically adjusts capacity. Inherits from `Stack`.
+
+### Constructor
+
+<ParamField path="capacity" type="int" default="10">
+  The initial size of the stack
+</ParamField>
+
+```python
+from dsa.stack import DynamicStack
+
+# Create a dynamic stack
+stack = DynamicStack()
+```
+
+### Methods
+
+DynamicStack inherits all methods from Stack with the following differences:
+
+#### push(element)
+
+Push an element onto the stack. Automatically grows the array if capacity needs to increase.
+
+<ParamField path="element" type="any" required>
+  The element to push onto the stack
+</ParamField>
+
+**Returns:** None
+
+```python
+stack = DynamicStack(capacity=2)
+stack.push(1)
+stack.push(2)
+stack.push(3)  # Automatically grows capacity
+stack.push(4)
+print(stack.capacity())  # Output: 4 (doubled from 2)
+```
+
+#### pop()
+
+Remove and return the top element. Automatically shrinks the array if count is ≤ 1/4 of capacity.
+
+**Returns:** The top element in the stack
+
+**Raises:**
+- `Exception`: When the stack is empty
+
+```python
+stack = DynamicStack(capacity=20)
+for i in range(20):
+    stack.push(i)
+for i in range(15):
+    stack.pop()
+print(stack.capacity())  # Capacity shrinks when count ≤ 1/4 capacity
+```
+
+#### grow()
+
+Helper method to double the capacity of the current array.
+
+```python
+stack = DynamicStack(capacity=10)
+print(stack.capacity())  # Output: 10
+stack.grow()
+print(stack.capacity())  # Output: 20
+```
+
+#### shrink()
+
+Helper method to halve the capacity of the current array. Minimum capacity is 10.
+
+```python
+stack = DynamicStack(capacity=20)
+stack.shrink()
+print(stack.capacity())  # Output: 10
+```
+
+#### check_capacity()
+
+Check and adjust the capacity of the stack:
+- If count ≥ capacity, grow the array
+- If count ≤ 1/4 of capacity, shrink the array
+
+```python
+stack = DynamicStack(capacity=10)
+for i in range(10):
+    stack.push(i)
+stack.check_capacity()  # Will grow if needed
+```
+
+### Complete Example
+
+<Accordion title="Working with DynamicStack">
+```python
+from dsa.stack import Stack, DynamicStack
+
+# Create a dynamic stack
+stack = DynamicStack(capacity=2)
+
+# Push elements - capacity grows automatically
+for i in range(10):
+    stack.push(i)
+    print(f"Pushed {i}, Capacity: {stack.capacity()}, Count: {len(stack)}")
+
+# Pop elements - capacity shrinks automatically
+while not stack.is_empty():
+    element = stack.pop()
+    print(f"Popped {element}, Capacity: {stack.capacity()}, Count: {len(stack)}")
+
+# Compare stacks
+stack1 = DynamicStack()
+stack2 = Stack()
+for i in [1, 2, 3]:
+    stack1.push(i)
+    stack2.push(i)
+
+print(stack1 == stack2)  # Output: True (compares values, not types)
+
+# Convert to/from list
+my_list = [10, 20, 30]
+stack3 = DynamicStack.from_list(my_list)
+print(stack3.to_list())  # Output: [10, 20, 30]
+```
+</Accordion>

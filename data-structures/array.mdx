@@ -1,0 +1,410 @@
+---
+title: 'Arrays'
+description: 'Static, dynamic, and circular array implementations'
+icon: 'table-cells'
+---
+
+## Overview
+
+The UCX DSA package provides three array implementations with different characteristics:
+
+- **Array**: Fixed-capacity static array
+- **DynamicArray**: Automatically resizing array
+- **CircularArray**: Wrap-around circular buffer
+
+All three implementations support index-based access using `array[index]` syntax and assignment with `array[index] = value`.
+
+## Array (Static)
+
+A static array with a fixed capacity that must be specified at initialization.
+
+### Creating an Array
+
+<CodeGroup>
+
+```python Empty Array
+from dsa.array import Array
+
+# Create array with default capacity of 10
+arr = Array()
+print(arr.capacity())  # 10
+print(len(arr))        # 0
+```
+
+```python With Initial Contents
+from dsa.array import Array
+
+# Create array from list
+arr = Array(contents=[1, 2, 3, 4, 5])
+print(arr)  # [1, 2, 3, 4, 5] Count: 5 Capacity: 10
+```
+
+```python Custom Capacity
+from dsa.array import Array
+
+# Specify custom capacity
+arr = Array(capacity=20)
+print(arr.capacity())  # 20
+```
+
+```python From List
+from dsa.array import Array
+
+# Create from existing list
+arr = Array.from_list([10, 20, 30])
+print(arr.to_list())  # [10, 20, 30]
+```
+
+</CodeGroup>
+
+### Key Methods
+
+#### append(element)
+
+Append an element to the end of the array.
+
+```python
+arr = Array(capacity=5)
+arr.append(1)
+arr.append(2)
+print(arr)  # [1, 2] Count: 2 Capacity: 5
+
+# Raises Exception if capacity is exceeded
+try:
+    for i in range(10):
+        arr.append(i)
+except Exception as e:
+    print(e)  # Capacity Error: Maximum capacity 5 reached.
+```
+
+<Note>
+**Time Complexity**: O(1)
+</Note>
+
+#### extend(array)
+
+Append multiple elements from an iterable.
+
+```python
+arr = Array(capacity=10)
+arr.extend([1, 2, 3])
+arr.extend([4, 5])
+print(arr.to_list())  # [1, 2, 3, 4, 5]
+```
+
+#### insert(index, element)
+
+Insert an element at a specific index, shifting elements to the right.
+
+```python
+arr = Array.from_list([1, 2, 4, 5])
+arr.insert(2, 3)  # Insert 3 at index 2
+print(arr.to_list())  # [1, 2, 3, 4, 5]
+```
+
+<Note>
+**Time Complexity**: O(n) - requires shifting elements
+</Note>
+
+#### delete(index)
+
+Delete an element at a specific index, shifting subsequent elements left.
+
+```python
+arr = Array.from_list([1, 2, 3, 4, 5])
+arr.delete(2)  # Delete element at index 2
+print(arr.to_list())  # [1, 2, 4, 5]
+```
+
+<Note>
+**Time Complexity**: O(n) - requires shifting elements
+</Note>
+
+#### Index Access
+
+Retrieve and set elements using bracket notation.
+
+```python
+arr = Array.from_list([10, 20, 30])
+
+# Get element
+print(arr[1])  # 20
+
+# Set element
+arr[1] = 25
+print(arr[1])  # 25
+
+# IndexError for out of bounds
+try:
+    value = arr[10]
+except IndexError:
+    print("Index out of bounds")
+```
+
+<Note>
+**Time Complexity**: O(1)
+</Note>
+
+### Utility Methods
+
+```python
+arr = Array.from_list([1, 2, 3])
+
+# Check if empty
+print(arr.is_empty())  # False
+
+# Get length
+print(len(arr))  # 3
+
+# Get capacity
+print(arr.capacity())  # 3
+
+# Convert to Python list
+print(arr.to_list())  # [1, 2, 3]
+```
+
+## DynamicArray
+
+A dynamic array that automatically adjusts its capacity as needed. It doubles in size when full and halves when utilization drops below 25%.
+
+### Creating a DynamicArray
+
+```python
+from dsa.array import DynamicArray
+
+# Create with default capacity
+arr = DynamicArray()
+
+# Create with initial contents
+arr = DynamicArray(contents=[1, 2, 3])
+
+# Create from list
+arr = DynamicArray.from_list([10, 20, 30])
+```
+
+### Automatic Resizing
+
+The DynamicArray grows and shrinks automatically:
+
+```python
+arr = DynamicArray(capacity=2)
+print(f"Initial capacity: {arr.capacity()}")  # 2
+
+# Add elements - capacity doubles when full
+arr.append(1)
+arr.append(2)
+print(f"After 2 elements: {arr.capacity()}")  # 2
+
+arr.append(3)  # Triggers growth
+print(f"After 3 elements: {arr.capacity()}")  # 4
+
+arr.append(4)
+arr.append(5)  # Triggers growth again
+print(f"After 5 elements: {arr.capacity()}")  # 8
+
+# Shrinks when count <= 1/4 of capacity
+for i in range(4):
+    arr.delete(0)
+print(f"After deletions: {arr.capacity()}")  # 4 (shrunk from 8)
+```
+
+<Tip>
+**Growth Strategy**: 
+- Grows: capacity × 2 when `count >= capacity`
+- Shrinks: capacity ÷ 2 when `count <= capacity ÷ 4`
+- Minimum capacity: 10
+</Tip>
+
+### Key Methods
+
+DynamicArray supports all the same methods as Array:
+
+```python
+arr = DynamicArray()
+
+# Append without capacity concerns
+for i in range(100):
+    arr.append(i)
+print(len(arr))  # 100
+
+# Insert at any position
+arr.insert(50, 999)
+
+# Delete elements
+arr.delete(0)
+
+# Access elements
+value = arr[10]
+arr[10] = 42
+```
+
+<Note>
+**Time Complexity**:
+- `append()`: O(1) amortized
+- `insert()`: O(n)
+- `delete()`: O(n)
+- Index access: O(1)
+</Note>
+
+## CircularArray
+
+A circular array implementation that wraps around when capacity is reached, overwriting the oldest elements.
+
+### Creating a CircularArray
+
+```python
+from dsa.array import CircularArray
+
+# Create with default capacity
+circ = CircularArray(capacity=5)
+
+# Create with initial contents
+circ = CircularArray(contents=[1, 2, 3], capacity=5)
+```
+
+### Circular Behavior
+
+When the array is full, new elements overwrite the oldest ones:
+
+```python
+circ = CircularArray(capacity=3)
+
+# Add elements
+circ.append(1)
+circ.append(2)
+circ.append(3)
+print(circ.to_list())  # [1, 2, 3]
+
+# Adding more wraps around and overwrites
+circ.append(4)  # Overwrites 1
+print(circ.to_list())  # [2, 3, 4]
+
+circ.append(5)  # Overwrites 2
+print(circ.to_list())  # [3, 4, 5]
+```
+
+<Tip>
+CircularArray is perfect for **fixed-size buffers** like:
+- Recent history tracking
+- Rolling logs
+- Sliding window operations
+- Ring buffers
+</Tip>
+
+### Key Methods
+
+#### append(element)
+
+Append element, wrapping around if necessary.
+
+```python
+circ = CircularArray(capacity=3)
+circ.extend([1, 2, 3])
+circ.append(4)  # Wraps around
+print(circ.to_list())  # [2, 3, 4]
+```
+
+#### insert(index, element)
+
+Insert at index without wrapping (raises exception if full).
+
+```python
+circ = CircularArray.from_list([1, 2, 3])
+try:
+    circ.insert(1, 99)
+except Exception as e:
+    print(e)  # Capacity Error: Maximum capacity 10 reached.
+```
+
+#### delete(index)
+
+Delete element at index and shift remaining elements.
+
+```python
+circ = CircularArray(contents=[1, 2, 3, 4, 5], capacity=5)
+circ.delete(2)  # Delete element at index 2
+print(circ.to_list())  # [1, 2, 4, 5]
+```
+
+#### raw_view()
+
+View the underlying array structure.
+
+```python
+circ = CircularArray(capacity=5)
+circ.extend([1, 2, 3, 4, 5])
+circ.append(6)  # Wraps around
+
+print(circ.to_list())    # [2, 3, 4, 5, 6] (logical view)
+print(circ.raw_view())   # [6, 2, 3, 4, 5] (physical memory)
+```
+
+## Comparison
+
+<Tabs>
+  <Tab title="When to Use Array">
+    **Use Array when**:
+    - You know the maximum size in advance
+    - Fixed capacity is acceptable
+    - Memory efficiency is critical
+    - You want explicit capacity control
+    
+    **Example use case**: Implementing a fixed-size cache or buffer
+  </Tab>
+  
+  <Tab title="When to Use DynamicArray">
+    **Use DynamicArray when**:
+    - Size is unknown or varies significantly
+    - You need automatic resizing
+    - You want ArrayList/Vector-like behavior
+    - Flexibility is more important than predictable memory usage
+    
+    **Example use case**: General-purpose list that grows with data
+  </Tab>
+  
+  <Tab title="When to Use CircularArray">
+    **Use CircularArray when**:
+    - You need a fixed-size rolling buffer
+    - Oldest data should be automatically discarded
+    - You're implementing a circular queue or ring buffer
+    - You want to track recent N items
+    
+    **Example use case**: Logging last N transactions, sliding window algorithms
+  </Tab>
+</Tabs>
+
+## Common Operations
+
+### Equality Comparison
+
+All array types support equality comparison based on contents:
+
+```python
+from dsa.array import Array, DynamicArray, CircularArray
+
+arr1 = Array.from_list([1, 2, 3])
+arr2 = DynamicArray.from_list([1, 2, 3])
+circ = CircularArray(contents=[1, 2, 3])
+
+print(arr1 == arr2)   # True
+print(arr1 == [1, 2, 3])  # False (different types)
+```
+
+<Note>
+CircularArray cannot be compared with Array or DynamicArray for equality.
+</Note>
+
+### String Representation
+
+All arrays provide informative string representations:
+
+```python
+arr = Array.from_list([1, 2, 3])
+print(arr)  # [1, 2, 3] Count: 3 Capacity: 3
+
+dyn = DynamicArray.from_list([4, 5])
+print(dyn)  # [4, 5] Count: 2 Capacity: 10
+
+circ = CircularArray(contents=[7, 8, 9], capacity=5)
+print(circ)  # [7, 8, 9] Count: 3 Capacity: 5
+```

@@ -1,97 +1,91 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "UCX DSA - Data Structures and Algorithms"
+description: "Educational Python package for learning data structures and algorithms at UC Berkeley Extension"
 ---
 
-## Setting up
+<Note>
+  This package is designed as an educational tool for students to learn and experiment with data structures and algorithms. Written in Python with an emphasis on readability and clarity.
+</Note>
 
-Get your documentation site up and running in minutes.
+## What is UCX DSA?
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+UCX DSA is a comprehensive Python package built specifically for UC Berkeley Extension's Computer Science X404.1: Data Structures and Algorithms class. It provides clean, educational implementations of fundamental data structures and algorithms that students can use to learn core concepts.
 
-## Make it yours
+## Key Features
 
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Complete Data Structures" icon="layer-group">
+    Arrays, stacks, queues, linked lists, trees, heaps, tries, hash tables, and graphs
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Graph Algorithms" icon="diagram-project">
+    Dijkstra's shortest path, Prim's minimum spanning tree, BFS, and DFS traversal
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Educational Focus" icon="graduation-cap">
+    Clear, readable code designed for learning rather than production optimization
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="Visualization Support" icon="chart-network">
+    Built-in visualization for graphs, trees, heaps, and tries using NetworkX
   </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## Quick Start
 
-Everything you need to create world-class documentation.
+Get started with UCX DSA in just a few steps:
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+<Steps>
+  <Step title="Install the package">
+    Install using pip from PyPI:
+    ```bash
+    pip install ucxdsa
+    ```
+  </Step>
+  
+  <Step title="Import a data structure">
+    Import any data structure you need:
+    ```python
+    from dsa.stack import Stack
+    from dsa.graph import Graph
+    ```
+  </Step>
+  
+  <Step title="Start using it">
+    Begin experimenting with data structures:
+    ```python
+    stack = Stack()
+    stack.push(1)
+    stack.push(2)
+    print(stack.pop())  # 2
+    ```
+  </Step>
+</Steps>
 
-## Need inspiration?
+## Explore the Documentation
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<CardGroup cols={2}>
+  <Card title="Installation Guide" icon="download" href="/installation">
+    Learn how to install and update the package
+  </Card>
+  <Card title="Quickstart Tutorial" icon="rocket" href="/quickstart">
+    Get hands-on with basic data structures
+  </Card>
+  <Card title="Data Structures" icon="database" href="/data-structures/array">
+    Explore all available data structures
+  </Card>
+  <Card title="API Reference" icon="code" href="/api/array">
+    Complete API documentation for all classes and methods
+  </Card>
+</CardGroup>
+
+## Why UCX DSA?
+
+UCX DSA prioritizes educational value over performance. Each implementation is crafted to:
+
+- Demonstrate fundamental concepts clearly
+- Follow standard textbook algorithms (CLRS)
+- Provide readable, well-documented code
+- Support visualization and experimentation
+- Help students understand how data structures work internally
+
+<Warning>
+  Not intended for production use. This package is designed for learning and educational purposes.
+</Warning>
